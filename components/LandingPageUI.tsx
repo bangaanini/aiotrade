@@ -109,66 +109,8 @@ export default function LandingPageUI({
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 py-16 sm:px-8 lg:px-10">
-        <div className="max-w-2xl">
-          <p className="text-sm font-medium text-emerald-700">Built for repeatable referrals</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-stone-950">
-            One landing experience, personalized entry points for every promoter.
-          </h2>
-          <p className="mt-4 text-base leading-7 text-stone-600">
-            Your main page stays consistent. Members get their own shareable route, and the signup flow records who referred each new account.
-          </p>
-        </div>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
-          {features.map((feature) => {
-            const Icon = feature.icon;
 
-            return (
-              <Card key={feature.title}>
-                <CardContent className="space-y-4 p-6">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="text-lg font-semibold text-stone-950">{feature.title}</h3>
-                    <p className="text-sm leading-6 text-stone-600">{feature.description}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="border-y border-stone-200 bg-white" id="how-it-works">
-        <div className="mx-auto grid max-w-6xl gap-10 px-6 py-16 sm:px-8 lg:grid-cols-[0.9fr,1.1fr] lg:px-10">
-          <div className="space-y-4">
-            <p className="text-sm font-medium text-amber-700">How it works</p>
-            <h2 className="text-3xl font-semibold tracking-tight text-stone-950">
-              Members sign up, activate their page, and start sharing.
-            </h2>
-            <p className="text-base leading-7 text-stone-600">
-              The workflow stays simple for users and easy to manage for your team.
-            </p>
-          </div>
-
-          <div className="grid gap-4">
-            {[
-              "A visitor lands on the main page or a sponsor-specific route.",
-              "Signup stores the referral username alongside the new profile.",
-              "The member enables their landing page from the dashboard and shares the live link.",
-            ].map((step, index) => (
-              <div className="flex gap-4 rounded-lg border border-stone-200 bg-stone-50 p-5" key={step}>
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-stone-900 text-sm font-semibold text-white">
-                  {index + 1}
-                </div>
-                <p className="pt-1 text-sm leading-6 text-stone-700">{step}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
     </main>
   );
 }
