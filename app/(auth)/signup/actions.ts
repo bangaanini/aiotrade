@@ -1,6 +1,5 @@
 "use server";
 
-import { Prisma } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createUserSession, hashPassword } from "@/lib/auth";
@@ -33,6 +32,10 @@ export type SignupActionState = {
     referredBy?: string;
   };
 };
+
+function isUniqueConstraintError(error: unknown): error is { code: string } {
+  return typeof error === "object" && error !== null && "code" in error && error.code === "P2002";
+}
 
 export async function signUpAction(
   _prevState: SignupActionState,
@@ -125,10 +128,7 @@ export async function signUpAction(
 
     await createUserSession(profile.id);
   } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2002"
-    ) {
+    if (isUniqueConstraintError(error)) {
       return {
         status: "error",
         message: "This account could not be created because one of the fields is already in use.",
