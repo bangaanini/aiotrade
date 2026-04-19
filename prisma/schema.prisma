@@ -1,0 +1,19 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Profile {
+  id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email        String? @unique
+  username     String  @unique
+  passwordHash String  @map("password_hash")
+  isLpActive   Boolean @default(false) @map("is_lp_active")
+  referredBy   String? @map("referred_by")
+
+  @@index([referredBy], map: "profiles_referred_by_idx")
+  @@map("profiles")
+}
