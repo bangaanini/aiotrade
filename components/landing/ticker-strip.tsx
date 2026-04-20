@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import type { TickerItem } from "@/components/landing/types";
 import { fallbackTickerItems, getTickerInitials } from "@/lib/market";
+import { cn } from "@/lib/utils";
 
 type TickerStripProps = {
   className?: string;
@@ -74,7 +75,7 @@ export function TickerStrip({ className }: TickerStripProps) {
 
       <motion.div
         animate={prefersReducedMotion ? { x: "0%" } : { x: ["0%", "-50%"] }}
-        className="flex w-max items-stretch gap-4 px-6 sm:px-8 lg:px-10"
+        className="flex w-max items-stretch gap-3 px-4 sm:gap-4 sm:px-8 lg:px-10"
         transition={
           prefersReducedMotion
             ? undefined
@@ -87,15 +88,15 @@ export function TickerStrip({ className }: TickerStripProps) {
       >
         {tickerItems.map((item, index) => (
           <article
-            className="min-w-[190px] rounded-lg border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.06)] px-4 py-3 backdrop-blur-sm"
+            className="min-w-[156px] rounded-lg border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.06)] px-3 py-3 backdrop-blur-sm sm:min-w-[190px] sm:px-4"
             key={`${item.symbol}-${index}`}
           >
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between gap-2 sm:gap-4">
+              <div className="flex min-w-0 items-center gap-2 sm:gap-3">
                 {item.logoUrl ? (
                   <Image
                     alt={item.name ?? item.symbol}
-                    className="h-7 w-7 rounded-full bg-white/5 object-cover"
+                    className="h-6 w-6 rounded-full bg-white/5 object-cover sm:h-7 sm:w-7"
                     height="28"
                     loading="lazy"
                     src={item.logoUrl}
@@ -103,20 +104,20 @@ export function TickerStrip({ className }: TickerStripProps) {
                     unoptimized
                   />
                 ) : (
-                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/8 text-[0.62rem] font-semibold tracking-[0.08em] text-white/84">
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/8 text-[0.55rem] font-semibold tracking-[0.08em] text-white/84 sm:h-7 sm:w-7 sm:text-[0.62rem]">
                     {getTickerInitials(item.symbol)}
                   </span>
                 )}
-                <div>
-                  <p className="text-sm font-semibold tracking-[0.08em] text-white">{item.symbol}</p>
+                <div className="min-w-0">
+                  <p className="truncate text-xs font-semibold tracking-[0.05em] text-white sm:text-sm sm:tracking-[0.08em]">{item.symbol}</p>
                   {item.rank ? <p className="text-[0.68rem] text-white/42">CMC #{item.rank}</p> : null}
                 </div>
               </div>
-              <span className={item.positive ? "text-[#34d399]" : "text-[#f87171]"}>
+              <span className={cn("text-xs sm:text-sm", item.positive ? "text-[#34d399]" : "text-[#f87171]")}>
                 {item.change}
               </span>
             </div>
-            <p className="mt-2 text-xl font-semibold text-white">{item.price}</p>
+            <p className="mt-2 text-lg font-semibold text-white sm:text-xl">{item.price}</p>
           </article>
         ))}
       </motion.div>

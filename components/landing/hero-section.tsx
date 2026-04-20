@@ -70,35 +70,35 @@ export function HeroSection({
             variants={containerVariants}
           >
             <motion.p
-              className="text-[0.72rem] uppercase tracking-[0.62em] text-white/82 sm:text-sm"
+              className="text-[0.62rem] uppercase tracking-[0.34em] text-white/82 sm:text-sm sm:tracking-[0.62em]"
               variants={itemVariants}
             >
               Selamat Datang Di Komunitas
             </motion.p>
 
             <motion.h1
-              className="mt-6 text-[4.4rem] font-medium uppercase leading-none tracking-[0.08em] text-white sm:text-[6.4rem] lg:text-[8.6rem]"
+              className="mt-5 text-[2.9rem] font-medium uppercase leading-none tracking-[0.04em] text-white sm:mt-6 sm:text-[6.4rem] sm:tracking-[0.08em] lg:text-[8.6rem]"
               variants={itemVariants}
             >
               <span className="text-[#0ea5ff]">AIO</span>TRADE
             </motion.h1>
 
             <motion.p
-              className="mt-5 max-w-5xl text-[1.25rem] font-light leading-[1.35] text-white/88 sm:text-[1.8rem] lg:text-[2.35rem]"
+              className="mt-4 max-w-[18rem] text-[1rem] font-light leading-[1.35] text-white/88 sm:mt-5 sm:max-w-5xl sm:text-[1.8rem] lg:text-[2.35rem]"
               variants={itemVariants}
             >
               “Edukasi &amp; Trading Otomatis Bersama AIOTrade”
             </motion.p>
             <motion.div
-              className="mt-10"
+              className="mt-8 w-full sm:mt-10 sm:w-auto"
               variants={itemVariants}
               whileHover={prefersReducedMotion ? undefined : { y: -4, scale: 1.01 }}
               whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
             >
               <Link
                 className={cn(
-                  "group relative inline-flex min-h-14 items-center justify-center gap-3 overflow-hidden rounded-lg border border-white/18 bg-[#ffcf10] px-8 py-4 text-lg font-semibold text-[#101726] shadow-[0_18px_48px_rgba(0,0,0,0.22)] transition duration-300 hover:border-[#ffe075] hover:bg-[#ffd83a] hover:shadow-[0_24px_56px_rgba(255,207,16,0.26)]",
-                  "sm:min-w-[304px]",
+                  "group relative inline-flex min-h-12 w-full items-center justify-center gap-3 overflow-hidden rounded-lg border border-white/18 bg-[#ffcf10] px-6 py-3 text-base font-semibold text-[#101726] shadow-[0_18px_48px_rgba(0,0,0,0.22)] transition duration-300 hover:border-[#ffe075] hover:bg-[#ffd83a] hover:shadow-[0_24px_56px_rgba(255,207,16,0.26)] sm:min-h-14 sm:px-8 sm:py-4 sm:text-lg",
+                  "sm:min-w-[304px] sm:w-auto",
                 )}
                 href={ctaHref}
                 rel={ctaExternal ? "noreferrer" : undefined}

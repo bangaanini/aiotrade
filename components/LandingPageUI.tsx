@@ -18,7 +18,7 @@ export default function LandingPageUI({
   const registrationHref = signupCtaHref ?? ctaHref;
 
   return (
-    <main className="flex-1 bg-[#f4f2ec] text-[#111827]">
+    <main className="flex-1 overflow-x-hidden bg-[#f4f2ec] text-[#111827]">
       <HeroSection
         ctaExternal={ctaExternal}
         ctaHref={ctaHref}

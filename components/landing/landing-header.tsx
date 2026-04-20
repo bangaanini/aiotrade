@@ -25,10 +25,10 @@ export function LandingHeader() {
       initial={prefersReducedMotion ? false : { opacity: 0, y: -18 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="mx-auto flex min-h-[68px] w-full max-w-7xl items-center justify-center px-6 sm:px-8 lg:px-10">
-        <nav className="no-scrollbar flex max-w-full items-center justify-center gap-3 overflow-x-auto px-2 text-[1rem] text-white/78 sm:gap-6 sm:px-4">
+      <div className="mx-auto flex min-h-[60px] w-full max-w-7xl items-center justify-center px-4 sm:min-h-[68px] sm:px-8 lg:px-10">
+        <nav className="no-scrollbar flex max-w-full items-center justify-center gap-2 overflow-x-auto px-0 text-[0.8rem] text-white/78 sm:gap-6 sm:px-4 sm:text-[1rem]">
           {navItems.map((item, index) => (
-            <div className="flex items-center gap-3 sm:gap-6" key={item.href}>
+            <div className="flex items-center gap-2 sm:gap-6" key={item.href}>
               {index > 0 ? <span className="text-white/28">|</span> : null}
               <motion.div
                 whileHover={prefersReducedMotion ? undefined : { y: -1.5 }}
