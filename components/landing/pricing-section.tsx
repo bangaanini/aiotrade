@@ -30,6 +30,9 @@ export function PricingSection({ ctaHref }: PricingSectionProps) {
             <Reveal
               className={cn(plan.emphasis ? "lg:-my-6" : undefined)}
               delay={index * 0.08}
+              direction="right"
+              distance={52}
+              duration={1.28}
               hover
               key={plan.name}
             >

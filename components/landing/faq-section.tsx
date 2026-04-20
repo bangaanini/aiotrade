@@ -24,7 +24,7 @@ export function FaqSection() {
 
           <div className="bg-white">
             {faqEntries.map((entry, index) => (
-              <Reveal delay={index * 0.04} key={entry.question}>
+              <Reveal delay={index * 0.04} direction="right" distance={28} duration={1.02} key={entry.question}>
                 <div className="border-b border-[#ece7dd] last:border-b-0">
                   <button
                     aria-controls={`faq-panel-${index}`}

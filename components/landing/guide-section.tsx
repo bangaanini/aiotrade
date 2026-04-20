@@ -24,6 +24,9 @@ export function GuideSection() {
             <Reveal
               className="rounded-[24px] border border-[#ece7dc] bg-white px-7 py-9 text-center shadow-[0_18px_46px_rgba(15,23,42,0.12)]"
               delay={index * 0.08}
+              direction="right"
+              distance={40}
+              duration={1.18}
               hover
               key={step.number}
             >

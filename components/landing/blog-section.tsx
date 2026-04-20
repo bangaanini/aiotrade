@@ -22,6 +22,9 @@ export function BlogSection() {
             <Reveal
               className="overflow-hidden rounded-none border border-[#ece7dc] bg-white shadow-[0_18px_40px_rgba(15,23,42,0.08)]"
               delay={index * 0.08}
+              direction="right"
+              distance={42}
+              duration={1.2}
               hover
               key={article.title}
             >
