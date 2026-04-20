@@ -45,7 +45,7 @@ export function Reveal({
   delay = 0,
   direction = "up",
   distance = 24,
-  duration = 0.72,
+  duration = 1.12,
   hover = false,
   once = false,
   ...props
@@ -72,10 +72,10 @@ export function Reveal({
       className={cn(className)}
       initial={hiddenState}
       ref={ref}
-      transition={{ duration, delay, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration, delay, ease: [0.16, 1, 0.3, 1] }}
       whileHover={
         hover && !prefersReducedMotion
-          ? { y: -6, scale: 1.01, transition: { duration: 0.22 } }
+          ? { y: -6, scale: 1.01, transition: { duration: 0.34 } }
           : undefined
       }
       {...props}
