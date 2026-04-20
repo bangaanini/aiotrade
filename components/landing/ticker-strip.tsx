@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import type { TickerItem } from "@/components/landing/types";
 import { fallbackTickerItems, getTickerInitials } from "@/lib/market";
+import { Reveal } from "@/components/ui/reveal";
 import { cn } from "@/lib/utils";
 
 type TickerStripProps = {
@@ -62,7 +63,7 @@ export function TickerStrip({ className }: TickerStripProps) {
   }, [items]);
 
   return (
-    <section
+    <Reveal
       className={[
         "relative overflow-hidden border-t border-white/8 bg-[rgba(8,14,27,0.62)] py-4 text-white",
         className,
@@ -121,6 +122,6 @@ export function TickerStrip({ className }: TickerStripProps) {
           </article>
         ))}
       </motion.div>
-    </section>
+    </Reveal>
   );
 }

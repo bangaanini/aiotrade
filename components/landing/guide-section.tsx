@@ -1,34 +1,54 @@
+import Link from "next/link";
+import { BookOpen } from "lucide-react";
 import { steps } from "@/components/landing/data";
+import { Reveal } from "@/components/ui/reveal";
 
 export function GuideSection() {
   return (
-    <section className="bg-white py-20" id="panduan">
+    <section className="relative overflow-hidden bg-white py-20" id="panduan">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(37,99,235,0.05)_0%,rgba(37,99,235,0)_100%)]" />
+      <div className="pointer-events-none absolute left-[-5%] top-24 h-52 w-52 rounded-full bg-[#76a9ff]/10 blur-[96px]" />
+      <div className="pointer-events-none absolute bottom-0 right-[-8%] h-64 w-64 rounded-full bg-[#ffd673]/16 blur-[120px]" />
       <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
-        <div className="max-w-3xl text-center lg:mx-auto">
-          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#126ac8]">
-            Bagaimana AIOTrade bekerja
+        <Reveal className="mx-auto max-w-4xl text-center">
+          <p className="text-[1.05rem] font-semibold tracking-[-0.02em] text-[#1c74de] sm:text-[1.3rem]">
+            Bagaimana <span className="font-bold">Aio Trade</span> Bekerja?
           </p>
-          <h2 className="mt-4 text-4xl font-semibold text-[#111827] sm:text-5xl">
-            3 langkah mudah
+          <h2 className="mt-5 text-[3rem] font-semibold leading-none tracking-[-0.045em] text-[#ffc84a] sm:text-[4.45rem]">
+            3 Langkah Mudah
           </h2>
-          <p className="mt-5 text-base leading-8 text-[#475569]">
-            Bagian ini menggantikan blok user guide di referensi dengan langkah yang lebih jelas
-            dan langsung bisa dipahami pengunjung baru.
-          </p>
-        </div>
+        </Reveal>
 
         <div className="mt-12 grid gap-5 lg:grid-cols-3">
-          {steps.map((step) => (
-            <article
-              className="rounded-lg border border-[#dbe2ea] bg-[#f8fafc] p-7 shadow-[0_16px_32px_rgba(15,23,42,0.06)]"
+          {steps.map((step, index) => (
+            <Reveal
+              className="rounded-[24px] border border-[#ece7dc] bg-white px-7 py-9 text-center shadow-[0_18px_46px_rgba(15,23,42,0.12)]"
+              delay={index * 0.08}
+              hover
               key={step.number}
             >
-              <p className="text-6xl font-semibold tracking-tight text-[#126ac8]">{step.number}</p>
-              <h3 className="mt-5 text-2xl font-semibold text-[#111827]">{step.title}</h3>
-              <p className="mt-4 text-base leading-8 text-[#475569]">{step.description}</p>
-            </article>
+              <p className="text-[4.2rem] font-bold leading-none tracking-[-0.05em] text-[#1b74df] sm:text-[4.7rem]">
+                {step.number}.
+              </p>
+              <h3 className="mt-4 text-[1.95rem] font-semibold leading-[1.15] tracking-[-0.03em] text-[#121826]">
+                {step.title}
+              </h3>
+              <p className="mx-auto mt-5 max-w-[21rem] text-[1.02rem] leading-[1.75] text-[#4b5563]">
+                {step.description}
+              </p>
+            </Reveal>
           ))}
         </div>
+
+        <Reveal className="mt-10 flex justify-center" delay={0.16}>
+          <Link
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[16px] border border-[#5aa0ff] bg-white px-6 text-[1.05rem] font-medium text-[#2a7df1] shadow-[0_10px_24px_rgba(42,125,241,0.1)] transition duration-300 hover:bg-[#eef5ff]"
+            href="#faq"
+          >
+            <BookOpen className="h-4 w-4" />
+            Selengkapnya
+          </Link>
+        </Reveal>
       </div>
     </section>
   );

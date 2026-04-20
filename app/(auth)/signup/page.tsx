@@ -8,12 +8,6 @@ type SignupPageProps = {
   searchParams: Promise<{ ref?: string | string[] }>;
 };
 
-const signupHighlights = [
-  "Nama pengguna Anda langsung siap dipakai.",
-  "Nomor WhatsApp memudahkan kami menghubungi Anda.",
-  "Halaman pribadi bisa Anda aktifkan setelah masuk.",
-];
-
 export default async function SignupPage({ searchParams }: SignupPageProps) {
   const profile = await getCurrentProfile();
 
@@ -34,11 +28,9 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
           Daftar dengan aman
         </>
       }
-      description="Isi data singkat di bawah untuk mulai bergabung. Setelah itu Anda bisa langsung masuk dan melanjutkan langkah berikutnya."
-      highlights={signupHighlights}
+      description="Isi data singkat di bawah untuk mulai bergabung dan lanjut ke langkah berikutnya dengan lebih nyaman."
       sideBadge="Mulai bersama AIOTrade"
-      sideDescription="Kami buat proses daftarnya singkat, jelas, dan nyaman supaya Anda bisa cepat lanjut tanpa bingung."
-      sideTitle="Buat akun baru dan mulai dengan tenang."
+      sideTitle="Buat akun baru dengan langkah yang terasa ringan."
       title="Buat akun Anda"
     >
       <SignupForm referredBy={referredBy} />

@@ -1,11 +1,13 @@
 "use client";
 
+import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Users } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { landingImages, partnerLogos } from "@/components/landing/data";
 import { TickerStrip } from "@/components/landing/ticker-strip";
+import { Reveal } from "@/components/ui/reveal";
 import { cn } from "@/lib/utils";
 
 type OverviewSectionProps = {
@@ -15,23 +17,36 @@ type OverviewSectionProps = {
 const duplicatedPartnerLogos = [...partnerLogos, ...partnerLogos];
 
 export function OverviewSection({ ctaHref }: OverviewSectionProps) {
+  const sectionRef = useRef<HTMLElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const leftChartY = useTransform(scrollYProgress, [0, 1], prefersReducedMotion ? [0, 0] : [-26, 24]);
+  const rightChartY = useTransform(scrollYProgress, [0, 1], prefersReducedMotion ? [0, 0] : [18, -22]);
+  const phoneY = useTransform(scrollYProgress, [0, 1], prefersReducedMotion ? [0, 0] : [16, -22]);
+  const contentY = useTransform(scrollYProgress, [0, 1], prefersReducedMotion ? [0, 0] : [12, -14]);
 
   return (
-    <section className="relative bg-[#0f1728] text-white" id="fitur">
+    <section className="relative bg-[#0f1728] text-white" id="fitur" ref={sectionRef}>
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <Image
-          alt=""
-          aria-hidden
-          className="absolute bottom-0 left-0 h-full w-[58%] object-cover object-left opacity-[0.14]"
-          src={landingImages.chartImage}
-        />
-        <Image
-          alt=""
-          aria-hidden
-          className="absolute inset-y-0 right-0 h-full w-[62%] object-cover opacity-[0.18]"
-          src={landingImages.chartImage}
-        />
+        <motion.div className="absolute bottom-0 left-0 h-full w-[58%]" style={{ y: leftChartY }}>
+          <Image
+            alt=""
+            aria-hidden
+            className="absolute bottom-0 left-0 h-full w-full object-cover object-left opacity-[0.14]"
+            src={landingImages.chartImage}
+          />
+        </motion.div>
+        <motion.div className="absolute inset-y-0 right-0 h-full w-[62%]" style={{ y: rightChartY }}>
+          <Image
+            alt=""
+            aria-hidden
+            className="absolute inset-y-0 right-0 h-full w-full object-cover opacity-[0.18]"
+            src={landingImages.chartImage}
+          />
+        </motion.div>
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(15,23,40,0.98)_0%,rgba(15,23,40,0.92)_36%,rgba(18,74,139,0.54)_100%)]" />
       </div>
 
@@ -40,6 +55,7 @@ export function OverviewSection({ ctaHref }: OverviewSectionProps) {
           animate={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
           className="relative flex min-h-[250px] items-center justify-center pb-2 lg:min-h-[600px] lg:justify-start lg:pb-0"
           initial={prefersReducedMotion ? false : { opacity: 0, x: -36 }}
+          style={{ y: phoneY }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="relative w-full max-w-[280px] sm:max-w-[430px] lg:max-w-[520px] lg:-ml-4">
@@ -58,19 +74,24 @@ export function OverviewSection({ ctaHref }: OverviewSectionProps) {
           animate={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
           className="relative z-10 mx-auto flex w-full max-w-[24rem] flex-col items-center text-center lg:max-w-none lg:items-start lg:pl-3 lg:text-left"
           initial={prefersReducedMotion ? false : { opacity: 0, x: 36 }}
+          style={{ y: contentY }}
           transition={{ duration: 0.8, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
         >
-          <h2 className="text-[2.2rem] font-light uppercase leading-none tracking-[0.05em] text-white sm:text-[3.2rem] sm:tracking-[0.08em] lg:text-[4.15rem]">
-            <span className="text-[#10a7ff]">AIO</span>TRADE
-          </h2>
-          <p className="mt-5 max-w-[22rem] text-[0.95rem] leading-[1.9] text-white/78 sm:mt-7 sm:max-w-[44rem] sm:text-[1.08rem] sm:leading-[2.05] lg:text-[1.12rem]">
-            Alat bantu trading otomatis berbasis Artificial Intelligence (AI) yang dirancang
-            untuk membantu pengguna menjalankan trading aset kripto di <strong className="font-semibold text-white">pasar spot</strong>.
-            {" "}AIOTrade terhubung dengan Binance, Tokocrypto, dan Bitget melalui API yang aman,
-            sehingga strategi dapat dijalankan lebih rapi, efisien, dan konsisten.
-          </p>
+          <Reveal className="w-full" delay={0.02}>
+            <h2 className="text-[2.2rem] font-medium uppercase leading-none tracking-[0.03em] text-white sm:text-[3.05rem] sm:tracking-[0.055em] lg:text-[3.85rem]">
+              <span className="text-[#10a7ff]">AIO</span>TRADE
+            </h2>
+          </Reveal>
+          <Reveal className="w-full" delay={0.08}>
+            <p className="mt-5 max-w-[22rem] text-[0.95rem] leading-[1.9] text-white/78 sm:mt-7 sm:max-w-[44rem] sm:text-[1.08rem] sm:leading-[2.05] lg:text-[1.12rem]">
+              Alat bantu trading otomatis berbasis Artificial Intelligence (AI) yang dirancang
+              untuk membantu pengguna menjalankan trading aset kripto di <strong className="font-semibold text-white">pasar spot</strong>.
+              {" "}AIOTrade terhubung dengan Binance, Tokocrypto, dan Bitget melalui API yang aman,
+              sehingga strategi dapat dijalankan lebih rapi, efisien, dan konsisten.
+            </p>
+          </Reveal>
 
-          <div className="relative mt-8 w-full max-w-[24rem] overflow-hidden sm:mt-10 lg:max-w-none">
+          <Reveal className="relative mt-8 w-full max-w-[24rem] overflow-hidden sm:mt-10 lg:max-w-none" delay={0.14}>
             <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-[linear-gradient(90deg,#0f1728_0%,rgba(15,23,40,0)_100%)] sm:w-16" />
             <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-[linear-gradient(270deg,#124a8b_0%,rgba(18,74,139,0)_100%)] sm:w-16" />
             <motion.div
@@ -99,12 +120,11 @@ export function OverviewSection({ ctaHref }: OverviewSectionProps) {
                 </div>
               ))}
             </motion.div>
-          </div>
+          </Reveal>
 
-          <motion.div
+          <Reveal
             className="mt-8 flex w-full justify-center sm:mt-10 lg:justify-start"
-            whileHover={prefersReducedMotion ? undefined : { y: -4, scale: 1.01 }}
-            whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+            delay={0.18}
           >
             <Link
               className={cn(
@@ -119,7 +139,7 @@ export function OverviewSection({ ctaHref }: OverviewSectionProps) {
                 Daftar Sekarang
               </span>
             </Link>
-          </motion.div>
+          </Reveal>
         </motion.div>
       </div>
 

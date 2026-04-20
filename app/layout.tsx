@@ -1,5 +1,14 @@
 import type { Metadata, Viewport } from "next";
+import { Poppins } from "next/font/google";
 import "./globals.css";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-poppins",
+  fallback: ["system-ui", "Arial", "sans-serif"],
+});
 
 export const metadata: Metadata = {
   title: "Referral Landing Pages",
@@ -18,8 +27,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased">
-      <body className="min-h-full overflow-x-hidden bg-background text-foreground font-sans">
+    <html lang="en" className={`${poppins.variable} h-full antialiased`}>
+      <body className="min-h-full overflow-x-clip bg-background text-foreground font-sans">
         <div className="flex min-h-full flex-col">{children}</div>
       </body>
     </html>

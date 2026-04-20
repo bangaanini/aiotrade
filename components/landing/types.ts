@@ -10,6 +10,7 @@ export type LandingPageUIProps = {
 };
 
 export type NavItem = {
+  accent: string;
   label: string;
   href: string;
 };

@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Check } from "lucide-react";
+import { LogIn } from "lucide-react";
 import { plans } from "@/components/landing/data";
-import { buttonVariants } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Reveal } from "@/components/ui/reveal";
 import { cn } from "@/lib/utils";
 
 type PricingSectionProps = {
@@ -10,90 +11,100 @@ type PricingSectionProps = {
 
 export function PricingSection({ ctaHref }: PricingSectionProps) {
   return (
-    <section className="bg-[#f8f6f0] py-20" id="harga">
+    <section className="relative overflow-hidden bg-[#f8f6f0] py-20 sm:py-24" id="harga">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-[linear-gradient(180deg,rgba(255,200,74,0.12)_0%,rgba(255,200,74,0)_100%)]" />
+      <div className="pointer-events-none absolute left-[-10%] top-16 h-64 w-64 rounded-full bg-[#ffd972]/18 blur-[110px]" />
+      <div className="pointer-events-none absolute bottom-8 right-[-6%] h-72 w-72 rounded-full bg-[#58a6ff]/10 blur-[120px]" />
       <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
-        <div className="max-w-3xl text-center lg:mx-auto">
-          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#126ac8]">
-            Biaya registrasi
+        <Reveal className="mx-auto max-w-4xl text-center">
+          <p className="text-[1.1rem] font-semibold tracking-[-0.015em] text-[#1b74df] sm:text-[2.05rem]">
+            Berapa <span className="font-bold">Biaya Registrasi</span> Aio Trade?
           </p>
-          <h2 className="mt-4 text-4xl font-semibold text-[#111827] sm:text-5xl">Harga</h2>
-          <p className="mt-5 text-base leading-8 text-[#475569]">
-            Paket dibuat sederhana supaya pengunjung bisa memutuskan lebih cepat tanpa harus
-            membaca terlalu banyak detail teknis.
-          </p>
-        </div>
+          <h2 className="mt-4 text-[3rem] font-semibold leading-none tracking-[-0.04em] text-[#ffc84a] sm:text-[4.5rem]">
+            Harga
+          </h2>
+        </Reveal>
 
-        <div className="mt-12 grid gap-5 lg:grid-cols-3">
-          {plans.map((plan) => (
-            <article
-              className={cn(
-                "rounded-lg border px-7 py-8 shadow-[0_18px_40px_rgba(15,23,42,0.08)]",
-                plan.emphasis
-                  ? "border-[#f6be4f] bg-[#111827] text-white"
-                  : "border-[#e5dcc7] bg-white text-[#111827]",
-              )}
+        <div className="mt-14 grid gap-6 lg:grid-cols-3 lg:items-center">
+          {plans.map((plan, index) => (
+            <Reveal
+              className={cn(plan.emphasis ? "lg:-my-6" : undefined)}
+              delay={index * 0.08}
+              hover
               key={plan.name}
             >
-              {plan.highlight ? (
-                <span className="inline-flex rounded-full bg-[#f6be4f] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#141a27]">
-                  {plan.highlight}
-                </span>
-              ) : null}
+              <Card
+                className={cn(
+                  "relative overflow-hidden rounded-[24px] border px-0 py-0 text-center shadow-[0_24px_50px_rgba(15,23,42,0.12)] transition duration-300",
+                  plan.emphasis
+                    ? "border-[#ece7dc] bg-[linear-gradient(180deg,#ffffff_0%,#fbfaf7_100%)] lg:shadow-[0_30px_70px_rgba(15,23,42,0.18)]"
+                    : "border-[#e6e1d6] bg-[linear-gradient(180deg,#ffffff_0%,#f9f8f4_100%)]",
+                )}
+              >
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(27,116,223,0.06)_0%,rgba(27,116,223,0)_100%)]" />
+                <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-[linear-gradient(90deg,rgba(255,255,255,0)_0%,rgba(27,116,223,0.28)_50%,rgba(255,255,255,0)_100%)]" />
 
-              <h3 className="mt-4 text-3xl font-semibold">{plan.name}</h3>
-              <div className="mt-4 flex items-baseline gap-3">
-                <span className="text-5xl font-semibold">{plan.price}</span>
-                <span
+                {plan.highlight ? (
+                  <span className="absolute right-6 top-5 inline-flex rounded-full bg-[#ffcc45] px-4 py-2 text-sm font-bold uppercase text-[#1f2937]">
+                    {plan.highlight}
+                  </span>
+                ) : null}
+
+                <CardContent
                   className={cn(
-                    "text-sm font-semibold uppercase tracking-[0.18em]",
-                    plan.emphasis ? "text-[#7dd3fc]" : "text-[#16a34a]",
+                    "px-8 py-10 lg:px-7 lg:py-9",
+                    plan.emphasis && "lg:px-8 lg:py-12",
                   )}
                 >
-                  Lifetime
-                </span>
-              </div>
-              <p
-                className={cn(
-                  "mt-5 text-base leading-8",
-                  plan.emphasis ? "text-white/72" : "text-[#475569]",
-                )}
-              >
-                {plan.description}
-              </p>
+                  {!plan.emphasis ? (
+                    <p className="text-[4.55rem] font-bold leading-none tracking-[-0.05em] text-[#1b74df]">
+                      #{plans.slice(0, index + 1).filter((entry) => !entry.emphasis).length}
+                    </p>
+                  ) : null}
 
-              <ul
-                className={cn(
-                  "mt-6 space-y-3 text-sm",
-                  plan.emphasis ? "text-white/80" : "text-[#334155]",
-                )}
-              >
-                <li className="flex items-start gap-3">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#11a7ff]" />
-                  Akses satu kali bayar
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#11a7ff]" />
-                  Dukungan onboarding dan referral
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#11a7ff]" />
-                  CTA langsung masuk ke alur daftar yang sama
-                </li>
-              </ul>
+                  {plan.emphasis ? (
+                    <h3 className="text-[4rem] font-semibold leading-none tracking-[-0.055em] text-[#1b74df] sm:text-[4.9rem]">
+                      {plan.name}
+                    </h3>
+                  ) : null}
 
-              <Link
-                className={cn(
-                  buttonVariants({ size: "lg" }),
-                  "mt-8 h-12 w-full rounded-lg text-base",
-                  plan.emphasis
-                    ? "bg-[#11a7ff] text-white hover:bg-[#3ab6ff]"
-                    : "bg-[#111827] text-white hover:bg-[#1f2937]",
-                )}
-                href={ctaHref}
-              >
-                Daftar Sekarang
-              </Link>
-            </article>
+                  <p
+                    className={cn(
+                      "mt-3 font-semibold tracking-[-0.025em] text-[#111827]",
+                      plan.emphasis ? "text-[2rem] sm:text-[2.2rem]" : "text-[1.78rem]",
+                    )}
+                  >
+                    {plan.emphasis ? "Akses Bot Crypto & Saham" : plan.name}
+                  </p>
+
+                  <div className="mt-6 flex items-end justify-center gap-3">
+                    <span className="text-[3.2rem] font-bold leading-none tracking-[-0.04em] text-[#101728]">
+                      {plan.price}
+                    </span>
+                    <span className="pb-1 text-[1.15rem] font-semibold text-[#22c55e]">Lifetime</span>
+                  </div>
+
+                  <p className="mx-auto mt-8 max-w-[24rem] text-[1.02rem] leading-[1.8] text-[#4b5563]">
+                    {plan.description}
+                  </p>
+
+                  <div className="mt-8 flex justify-center">
+                    <Link
+                      className={cn(
+                        "inline-flex min-h-11 items-center justify-center gap-2 rounded-[14px] px-6 text-lg font-medium transition duration-300",
+                        plan.emphasis
+                          ? "border border-[#5aa0ff] bg-[linear-gradient(180deg,#ffffff_0%,#eef5ff_100%)] text-[#2a7df1] shadow-[0_10px_24px_rgba(42,125,241,0.14)] hover:bg-[#eef5ff]"
+                          : "border border-[#b9d5ff] bg-white text-[#2a7df1] hover:bg-[#eef5ff]",
+                      )}
+                      href={ctaHref}
+                    >
+                      <LogIn className="h-5 w-5" />
+                      Daftar Sekarang
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            </Reveal>
           ))}
         </div>
       </div>

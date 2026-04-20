@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ArrowLeft, Check, Sparkles } from "lucide-react";
+import { ArrowLeft, Sparkles } from "lucide-react";
 import heroImage from "@/bahan foto/hero.jpg";
 
 type AuthPageShellProps = {
@@ -10,8 +10,6 @@ type AuthPageShellProps = {
   description: string;
   sideBadge: string;
   sideTitle: string;
-  sideDescription: string;
-  highlights: string[];
   children: ReactNode;
 };
 
@@ -21,8 +19,6 @@ export function AuthPageShell({
   description,
   sideBadge,
   sideTitle,
-  sideDescription,
-  highlights,
   children,
 }: AuthPageShellProps) {
   return (
@@ -46,31 +42,9 @@ export function AuthPageShell({
                 <Sparkles className="h-4 w-4 animate-pulse text-[#6dd3ff]" />
                 {sideBadge}
               </div>
-              <h1 className="mt-8 max-w-xl text-5xl font-semibold leading-tight tracking-tight">
+              <h1 className="mt-8 max-w-xl text-[3.25rem] font-semibold leading-[1.08] tracking-[-0.03em] xl:text-[3.8rem]">
                 {sideTitle}
               </h1>
-              <p className="mt-5 max-w-lg text-lg leading-8 text-white/74">{sideDescription}</p>
-            </div>
-
-            <div className="grid gap-4">
-              {highlights.map((item, index) => (
-                <div
-                  className="rounded-lg border border-white/12 bg-[rgba(10,18,34,0.7)] p-5 backdrop-blur-sm transition-transform duration-300 hover:-translate-y-1"
-                  key={item}
-                >
-                  <div className="flex items-start gap-3">
-                    <span className="mt-0.5 inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[#11a7ff]/14 text-[#7dd3fc]">
-                      <Check className="h-4 w-4" />
-                    </span>
-                    <div>
-                      <p className="text-sm uppercase tracking-[0.24em] text-white/45">
-                        0{index + 1}
-                      </p>
-                      <p className="mt-2 text-base leading-7 text-white/88">{item}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </section>
@@ -90,8 +64,10 @@ export function AuthPageShell({
                 <div className="inline-flex items-center gap-2 rounded-lg border border-sky-100 bg-sky-50 px-3 py-2 text-sm text-sky-700">
                   {badge}
                 </div>
-                <h2 className="text-3xl font-semibold tracking-tight text-slate-950">{title}</h2>
-                <p className="max-w-md text-sm leading-7 text-slate-600">{description}</p>
+                <h2 className="text-[2.2rem] font-semibold leading-[1.12] tracking-[-0.025em] text-slate-950 sm:text-[2.5rem]">
+                  {title}
+                </h2>
+                <p className="max-w-md text-[0.98rem] leading-7 text-slate-600">{description}</p>
               </div>
 
               <div className="mt-8">{children}</div>

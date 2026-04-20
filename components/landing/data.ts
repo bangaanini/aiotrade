@@ -1,10 +1,10 @@
 import {
   BarChart3,
   Clock3,
-  Link2,
+  Star,
+  ChartPie,
   ShieldCheck,
-  Users,
-  WalletCards,
+  ChartLine,
 } from "lucide-react";
 import heroImage from "@/bahan foto/hero.jpg";
 import logoImage from "@/bahan foto/Logo-AIOTrade.png";
@@ -32,11 +32,11 @@ export const landingImages = {
 } as const;
 
 export const navItems: NavItem[] = [
-  { label: "Feature", href: "#fitur" },
-  { label: "Harga", href: "#harga" },
-  { label: "FAQ", href: "#faq" },
-  { label: "User Guide", href: "#panduan" },
-  { label: "Blog", href: "#blog" },
+  { label: "Feature", href: "#fitur", accent: "#10a7ff" },
+  { label: "Harga", href: "#harga", accent: "#ffc84a" },
+  { label: "FAQ", href: "#faq", accent: "#38bdf8" },
+  { label: "User Guide", href: "#panduan", accent: "#2563eb" },
+  { label: "Blog", href: "#blog", accent: "#f6be4f" },
 ];
 
 export const stats: StatItem[] = [
@@ -48,56 +48,56 @@ export const stats: StatItem[] = [
 export const features: Feature[] = [
   {
     title: "24/7 Trading",
-    description: "Bot tetap berjalan sepanjang hari tanpa Anda perlu memantau layar terus-menerus.",
+    description: "Aio Trade bekerja sepanjang waktu tanpa perlu Anda memantaunya. .",
     icon: Clock3,
   },
   {
     title: "Cepat dan efisien",
-    description: "Analisa market dibuat otomatis agar eksekusi lebih disiplin dan responsif.",
+    description: "Aio Trade dapat menganalisa kondisi pasar secara otomatis dengan cepat dan efisien.",
     icon: BarChart3,
   },
   {
-    title: "Strategi adaptif",
-    description: "Grid, averaging, dan pengaturan custom bisa dipilih sesuai gaya trading Anda.",
+    title: "Strategi",
+    description: "Aio Trade dirancang menggunakan Teknologi AI sehingga menghasilkan profit yang maksimal",
     icon: ShieldCheck,
   },
   {
-    title: "Referral siap pakai",
-    description: "Halaman referral tetap utuh karena CTA, signup, dan aktivasi member tidak diubah.",
-    icon: Link2,
+    title: "Timeframe & Price Range ",
+    description: "Anda dapat menentukan pergerakan harga di timeframe tertentu dan membatasi perdagangan pada harga tertentu. ",
+    icon: Star,
   },
   {
-    title: "Komunitas aktif",
-    description: "Belajar bareng, dapat insight, dan diskusi setup dengan member lainnya.",
-    icon: Users,
+    title: "Manajemen Resiko",
+    description: "Aio Trade secara otomatis dapat mengelola modal trading Anda sehingga meminimalisir risiko dalam perdagangan crypto .",
+    icon: ChartPie,
   },
   {
-    title: "Pembayaran simpel",
-    description: "Pilihan paket disusun ringkas agar orang langsung paham apa yang didapat.",
-    icon: WalletCards,
+    title: "Teknik Averaging & Grid ",
+    description: "Aio Trade menggunakan teknik Averaging dan Grid (Mak. 100 Layer) yang dioptimalkan menggunakan teknologi AI.",
+    icon: ChartLine,
   },
 ];
 
 export const plans: Plan[] = [
   {
-    name: "Bot Crypto",
+    name: "Akses Bot Crypto",
     price: "$130",
     description:
-      "Akses bot spot dengan grid, averaging, trailing stop, dan pengaturan custom untuk market crypto.",
+      "Akses penuh ke bot otomatis AioTrade untuk perdagangan crypto spot, lengkap dengan fitur grid, averaging, trailing stop, dan pengaturan custom.",
   },
   {
     name: "Combo",
     price: "$190",
     description:
-      "Gabungkan akses bot crypto dan saham dalam satu paket lengkap dengan prioritas update.",
+      "Dapatkan semua fitur dari Bot Crypto dan tambahan akses eksklusif ke bot saham otomatis. Termasuk prioritas support dan update seumur hidup.",
     highlight: "Best price",
     emphasis: true,
   },
   {
-    name: "Bot Saham",
+    name: "Akses Bot Saham",
     price: "$130",
     description:
-      "Akses bot saham berbasis AI untuk analisa dan strategi otomatis yang sedang terus dikembangkan.",
+      "Akses bot otomatis AioTrade untuk perdagangan saham, dengan fitur analisis dan strategi berbasis AI. (Masih dalam pengembangan).",
   },
 ];
 
@@ -105,61 +105,79 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "Apa itu AIOTrade?",
     answer:
-      "AIOTrade adalah alat bantu trading berbasis AI untuk membantu pengguna menjalankan strategi otomatis di market spot dengan koneksi API yang aman.",
+      "AioTrade adalah bot trading berbasis Artificial Intelligence (AI) yang dirancang untuk membantu pengguna melakukan perdagangan aset digital secara otomatis dan efisien. Saat ini AioTrade mendukung perdagangan kripto di pasar spot melalui integrasi API yang aman dengan exchange global seperti Binance dan Bitget, dan ke depannya akan diperluas untuk mendukung pasar saham (stock trading).",
   },
   {
-    question: "Exchange apa saja yang bisa dipakai?",
+    question: "Apakah AIOTrade scam?",
     answer:
-      "Landing page ini menonjolkan integrasi Binance, Bitget, dan Tokocrypto, dengan fokus pada alur setup yang cepat untuk pengguna baru.",
+      "Tidak. Aio Trade tidak memiliki akses untuk menarik (withdraw) modal trading Anda karena 100% modal trading Anda simpan di dompet exchange pribadi. Aio Trade hanya diijinkan untuk perdagangan di pasar spot, sehingga tidak ada risiko margin call atau liquid.",
   },
   {
-    question: "Apakah saya harus online terus?",
+    question: "AIOTrade bisa digunakan di exchange apa saja?",
     answer:
-      "Tidak. Setelah API dan strategi diatur, bot dapat berjalan terus sambil Anda memantau performa dari dashboard dan histori transaksi.",
+      "Saat ini Aio Trade terintegrasi dengan exchange terbesar yaitu Binance dan Bitget. ",
   },
   {
-    question: "Bagaimana alur referral tetap bekerja?",
+    question: "Apakah ada biaya registrasi atau biaya berlangganan?",
     answer:
-      "Semua tombol daftar tetap memakai tujuan signup yang sama, jadi homepage utama maupun halaman referral user tetap mengarah ke alur pendaftaran yang konsisten.",
+      "Daftar sekarang gratis tanpa biaya registrasi! Cukup isi trading fee minimal $10 untuk mulai menggunakan AioTrade. Ingin akses permanen? Deposit trading fee minimal $50 dan gunakan selamanya.",
+  },
+  {
+    question: "Bisakah trading berjalan otomatis tanpa saya pantau terus?",
+    answer:
+      "Tentu bisa. Anda dapat menggunakan Aio Trade untuk trading secara otomatis dengan menggunakan fitur “follow master”. Disamping itu Anda juga bisa menerapkan teknik trading Anda dengan melakukan pengaturan custom.",
+  },
+  {
+    question: "Teknik apa yang dipakai AIOTrade?",
+    answer:
+      "Aio Trade menggunakan beberapa teknik trading yaitu Averaging (DCA), Grid dan Price Range yang dikombinasikan untuk mendapatkan hasil yang maksimal. Sistem Aio Trade juga dilengkapi dengan fitur timeframe dan trailing stop untuk memaksimalkan profit trading Anda.",
+  },
+  {
+    question: "Apakah ada komunitas atau panduan untuk pengguna baru?",
+    answer:
+      "Tentu. Anda dapat diskusi dan komunikasi dengan komunitas Aio Trade di group whatsapp dan telegram, serta dukungan dari tim support.",
   },
 ];
 
 export const steps: Step[] = [
   {
     number: "01",
-    title: "Daftar akun",
-    description: "Buat akun AIOTrade lalu masuk ke area member untuk menyiapkan akun Anda.",
+    title: "Daftar & Buat Akun",
+    description:
+      "Buat akun Aio Trade dan verifikasi melalui email. Jika belum memiliki akun di Binance atau Bitget, buat akun exchanger terlebih dahulu.",
   },
   {
     number: "02",
-    title: "Hubungkan API",
-    description: "Sambungkan API spot dari exchange pilihan dan sesuaikan parameter bot yang diinginkan.",
+    title: "Hubungkan API & Atur Bot",
+    description:
+      "Sambungkan API Spot dari akun exchanger ke Aio Trade, lalu atur bot sesuai modal trading dan strategi yang diinginkan.",
   },
   {
     number: "03",
-    title: "Jalankan strategi",
-    description: "Pilih mode trading, pantau histori transaksi, lalu optimalkan setup sesuai kondisi market.",
+    title: "Mulai Trading",
+    description:
+      "Pilih mode Custom atau Follow, teknik Grid atau Average untuk strategi trading Anda dan nikmati profit trading dengan pemantauan realtime.",
   },
 ];
 
 export const articles: Article[] = [
   {
-    title: "Trading crypto otomatis di Bitget",
-    description: "Mulai dengan setup yang rapi untuk market spot dan pemantauan yang lebih tenang.",
+    title: "Trading Crypto di Bitget Kini Bisa Otomatis dengan AIOTrade",
+    description: "Trading spot otomatis dengan setup yang lebih rapi dan mudah dipantau.",
     image: bitgetLogo,
     label: "Crypto news",
   },
   {
-    title: "Kenapa Binance tetap jadi favorit trader",
-    description: "Likuiditas besar dan integrasi yang familiar bikin onboarding jadi lebih cepat.",
+    title: "Binance: Aman untuk Trading Kripto?",
+    description: "Likuiditas besar, sistem familiar, dan integrasi yang terasa cepat.",
     image: binanceLogo,
-    label: "Exchange",
+    label: "Crypto news",
   },
   {
-    title: "Partner lokal untuk akses yang lebih dekat",
-    description: "Tokocrypto memberi opsi tambahan untuk pengguna yang ingin tetap dekat dengan ekosistem lokal.",
+    title: "Mengenal Market Kripto yang Bergerak Lebih Cepat",
+    description: "Cara membaca peluang market dengan pendekatan yang lebih tenang.",
     image: tokocryptoLogo,
-    label: "Partner",
+    label: "Crypto news",
   },
 ];
 

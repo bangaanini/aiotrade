@@ -1,9 +1,10 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Users } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { landingImages } from "@/components/landing/data";
 import type { LandingPageUIProps } from "@/components/landing/types";
 import { cn } from "@/lib/utils";
@@ -38,24 +39,34 @@ export function HeroSection({
   ctaHref,
   ctaLabel = "Gabung Komunitas",
 }: HeroSectionProps) {
+  const sectionRef = useRef<HTMLElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const backgroundY = useTransform(scrollYProgress, [0, 1], prefersReducedMotion ? [0, 0] : [0, 86]);
+  const contentY = useTransform(scrollYProgress, [0, 1], prefersReducedMotion ? [0, 0] : [0, -28]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.76]);
 
   return (
-    <section className="relative isolate overflow-hidden bg-[#0b1322] text-white">
-      <motion.div
-        animate={prefersReducedMotion ? { scale: 1 } : { scale: 1.02 }}
-        className="absolute inset-0"
-        initial={prefersReducedMotion ? false : { scale: 1.08 }}
-        transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <Image
-          alt="Komunitas AIOTrade berkumpul di depan panggung Ruang Investasi."
-          className="absolute inset-0 h-full w-full object-cover object-center"
-          fill
-          priority
-          sizes="100vw"
-          src={landingImages.heroImage}
-        />
+    <section className="relative isolate overflow-hidden bg-[#0b1322] text-white" ref={sectionRef}>
+      <motion.div className="absolute inset-0" style={{ y: backgroundY }}>
+        <motion.div
+          animate={prefersReducedMotion ? { scale: 1 } : { scale: 1.02 }}
+          className="absolute inset-0"
+          initial={prefersReducedMotion ? false : { scale: 1.08 }}
+          transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <Image
+            alt="Komunitas AIOTrade berkumpul di depan panggung Ruang Investasi."
+            className="absolute inset-0 h-full w-full object-cover object-center"
+            fill
+            priority
+            sizes="100vw"
+            src={landingImages.heroImage}
+          />
+        </motion.div>
       </motion.div>
 
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,8,16,0.1)_0%,rgba(4,8,16,0.22)_38%,rgba(4,8,16,0.42)_100%)]" />
@@ -67,24 +78,25 @@ export function HeroSection({
             animate="show"
             className="mx-auto flex w-full max-w-6xl flex-col items-center text-center"
             initial="hidden"
+            style={{ opacity: contentOpacity, y: contentY }}
             variants={containerVariants}
           >
             <motion.p
-              className="text-[0.62rem] uppercase tracking-[0.34em] text-white/82 sm:text-sm sm:tracking-[0.62em]"
+              className="text-[0.65rem] uppercase tracking-[0.28em] text-white/82 sm:text-sm sm:tracking-[0.5em]"
               variants={itemVariants}
             >
               Selamat Datang Di Komunitas
             </motion.p>
 
             <motion.h1
-              className="mt-5 text-[2.9rem] font-medium uppercase leading-none tracking-[0.04em] text-white sm:mt-6 sm:text-[6.4rem] sm:tracking-[0.08em] lg:text-[8.6rem]"
+              className="mt-5 text-[3rem] font-semibold uppercase leading-[0.95] tracking-[0.015em] text-white sm:mt-6 sm:text-[6.15rem] sm:tracking-[0.045em] lg:text-[8.15rem]"
               variants={itemVariants}
             >
               <span className="text-[#0ea5ff]">AIO</span>TRADE
             </motion.h1>
 
             <motion.p
-              className="mt-4 max-w-[18rem] text-[1rem] font-light leading-[1.35] text-white/88 sm:mt-5 sm:max-w-5xl sm:text-[1.8rem] lg:text-[2.35rem]"
+              className="mt-4 max-w-[18rem] text-[1rem] font-normal leading-[1.38] text-white/88 sm:mt-5 sm:max-w-5xl sm:text-[1.7rem] lg:text-[2.15rem]"
               variants={itemVariants}
             >
               “Edukasi &amp; Trading Otomatis Bersama AIOTrade”
@@ -97,7 +109,7 @@ export function HeroSection({
             >
               <Link
                 className={cn(
-                  "group relative inline-flex min-h-12 w-full items-center justify-center gap-3 overflow-hidden rounded-lg border border-white/18 bg-[#ffcf10] px-6 py-3 text-base font-semibold text-[#101726] shadow-[0_18px_48px_rgba(0,0,0,0.22)] transition duration-300 hover:border-[#ffe075] hover:bg-[#ffd83a] hover:shadow-[0_24px_56px_rgba(255,207,16,0.26)] sm:min-h-14 sm:px-8 sm:py-4 sm:text-lg",
+                  "group relative inline-flex min-h-12 w-full items-center justify-center gap-3 overflow-hidden rounded-lg border border-white/18 bg-[#ffcf10] px-6 py-3 text-base font-semibold text-[#101726] shadow-[0_18px_48px_rgba(0,0,0,0.22)] transition duration-300 hover:-translate-y-0.5 hover:border-[#ffe075] hover:bg-[#ffd83a] hover:shadow-[0_24px_56px_rgba(255,207,16,0.26)] sm:min-h-14 sm:px-8 sm:py-4 sm:text-lg",
                   "sm:min-w-[304px] sm:w-auto",
                 )}
                 href={ctaHref}

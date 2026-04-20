@@ -1,7 +1,7 @@
 import { BenefitsSection } from "@/components/landing/benefits-section";
 import { BlogSection } from "@/components/landing/blog-section";
-import { CtaSection } from "@/components/landing/cta-section";
 import { FaqSection } from "@/components/landing/faq-section";
+import { FooterSection } from "@/components/landing/footer-section";
 import { GuideSection } from "@/components/landing/guide-section";
 import { HeroSection } from "@/components/landing/hero-section";
 import { LandingHeader } from "@/components/landing/landing-header";
@@ -18,20 +18,23 @@ export default function LandingPageUI({
   const registrationHref = signupCtaHref ?? ctaHref;
 
   return (
-    <main className="flex-1 overflow-x-hidden bg-[#f4f2ec] text-[#111827]">
+    <main className="flex-1 bg-[#f4f2ec] text-[#111827]" id="top">
       <HeroSection
         ctaExternal={ctaExternal}
         ctaHref={ctaHref}
         ctaLabel={ctaLabel}
       />
-      <LandingHeader />
-      <OverviewSection ctaHref={registrationHref} />
-      <BenefitsSection />
-      <PricingSection ctaHref={registrationHref} />
-      <FaqSection />
-      <GuideSection />
-      <BlogSection />
-      <CtaSection ctaHref={registrationHref} />
+
+      <div className="relative">
+        <LandingHeader />
+        <OverviewSection ctaHref={registrationHref} />
+        <BenefitsSection />
+        <PricingSection ctaHref={registrationHref} />
+        <FaqSection />
+        <GuideSection />
+        <BlogSection />
+        <FooterSection ctaHref={registrationHref} />
+      </div>
     </main>
   );
 }

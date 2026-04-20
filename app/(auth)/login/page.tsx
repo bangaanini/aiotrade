@@ -4,12 +4,6 @@ import { AuthPageShell } from "@/components/auth/auth-page-shell";
 import { LoginForm } from "@/components/auth/login-form";
 import { getCurrentProfile } from "@/lib/auth";
 
-const loginHighlights = [
-  "Masuk kembali ke akun Anda dengan cepat.",
-  "Lihat halaman pribadi Anda di satu tempat.",
-  "Lanjutkan aktivitas tanpa perlu mulai dari awal.",
-];
-
 export default async function LoginPage() {
   const profile = await getCurrentProfile();
 
@@ -25,11 +19,9 @@ export default async function LoginPage() {
           Masuk dengan aman
         </>
       }
-      description="Masuk ke akun Anda untuk melihat halaman pribadi dan melanjutkan aktivitas seperti biasa."
-      highlights={loginHighlights}
+      description="Masuk ke akun Anda untuk melanjutkan aktivitas dan membuka halaman pribadi Anda seperti biasa."
       sideBadge="Selamat datang kembali"
-      sideDescription="Kalau Anda sudah pernah daftar, tinggal masuk dan lanjutkan dari tempat terakhir."
-      sideTitle="Masuk lagi dan lanjutkan perjalanan Anda."
+      sideTitle="Masuk lagi dan lanjutkan langkah Anda."
       title="Masuk ke akun Anda"
     >
       <LoginForm />
