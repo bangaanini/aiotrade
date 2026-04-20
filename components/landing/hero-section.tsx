@@ -1,13 +1,12 @@
 "use client";
 
 import { useRef } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { Users } from "lucide-react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { landingImages } from "@/components/landing/data";
+import { LandingCtaButton } from "@/components/landing/landing-cta-button";
 import type { LandingPageUIProps } from "@/components/landing/types";
-import { cn } from "@/lib/utils";
 
 type HeroSectionProps = Pick<LandingPageUIProps, "ctaExternal" | "ctaHref" | "ctaLabel">;
 
@@ -107,21 +106,13 @@ export function HeroSection({
               whileHover={prefersReducedMotion ? undefined : { y: -4, scale: 1.01 }}
               whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
             >
-              <Link
-                className={cn(
-                  "group relative inline-flex min-h-12 w-full items-center justify-center gap-3 overflow-hidden rounded-lg border border-white/18 bg-[#ffcf10] px-6 py-3 text-base font-semibold text-[#101726] shadow-[0_18px_48px_rgba(0,0,0,0.22)] transition duration-300 hover:-translate-y-0.5 hover:border-[#ffe075] hover:bg-[#ffd83a] hover:shadow-[0_24px_56px_rgba(255,207,16,0.26)] sm:min-h-14 sm:px-8 sm:py-4 sm:text-lg",
-                  "sm:min-w-[304px] sm:w-auto",
-                )}
+              <LandingCtaButton
+                className="w-auto sm:min-w-[304px]"
+                external={ctaExternal}
                 href={ctaHref}
-                rel={ctaExternal ? "noreferrer" : undefined}
-                target={ctaExternal ? "_blank" : undefined}
-              >
-                <span className="absolute inset-0 rounded-lg bg-[linear-gradient(115deg,transparent_20%,rgba(255,255,255,0.34)_50%,transparent_78%)] opacity-0 transition duration-500 group-hover:opacity-100" />
-                <span className="relative z-10 inline-flex items-center gap-3">
-                  <Users className="h-5 w-5 transition duration-300 group-hover:scale-110" />
-                  {ctaLabel}
-                </span>
-              </Link>
+                icon={Users}
+                label={ctaLabel}
+              />
             </motion.div>
           </motion.div>
         </div>

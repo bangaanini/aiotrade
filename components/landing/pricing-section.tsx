@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { LogIn } from "lucide-react";
 import { plans } from "@/components/landing/data";
+import { LandingCtaButton } from "@/components/landing/landing-cta-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Reveal } from "@/components/ui/reveal";
 import { cn } from "@/lib/utils";
@@ -89,18 +89,16 @@ export function PricingSection({ ctaHref }: PricingSectionProps) {
                   </p>
 
                   <div className="mt-8 flex justify-center">
-                    <Link
+                    <LandingCtaButton
                       className={cn(
-                        "inline-flex min-h-11 items-center justify-center gap-2 rounded-[14px] px-6 text-lg font-medium transition duration-300",
-                        plan.emphasis
-                          ? "border border-[#5aa0ff] bg-[linear-gradient(180deg,#ffffff_0%,#eef5ff_100%)] text-[#2a7df1] shadow-[0_10px_24px_rgba(42,125,241,0.14)] hover:bg-[#eef5ff]"
-                          : "border border-[#b9d5ff] bg-white text-[#2a7df1] hover:bg-[#eef5ff]",
+                        "min-w-[212px]",
+                        plan.emphasis && "shadow-[0_14px_30px_rgba(0,0,0,0.12)]",
                       )}
                       href={ctaHref}
-                    >
-                      <LogIn className="h-5 w-5" />
-                      Daftar Sekarang
-                    </Link>
+                      icon={LogIn}
+                      label="Daftar Sekarang"
+                      size="compact"
+                    />
                   </div>
                 </CardContent>
               </Card>

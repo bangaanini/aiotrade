@@ -2,13 +2,12 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { Users } from "lucide-react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { landingImages, partnerLogos } from "@/components/landing/data";
+import { LandingCtaButton } from "@/components/landing/landing-cta-button";
 import { TickerStrip } from "@/components/landing/ticker-strip";
 import { Reveal } from "@/components/ui/reveal";
-import { cn } from "@/lib/utils";
 
 type OverviewSectionProps = {
   ctaHref: string;
@@ -58,7 +57,35 @@ export function OverviewSection({ ctaHref }: OverviewSectionProps) {
           style={{ y: phoneY }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="relative w-full max-w-[280px] sm:max-w-[430px] lg:max-w-[520px] lg:-ml-4">
+          <motion.div
+            animate={
+              prefersReducedMotion
+                ? undefined
+                : {
+                    rotate: [0, -1.2, 0.9, 0],
+                    y: [0, -10, 0, -6, 0],
+                  }
+            }
+            className="relative w-full max-w-[280px] sm:max-w-[430px] lg:max-w-[520px] lg:-ml-4"
+            transition={
+              prefersReducedMotion
+                ? undefined
+                : {
+                    duration: 7.2,
+                    ease: "easeInOut",
+                    repeat: Number.POSITIVE_INFINITY,
+                  }
+            }
+            whileHover={
+              prefersReducedMotion
+                ? undefined
+                : {
+                    rotate: -1.5,
+                    y: -8,
+                    scale: 1.015,
+                  }
+            }
+          >
             <div className="absolute inset-x-[10%] bottom-6 h-16 rounded-full bg-[#0ea5ff]/14 blur-[34px] sm:bottom-8 sm:h-24 sm:blur-[52px]" />
             <Image
               alt="Mockup aplikasi mobile AIOTrade berisi trade history dan profit."
@@ -67,7 +94,7 @@ export function OverviewSection({ ctaHref }: OverviewSectionProps) {
               sizes="(max-width: 1024px) 100vw, 520px"
               src={landingImages.phoneImage}
             />
-          </div>
+          </motion.div>
         </motion.div>
 
         <motion.div
@@ -126,19 +153,12 @@ export function OverviewSection({ ctaHref }: OverviewSectionProps) {
             className="mt-8 flex w-full justify-center sm:mt-10 lg:justify-start"
             delay={0.18}
           >
-            <Link
-              className={cn(
-                "group relative inline-flex min-h-12 items-center justify-center gap-3 overflow-hidden rounded-lg border border-white/18 bg-[#ffcf10] px-6 py-3 text-base font-semibold text-[#101726] shadow-[0_18px_48px_rgba(0,0,0,0.22)] transition duration-300 hover:border-[#ffe075] hover:bg-[#ffd83a] hover:shadow-[0_24px_56px_rgba(255,207,16,0.26)] sm:min-h-14 sm:px-8 sm:py-4 sm:text-lg",
-                "w-full max-w-[220px] sm:min-w-[304px] sm:max-w-none sm:w-auto",
-              )}
+            <LandingCtaButton
+              className="w-full max-w-[220px] sm:min-w-[304px] sm:max-w-none sm:w-auto"
               href={ctaHref}
-            >
-              <span className="absolute inset-0 rounded-lg bg-[linear-gradient(115deg,transparent_20%,rgba(255,255,255,0.34)_50%,transparent_78%)] opacity-0 transition duration-500 group-hover:opacity-100" />
-              <span className="relative z-10 inline-flex items-center gap-3">
-                <Users className="h-5 w-5 transition duration-300 group-hover:scale-110" />
-                Daftar Sekarang
-              </span>
-            </Link>
+              icon={Users}
+              label="Daftar Sekarang"
+            />
           </Reveal>
         </motion.div>
       </div>
