@@ -42,6 +42,14 @@ function hasBlogPostWriteDelegate() {
   );
 }
 
+async function hasBlogPostsTable() {
+  const tables = await prisma.$queryRaw<Array<{ tableName: string | null }>>`
+    SELECT to_regclass('public.blog_posts')::text AS "tableName"
+  `;
+
+  return Boolean(tables[0]?.tableName);
+}
+
 function mapBlogPost(record: BlogPostRecord): BlogPostDetail {
   return {
     category: record.category,
@@ -73,6 +81,10 @@ function toDateOrNow(value: string | null | undefined) {
 }
 
 async function getBlogPostRows(whereSql?: { clause: string; values: unknown[] }, limit?: number) {
+  if (!(await hasBlogPostsTable())) {
+    return [];
+  }
+
   const limitValue = limit ?? null;
 
   if (hasBlogPostDelegate() && !whereSql) {
@@ -143,6 +155,10 @@ async function getBlogPostRows(whereSql?: { clause: string; values: unknown[] },
 }
 
 export async function getAdminBlogPosts() {
+  if (!(await hasBlogPostsTable())) {
+    return [];
+  }
+
   const rows = hasBlogPostDelegate()
     ? await prisma.blogPost.findMany({
         orderBy: [{ updatedAt: "desc" }],
@@ -191,6 +207,10 @@ export async function getAdminBlogPosts() {
 }
 
 export async function getPublishedBlogPosts(limit?: number) {
+  if (!(await hasBlogPostsTable())) {
+    return [];
+  }
+
   const rows = hasBlogPostDelegate()
     ? await prisma.blogPost.findMany({
         where: {
@@ -223,6 +243,10 @@ export async function getPublishedBlogPosts(limit?: number) {
 }
 
 export async function getPublishedBlogPostBySlug(slug: string) {
+  if (!(await hasBlogPostsTable())) {
+    return null;
+  }
+
   if (hasBlogPostDelegate()) {
     const record = await prisma.blogPost.findUnique({
       where: {
@@ -256,6 +280,10 @@ export async function getPublishedBlogPostBySlug(slug: string) {
 }
 
 export async function getAdminBlogPostById(id: string) {
+  if (!(await hasBlogPostsTable())) {
+    return null;
+  }
+
   if (hasBlogPostDelegate()) {
     const record = await prisma.blogPost.findUnique({
       where: {
