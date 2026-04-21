@@ -294,31 +294,36 @@ async function getHomepageContentRaw() {
 }
 
 export async function getHomepageContent() {
-  const tables = await prisma.$queryRaw<Array<{ tableName: string | null }>>`
-    SELECT to_regclass('public.homepage_content')::text AS "tableName"
-  `;
+  try {
+    const tables = await prisma.$queryRaw<Array<{ tableName: string | null }>>`
+      SELECT to_regclass('public.homepage_content')::text AS "tableName"
+    `;
 
-  if (!tables[0]?.tableName) {
+    if (!tables[0]?.tableName) {
+      return defaultHomepageContent;
+    }
+
+    const record = hasHomepageContentDelegate()
+      ? await prisma.homepageContent.findUnique({
+          where: { id: HOMEPAGE_CONTENT_ID },
+          select: {
+            hero: true,
+            overview: true,
+            benefits: true,
+            pricing: true,
+            faq: true,
+            guide: true,
+            blog: true,
+            footer: true,
+          },
+        })
+      : await getHomepageContentRaw();
+
+    return toHomepageContent(record);
+  } catch (error) {
+    console.error("[homepage-content] Failed to load homepage content, using defaults.", error);
     return defaultHomepageContent;
   }
-
-  const record = hasHomepageContentDelegate()
-    ? await prisma.homepageContent.findUnique({
-        where: { id: HOMEPAGE_CONTENT_ID },
-        select: {
-          hero: true,
-          overview: true,
-          benefits: true,
-          pricing: true,
-          faq: true,
-          guide: true,
-          blog: true,
-          footer: true,
-        },
-      })
-    : await getHomepageContentRaw();
-
-  return toHomepageContent(record);
 }
 
 export async function updateHomepageContentSection<

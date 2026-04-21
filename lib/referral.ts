@@ -35,18 +35,23 @@ export async function getActiveReferralOwner(username: string | null | undefined
     return null;
   }
 
-  const profiles = await prisma.$queryRaw<ReferralOwner[]>`
-    SELECT
-      "referral_link" AS "referralLink",
-      "username",
-      "whatsapp"
-    FROM "public"."profiles"
-    WHERE "username" = ${normalizedUsername}
-      AND "is_lp_active" = true
-    LIMIT 1
-  `;
+  try {
+    const profiles = await prisma.$queryRaw<ReferralOwner[]>`
+      SELECT
+        "referral_link" AS "referralLink",
+        "username",
+        "whatsapp"
+      FROM "public"."profiles"
+      WHERE "username" = ${normalizedUsername}
+        AND "is_lp_active" = true
+      LIMIT 1
+    `;
 
-  return profiles[0] ?? null;
+    return profiles[0] ?? null;
+  } catch (error) {
+    console.error("[referral] Failed to load referral owner, using default CTA.", error);
+    return null;
+  }
 }
 
 export async function resolveHomepageReferralState(cookieReferralUsername: string | null | undefined) {

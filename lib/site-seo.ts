@@ -90,50 +90,55 @@ function normalizeSiteSeoSettings(value: unknown): SiteSeoSettings {
 }
 
 export async function getSiteSeoSettings(): Promise<SiteSeoSettings> {
-  const tables = await prisma.$queryRaw<Array<{ tableName: string | null }>>`
-    SELECT to_regclass('public.site_seo_settings')::text AS "tableName"
-  `;
+  try {
+    const tables = await prisma.$queryRaw<Array<{ tableName: string | null }>>`
+      SELECT to_regclass('public.site_seo_settings')::text AS "tableName"
+    `;
 
-  if (!tables[0]?.tableName) {
+    if (!tables[0]?.tableName) {
+      return defaultSiteSeoSettings;
+    }
+
+    const record = hasSiteSeoDelegate()
+      ? await prisma.siteSeoSettings.findUnique({
+          where: { id: SITE_SEO_SETTINGS_ID },
+          select: {
+            faviconAssetId: true,
+            faviconUrl: true,
+            homeDescription: true,
+            homeTitle: true,
+            openGraphDescription: true,
+            openGraphImageAssetId: true,
+            openGraphImageUrl: true,
+            openGraphTitle: true,
+            siteName: true,
+            siteUrl: true,
+          },
+        })
+      : (
+          await prisma.$queryRaw<SiteSeoRecord[]>`
+            SELECT
+              "favicon_asset_id" AS "faviconAssetId",
+              "favicon_url" AS "faviconUrl",
+              "home_description" AS "homeDescription",
+              "home_title" AS "homeTitle",
+              "open_graph_description" AS "openGraphDescription",
+              "open_graph_image_asset_id" AS "openGraphImageAssetId",
+              "open_graph_image_url" AS "openGraphImageUrl",
+              "open_graph_title" AS "openGraphTitle",
+              "site_name" AS "siteName",
+              "site_url" AS "siteUrl"
+            FROM "public"."site_seo_settings"
+            WHERE "id" = ${SITE_SEO_SETTINGS_ID}
+            LIMIT 1
+          `
+        )[0] ?? null;
+
+    return normalizeSiteSeoSettings(record);
+  } catch (error) {
+    console.error("[site-seo] Failed to load SEO settings, using defaults.", error);
     return defaultSiteSeoSettings;
   }
-
-  const record = hasSiteSeoDelegate()
-    ? await prisma.siteSeoSettings.findUnique({
-        where: { id: SITE_SEO_SETTINGS_ID },
-        select: {
-          faviconAssetId: true,
-          faviconUrl: true,
-          homeDescription: true,
-          homeTitle: true,
-          openGraphDescription: true,
-          openGraphImageAssetId: true,
-          openGraphImageUrl: true,
-          openGraphTitle: true,
-          siteName: true,
-          siteUrl: true,
-        },
-      })
-    : (
-        await prisma.$queryRaw<SiteSeoRecord[]>`
-          SELECT
-            "favicon_asset_id" AS "faviconAssetId",
-            "favicon_url" AS "faviconUrl",
-            "home_description" AS "homeDescription",
-            "home_title" AS "homeTitle",
-            "open_graph_description" AS "openGraphDescription",
-            "open_graph_image_asset_id" AS "openGraphImageAssetId",
-            "open_graph_image_url" AS "openGraphImageUrl",
-            "open_graph_title" AS "openGraphTitle",
-            "site_name" AS "siteName",
-            "site_url" AS "siteUrl"
-          FROM "public"."site_seo_settings"
-          WHERE "id" = ${SITE_SEO_SETTINGS_ID}
-          LIMIT 1
-        `
-      )[0] ?? null;
-
-  return normalizeSiteSeoSettings(record);
 }
 
 export async function updateSiteSeoSettings(value: SiteSeoSettings) {

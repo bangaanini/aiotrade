@@ -43,11 +43,16 @@ function hasBlogPostWriteDelegate() {
 }
 
 async function hasBlogPostsTable() {
-  const tables = await prisma.$queryRaw<Array<{ tableName: string | null }>>`
-    SELECT to_regclass('public.blog_posts')::text AS "tableName"
-  `;
+  try {
+    const tables = await prisma.$queryRaw<Array<{ tableName: string | null }>>`
+      SELECT to_regclass('public.blog_posts')::text AS "tableName"
+    `;
 
-  return Boolean(tables[0]?.tableName);
+    return Boolean(tables[0]?.tableName);
+  } catch (error) {
+    console.error("[blog-posts] Failed to reach database while checking blog_posts table.", error);
+    return false;
+  }
 }
 
 function mapBlogPost(record: BlogPostRecord): BlogPostDetail {
