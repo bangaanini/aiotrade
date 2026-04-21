@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { normalizeReferralLink } from "@/lib/referral-links";
 import { buildWhatsAppUrl } from "@/lib/site";
 import { parsePublicUsernameCandidate } from "@/lib/username-rules";
 
@@ -6,6 +7,7 @@ export const LANDING_REFERRAL_COOKIE_NAME = "landing_referral";
 export const LANDING_REFERRAL_COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
 
 export type ReferralOwner = {
+  referralLink: string | null;
   username: string;
   whatsapp: string | null;
 };
@@ -14,6 +16,7 @@ export type ReferralLandingState = {
   owner: ReferralOwner | null;
   ctaExternal: boolean;
   ctaHref: string;
+  signupExternal: boolean;
   signupHref: string;
 };
 
@@ -34,6 +37,7 @@ export async function getActiveReferralOwner(username: string | null | undefined
 
   const profiles = await prisma.$queryRaw<ReferralOwner[]>`
     SELECT
+      "referral_link" AS "referralLink",
       "username",
       "whatsapp"
     FROM "public"."profiles"
@@ -53,19 +57,22 @@ export async function resolveHomepageReferralState(cookieReferralUsername: strin
       owner: null,
       ctaExternal: false,
       ctaHref: "/login",
+      signupExternal: false,
       signupHref: "/login",
     } satisfies ReferralLandingState;
   }
 
-  const signupHref = buildReferralSignupUrl(owner.username);
+  const externalSignupHref = normalizeReferralLink(owner.referralLink);
+  const signupHref = externalSignupHref ?? buildReferralSignupUrl(owner.username);
   const whatsappUrl = owner.whatsapp
     ? buildWhatsAppUrl(owner.whatsapp, owner.username)
     : null;
 
   return {
     owner,
-    ctaExternal: Boolean(whatsappUrl),
+    ctaExternal: Boolean(whatsappUrl ?? externalSignupHref),
     ctaHref: whatsappUrl ?? signupHref,
+    signupExternal: Boolean(externalSignupHref),
     signupHref,
   } satisfies ReferralLandingState;
 }

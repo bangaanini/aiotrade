@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
+import { SectionBackgroundLayer } from "@/components/landing/section-background-layer";
 import type { GuideContent } from "@/components/landing/types";
 import { Reveal } from "@/components/ui/reveal";
 
@@ -9,11 +12,17 @@ type GuideSectionProps = {
 
 export function GuideSection({ content }: GuideSectionProps) {
   return (
-    <section className="relative overflow-hidden bg-white py-20" id="panduan">
+    <section className="relative overflow-hidden py-20" id="panduan">
+      <SectionBackgroundLayer
+        config={content.background}
+        fallbackOverlayColor="#ffffff"
+        fallbackOverlayOpacity={20}
+        fallbackPreset="sky-blue-accent"
+      />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(37,99,235,0.05)_0%,rgba(37,99,235,0)_100%)]" />
       <div className="pointer-events-none absolute left-[-5%] top-24 h-52 w-52 rounded-full bg-[#76a9ff]/10 blur-[96px]" />
       <div className="pointer-events-none absolute bottom-0 right-[-8%] h-64 w-64 rounded-full bg-[#ffd673]/16 blur-[120px]" />
-      <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
+      <div className="relative z-10 mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
         <Reveal className="mx-auto max-w-4xl text-center">
           <p className="text-[1.05rem] font-semibold tracking-[-0.02em] text-[#1c74de] sm:text-[1.3rem]">
             {content.eyebrow}

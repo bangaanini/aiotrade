@@ -6,7 +6,11 @@ import { motion, useMotionValueEvent, useReducedMotion, useScroll } from "framer
 import { navItems } from "@/components/landing/data";
 import { cn } from "@/lib/utils";
 
-export function LandingHeader() {
+type LandingHeaderProps = {
+  previewMode?: boolean;
+};
+
+export function LandingHeader({ previewMode = false }: LandingHeaderProps) {
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const { scrollY } = useScroll();
@@ -15,10 +19,16 @@ export function LandingHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useMotionValueEvent(scrollY, "change", (value) => {
-    setIsScrolled(value > 32);
+    if (!previewMode) {
+      setIsScrolled(value > 32);
+    }
   });
 
   useEffect(() => {
+    if (previewMode) {
+      return;
+    }
+
     const sections = navItems
       .map((item) => document.querySelector<HTMLElement>(item.href))
       .filter((section): section is HTMLElement => Boolean(section));
@@ -56,9 +66,13 @@ export function LandingHeader() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, []);
+  }, [previewMode]);
 
   useEffect(() => {
+    if (previewMode) {
+      return;
+    }
+
     let frame = 0;
 
     const syncPinnedState = () => {
@@ -83,7 +97,7 @@ export function LandingHeader() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, []);
+  }, [previewMode]);
 
   const activeItem = navItems.find((item) => item.href === activeHref) ?? navItems[0];
 
@@ -92,8 +106,8 @@ export function LandingHeader() {
       <header
         className={cn(
           "left-0 right-0 z-40 w-full border-b border-white/10 bg-[rgba(11,19,34,0.96)] backdrop-blur-2xl transition duration-300",
-          isPinned ? "fixed top-0" : "absolute top-0",
-          isScrolled && "bg-[rgba(9,16,30,0.985)] shadow-[0_16px_42px_rgba(0,0,0,0.36)]",
+          previewMode ? "absolute top-0" : isPinned ? "fixed top-0" : "absolute top-0",
+          !previewMode && isScrolled && "bg-[rgba(9,16,30,0.985)] shadow-[0_16px_42px_rgba(0,0,0,0.36)]",
         )}
       >
         <motion.div

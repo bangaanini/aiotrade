@@ -1,4 +1,6 @@
 import { HomepageSettingsView } from "@/components/admin/homepage-settings-view";
+import { isCloudinaryConfigured } from "@/lib/cloudinary";
+import { getHomepageAssets } from "@/lib/homepage-assets";
 import { getHomepageContent } from "@/lib/homepage-content";
 
 type AdminPageProps = {
@@ -9,10 +11,16 @@ type AdminPageProps = {
 };
 
 export default async function AdminPage({ searchParams }: AdminPageProps) {
-  const [content, query] = await Promise.all([getHomepageContent(), searchParams]);
+  const [assets, content, query] = await Promise.all([
+    getHomepageAssets(),
+    getHomepageContent(),
+    searchParams,
+  ]);
 
   return (
     <HomepageSettingsView
+      assets={assets}
+      cloudinaryEnabled={isCloudinaryConfigured()}
       content={content}
       section={query.section}
       status={query.status}

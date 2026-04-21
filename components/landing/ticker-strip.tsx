@@ -10,15 +10,20 @@ import { cn } from "@/lib/utils";
 
 type TickerStripProps = {
   className?: string;
+  previewMode?: boolean;
 };
 
 const duplicatedFallbackItems = [...fallbackTickerItems, ...fallbackTickerItems];
 
-export function TickerStrip({ className }: TickerStripProps) {
+export function TickerStrip({ className, previewMode = false }: TickerStripProps) {
   const prefersReducedMotion = useReducedMotion();
   const [items, setItems] = useState<TickerItem[]>(fallbackTickerItems);
 
   useEffect(() => {
+    if (previewMode) {
+      return;
+    }
+
     let isMounted = true;
 
     async function loadTicker() {
@@ -52,7 +57,7 @@ export function TickerStrip({ className }: TickerStripProps) {
       isMounted = false;
       window.clearInterval(intervalId);
     };
-  }, []);
+  }, [previewMode]);
 
   const tickerItems = useMemo(() => {
     if (!items.length) {

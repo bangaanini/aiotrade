@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { BadgeCheck, CircleUserRound, Link2, ShieldCheck } from "lucide-react";
 import { DeleteUserButton } from "@/components/admin/delete-user-button";
 import { Alert } from "@/components/ui/alert";
@@ -81,7 +82,7 @@ export function UsersTableView({ currentAdminId, status, users }: UsersTableView
         <CardHeader>
           <CardTitle>User Table</CardTitle>
           <CardDescription>
-            Menampilkan semua user beserta sponsor dan jumlah referral per akun.
+            Menampilkan semua user
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -92,7 +93,7 @@ export function UsersTableView({ currentAdminId, status, users }: UsersTableView
                   <th className="px-3 py-3">Username</th>
                   <th className="px-3 py-3">Email</th>
                   <th className="px-3 py-3">WhatsApp</th>
-                  <th className="px-3 py-3">Sponsor</th>
+                  <th className="px-3 py-3">Link Referral</th>
                   <th className="px-3 py-3">Referral</th>
                   <th className="px-3 py-3">Landing Page</th>
                   <th className="px-3 py-3">Admin</th>
@@ -105,7 +106,19 @@ export function UsersTableView({ currentAdminId, status, users }: UsersTableView
                     <td className="px-3 py-4 font-semibold text-stone-950">@{user.username}</td>
                     <td className="px-3 py-4">{user.email ?? "-"}</td>
                     <td className="px-3 py-4">{user.whatsapp ?? "-"}</td>
-                    <td className="px-3 py-4">{user.referredBy ? `@${user.referredBy}` : "Direct signup"}</td>
+                    <td className="px-3 py-4">
+                      {user.referralLink ? (
+                        <Link
+                          className="break-all text-sky-700 underline decoration-sky-300 underline-offset-4"
+                          href={user.referralLink}
+                          target="_blank"
+                        >
+                          {user.referralLink}
+                        </Link>
+                      ) : (
+                        "-"
+                      )}
+                    </td>
                     <td className="px-3 py-4 font-semibold text-stone-950">{user.referralCount}</td>
                     <td className="px-3 py-4">
                       <StatusPill

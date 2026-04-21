@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { features, landingImages } from "@/components/landing/data";
+import { SectionBackgroundLayer } from "@/components/landing/section-background-layer";
 import { Reveal } from "@/components/ui/reveal";
 import type { BenefitsContent } from "@/components/landing/types";
 
@@ -28,12 +28,12 @@ export function BenefitsSection({ content }: BenefitsSectionProps) {
   return (
     <section className="relative overflow-hidden py-20 text-white sm:py-24" ref={sectionRef}>
       <motion.div className="absolute inset-0" style={{ scale: backgroundScale, y: backgroundY }}>
-        <Image
-          alt="Komunitas AIOTrade di acara edukasi trading."
-          className="absolute inset-0 h-full w-full object-cover"
-          fill
-          sizes="100vw"
-          src={landingImages.heroImage}
+        <SectionBackgroundLayer
+          config={content.background}
+          fallbackImageUrl={landingImages.heroImage.src}
+          fallbackOverlayColor="#070a12"
+          fallbackOverlayOpacity={74}
+          fallbackPreset="dark-slate-cinematic"
         />
       </motion.div>
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,10,18,0.7)_0%,rgba(7,10,18,0.78)_28%,rgba(7,10,18,0.74)_100%)]" />

@@ -1,11 +1,11 @@
 "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
 import { Users } from "lucide-react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { landingImages } from "@/components/landing/data";
 import { LandingCtaButton } from "@/components/landing/landing-cta-button";
+import { SectionBackgroundLayer } from "@/components/landing/section-background-layer";
 import type { HeroContent, LandingPageUIProps } from "@/components/landing/types";
 
 type HeroSectionProps = Pick<LandingPageUIProps, "ctaExternal" | "ctaHref" | "ctaLabel"> & {
@@ -60,13 +60,12 @@ export function HeroSection({
           initial={prefersReducedMotion ? false : { scale: 1.08 }}
           transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <Image
-            alt="Komunitas AIOTrade berkumpul di depan panggung Ruang Investasi."
-            className="absolute inset-0 h-full w-full object-cover object-center"
-            fill
-            priority
-            sizes="100vw"
-            src={landingImages.heroImage}
+          <SectionBackgroundLayer
+            config={content.background}
+            fallbackImageUrl={landingImages.heroImage.src}
+            fallbackOverlayColor="#07101d"
+            fallbackOverlayOpacity={40}
+            fallbackPreset="dark-slate-cinematic"
           />
         </motion.div>
       </motion.div>

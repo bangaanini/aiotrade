@@ -9,6 +9,7 @@ import {
   Circle,
   KeyRound,
   LoaderCircle,
+  Link2,
   Mail,
   MessageCircleMore,
   ShieldCheck,
@@ -359,6 +360,33 @@ export function SignupForm({ referredBy }: SignupFormProps) {
             />
           </AuthFieldShell>
           {fieldErrors.whatsapp ? <p className="text-sm text-rose-600">{fieldErrors.whatsapp}</p> : null}
+        </div>
+
+        <div className="space-y-2 sm:col-span-2">
+          <AuthFieldShell error={fieldErrors.referralLink}>
+            <Label className="mb-2 inline-flex items-center gap-2 text-slate-700" htmlFor="referralLink">
+              <Link2 className="h-4 w-4 text-sky-500" />
+              Link Referral
+            </Label>
+            <Input
+              autoCapitalize="none"
+              autoComplete="url"
+              className="border-0 bg-transparent px-0 text-base shadow-none focus:ring-0"
+              defaultValue={state.formValues?.referralLink ?? ""}
+              id="referralLink"
+              name="referralLink"
+              placeholder="https://partner.com/ref/username"
+              required
+              spellCheck={false}
+              type="url"
+            />
+            <p className="mt-2 text-xs text-slate-500">
+              Link ini akan dipakai untuk tombol Daftar Sekarang di landing page Anda.
+            </p>
+          </AuthFieldShell>
+          {fieldErrors.referralLink ? (
+            <p className="text-sm text-rose-600">{fieldErrors.referralLink}</p>
+          ) : null}
         </div>
 
         <div className="space-y-2">

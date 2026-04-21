@@ -1,8 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { clearUserSession, getSessionUserId } from "@/lib/auth";
+import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export type ActivateLandingPageState = {
@@ -46,9 +45,4 @@ export async function activateLandingPageAction(
     status: "success",
     message: "Landing page activated.",
   };
-}
-
-export async function logoutAction() {
-  await clearUserSession();
-  redirect("/login");
 }

@@ -6,18 +6,26 @@ import { Users } from "lucide-react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { landingImages, partnerLogos } from "@/components/landing/data";
 import { LandingCtaButton } from "@/components/landing/landing-cta-button";
+import { SectionBackgroundLayer } from "@/components/landing/section-background-layer";
 import { TickerStrip } from "@/components/landing/ticker-strip";
 import { Reveal } from "@/components/ui/reveal";
 import type { OverviewContent } from "@/components/landing/types";
 
 type OverviewSectionProps = {
   content: OverviewContent;
+  ctaExternal?: boolean;
   ctaHref: string;
+  previewMode?: boolean;
 };
 
 const duplicatedPartnerLogos = [...partnerLogos, ...partnerLogos];
 
-export function OverviewSection({ content, ctaHref }: OverviewSectionProps) {
+export function OverviewSection({
+  content,
+  ctaExternal = false,
+  ctaHref,
+  previewMode = false,
+}: OverviewSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({
@@ -30,8 +38,14 @@ export function OverviewSection({ content, ctaHref }: OverviewSectionProps) {
   const contentY = useTransform(scrollYProgress, [0, 1], prefersReducedMotion ? [0, 0] : [12, -14]);
 
   return (
-    <section className="relative bg-[#0f1728] text-white" id="fitur" ref={sectionRef}>
+    <section className="relative text-white" id="fitur" ref={sectionRef}>
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <SectionBackgroundLayer
+          config={content.background}
+          fallbackOverlayColor="#0f1728"
+          fallbackOverlayOpacity={52}
+          fallbackPreset="dark-navy"
+        />
         <motion.div className="absolute bottom-0 left-0 h-full w-[58%]" style={{ y: leftChartY }}>
           <Image
             alt=""
@@ -155,6 +169,7 @@ export function OverviewSection({ content, ctaHref }: OverviewSectionProps) {
           >
             <LandingCtaButton
               className="w-full max-w-[220px] sm:min-w-[304px] sm:max-w-none sm:w-auto"
+              external={ctaExternal}
               href={ctaHref}
               icon={Users}
               label={content.ctaLabel}
@@ -163,7 +178,10 @@ export function OverviewSection({ content, ctaHref }: OverviewSectionProps) {
         </motion.div>
       </div>
 
-      <TickerStrip className="relative z-10 mt-2 border-white/10 bg-[rgba(8,14,27,0.38)]" />
+      <TickerStrip
+        className="relative z-10 mt-2 border-white/10 bg-[rgba(8,14,27,0.38)]"
+        previewMode={previewMode}
+      />
     </section>
   );
 }

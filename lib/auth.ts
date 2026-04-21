@@ -24,6 +24,7 @@ type CurrentProfile = {
   id: string;
   isAdmin: boolean;
   isLpActive: boolean;
+  referralLink: string | null;
   referredBy: string | null;
   username: string;
   whatsapp: string | null;
@@ -158,6 +159,7 @@ export async function getCurrentProfile() {
         id: true,
         isAdmin: true,
         isLpActive: true,
+        referralLink: true,
         referredBy: true,
         whatsapp: true,
         username: true,
@@ -169,7 +171,8 @@ export async function getCurrentProfile() {
     const isStaleWhatsappSelect =
       error instanceof Error &&
       (error.message.includes("Unknown field `whatsapp` for select statement on model `Profile`") ||
-        error.message.includes("Unknown field `isAdmin` for select statement on model `Profile`"));
+        error.message.includes("Unknown field `isAdmin` for select statement on model `Profile`") ||
+        error.message.includes("Unknown field `referralLink` for select statement on model `Profile`"));
 
     if (!isStaleWhatsappSelect) {
       throw error;
@@ -181,6 +184,7 @@ export async function getCurrentProfile() {
         "email",
         "is_admin" AS "isAdmin",
         "is_lp_active" AS "isLpActive",
+        "referral_link" AS "referralLink",
         "referred_by" AS "referredBy",
         "whatsapp",
         "username"

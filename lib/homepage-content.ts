@@ -1,13 +1,19 @@
 import "server-only";
 
 import { z } from "zod";
-import { articles, faqEntries, features, plans, steps } from "@/components/landing/data";
-import type { HomepageContent } from "@/components/landing/types";
+import { articles, faqEntries, features, landingImages, plans, steps } from "@/components/landing/data";
+import type { HomepageContent, SectionBackgroundConfig } from "@/components/landing/types";
+import {
+  createDefaultSectionBackground,
+  normalizeSectionBackground,
+  sectionBackgroundSchema,
+} from "@/lib/homepage-backgrounds";
 import { prisma } from "@/lib/prisma";
 
 const HOMEPAGE_CONTENT_ID = "homepage";
 
 const heroSchema = z.object({
+  background: sectionBackgroundSchema,
   eyebrow: z.string().min(1),
   titleBlue: z.string().min(1),
   titleWhite: z.string().min(1),
@@ -16,6 +22,7 @@ const heroSchema = z.object({
 });
 
 const overviewSchema = z.object({
+  background: sectionBackgroundSchema,
   titleBlue: z.string().min(1),
   titleWhite: z.string().min(1),
   description: z.string().min(1),
@@ -28,6 +35,7 @@ const benefitItemSchema = z.object({
 });
 
 const benefitsSchema = z.object({
+  background: sectionBackgroundSchema,
   heading: z.string().min(1),
   description: z.string().min(1),
   items: z.array(benefitItemSchema).min(1),
@@ -42,6 +50,7 @@ const pricingPlanSchema = z.object({
 });
 
 const pricingSchema = z.object({
+  background: sectionBackgroundSchema,
   eyebrow: z.string().min(1),
   title: z.string().min(1),
   buttonLabel: z.string().min(1),
@@ -49,6 +58,7 @@ const pricingSchema = z.object({
 });
 
 const faqSchema = z.object({
+  background: sectionBackgroundSchema,
   title: z.string().min(1),
   subtitle: z.string().min(1),
   items: z.array(
@@ -60,6 +70,7 @@ const faqSchema = z.object({
 });
 
 const guideSchema = z.object({
+  background: sectionBackgroundSchema,
   eyebrow: z.string().min(1),
   title: z.string().min(1),
   buttonLabel: z.string().min(1),
@@ -73,6 +84,7 @@ const guideSchema = z.object({
 });
 
 const blogSchema = z.object({
+  background: sectionBackgroundSchema,
   title: z.string().min(1),
   items: z.array(
     z.object({
@@ -84,6 +96,7 @@ const blogSchema = z.object({
 });
 
 const footerSchema = z.object({
+  background: sectionBackgroundSchema,
   description: z.string().min(1),
   copyright: z.string().min(1),
   guideLinks: z.array(
@@ -96,6 +109,11 @@ const footerSchema = z.object({
 
 export const defaultHomepageContent: HomepageContent = {
   hero: {
+    background: createDefaultSectionBackground("dark-slate-cinematic", {
+      imageUrl: landingImages.heroImage.src,
+      overlayColor: "#07101d",
+      overlayOpacity: 40,
+    }),
     eyebrow: "Selamat Datang Di Komunitas",
     titleBlue: "AIO",
     titleWhite: "TRADE",
@@ -103,6 +121,7 @@ export const defaultHomepageContent: HomepageContent = {
     ctaLabel: "Gabung Komunitas",
   },
   overview: {
+    background: createDefaultSectionBackground("dark-navy"),
     titleBlue: "AIO",
     titleWhite: "TRADE",
     description:
@@ -110,6 +129,11 @@ export const defaultHomepageContent: HomepageContent = {
     ctaLabel: "Daftar Sekarang",
   },
   benefits: {
+    background: createDefaultSectionBackground("dark-slate-cinematic", {
+      imageUrl: landingImages.heroImage.src,
+      overlayColor: "#070a12",
+      overlayOpacity: 74,
+    }),
     heading: "Mengapa Trading Crypto Menggunakan Aio Trade?",
     description:
       "Aio Trade cocok digunakan untuk semua kalangan, Trader (Pemula atau Profesional) dan Investor",
@@ -119,6 +143,7 @@ export const defaultHomepageContent: HomepageContent = {
     })),
   },
   pricing: {
+    background: createDefaultSectionBackground("warm-ivory"),
     eyebrow: "Berapa Biaya Registrasi Aio Trade?",
     title: "Harga",
     buttonLabel: "Daftar Sekarang",
@@ -131,17 +156,20 @@ export const defaultHomepageContent: HomepageContent = {
     })),
   },
   faq: {
+    background: createDefaultSectionBackground("warm-ivory"),
     title: "F.A.Q",
     subtitle: "Pertanyaan yang Sering Diajukan",
     items: faqEntries,
   },
   guide: {
+    background: createDefaultSectionBackground("sky-blue-accent"),
     eyebrow: "Bagaimana Aio Trade Bekerja?",
     title: "3 Langkah Mudah",
     buttonLabel: "Selengkapnya",
     steps: steps,
   },
   blog: {
+    background: createDefaultSectionBackground("warm-ivory"),
     title: "Blog - Crypto News",
     items: articles.map((article) => ({
       title: article.title,
@@ -150,6 +178,7 @@ export const defaultHomepageContent: HomepageContent = {
     })),
   },
   footer: {
+    background: createDefaultSectionBackground("dark-slate-cinematic"),
     description:
       "Alat bantu (bot trading) berbasis Artificial Intelligence (AI) yang dirancang untuk membantu pengguna melakukan perdagangan aset kripto secara otomatis di pasar spot. AioTrade dapat diintegrasikan dengan exchange global seperti Binance dan Bitget melalui sistem API yang aman, sehingga pengguna dapat menjalankan strategi trading secara efisien dan konsisten.",
     copyright: "© 2026 All Rights Reserved.",
@@ -173,8 +202,22 @@ const homepageContentSchema = z.object({
   footer: footerSchema,
 });
 
-function parseWithFallback<T>(schema: z.ZodType<T>, value: unknown, fallback: T) {
-  const parsed = schema.safeParse(value);
+function parseSectionWithBackground<T extends { background: SectionBackgroundConfig }>(
+  schema: z.ZodType<T>,
+  value: unknown,
+  fallback: T,
+  options?: {
+    legacyImageUrl?: string;
+  },
+) {
+  const raw = value && typeof value === "object" ? (value as Record<string, unknown>) : {};
+  const merged = {
+    ...fallback,
+    ...raw,
+    background: normalizeSectionBackground(raw.background, fallback.background, options?.legacyImageUrl),
+  };
+
+  const parsed = schema.safeParse(merged);
 
   return parsed.success ? parsed.data : fallback;
 }
@@ -194,14 +237,19 @@ function toHomepageContent(record: {
   }
 
   const merged = {
-    hero: parseWithFallback(heroSchema, record.hero, defaultHomepageContent.hero),
-    overview: parseWithFallback(overviewSchema, record.overview, defaultHomepageContent.overview),
-    benefits: parseWithFallback(benefitsSchema, record.benefits, defaultHomepageContent.benefits),
-    pricing: parseWithFallback(pricingSchema, record.pricing, defaultHomepageContent.pricing),
-    faq: parseWithFallback(faqSchema, record.faq, defaultHomepageContent.faq),
-    guide: parseWithFallback(guideSchema, record.guide, defaultHomepageContent.guide),
-    blog: parseWithFallback(blogSchema, record.blog, defaultHomepageContent.blog),
-    footer: parseWithFallback(footerSchema, record.footer, defaultHomepageContent.footer),
+    hero: parseSectionWithBackground(heroSchema, record.hero, defaultHomepageContent.hero, {
+      legacyImageUrl:
+        record.hero && typeof record.hero === "object"
+          ? String((record.hero as { backgroundImageUrl?: unknown }).backgroundImageUrl ?? "").trim() || undefined
+          : undefined,
+    }),
+    overview: parseSectionWithBackground(overviewSchema, record.overview, defaultHomepageContent.overview),
+    benefits: parseSectionWithBackground(benefitsSchema, record.benefits, defaultHomepageContent.benefits),
+    pricing: parseSectionWithBackground(pricingSchema, record.pricing, defaultHomepageContent.pricing),
+    faq: parseSectionWithBackground(faqSchema, record.faq, defaultHomepageContent.faq),
+    guide: parseSectionWithBackground(guideSchema, record.guide, defaultHomepageContent.guide),
+    blog: parseSectionWithBackground(blogSchema, record.blog, defaultHomepageContent.blog),
+    footer: parseSectionWithBackground(footerSchema, record.footer, defaultHomepageContent.footer),
   };
 
   return homepageContentSchema.parse(merged);

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { ensureEnvAdmin } from "@/lib/admin-bootstrap";
 import { createUserSession, hashPassword } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { normalizeReferralLink } from "@/lib/referral-links";
 import { isReservedUsername, normalizeUsername } from "@/lib/username-rules";
 
 const usernameSchema = z
@@ -25,10 +26,30 @@ const whatsappSchema = z
   .transform((value) => value.replace(/[()\-\s]/g, ""))
   .refine((value) => /^\+?[0-9]{9,16}$/.test(value), "Enter a valid WhatsApp number.");
 
+const referralLinkSchema = z
+  .string()
+  .trim()
+  .min(1, "Enter your referral link.")
+  .transform((value, ctx) => {
+    const normalizedValue = normalizeReferralLink(value);
+
+    if (!normalizedValue) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Enter a valid referral link.",
+      });
+
+      return z.NEVER;
+    }
+
+    return normalizedValue;
+  });
+
 const signUpSchema = z.object({
   email: z.string().trim().email("Enter a valid email address.").transform((value) => value.toLowerCase()),
   password: z.string().min(8, "Password must be at least 8 characters."),
   passwordConfirmation: z.string().min(1, "Repeat your password."),
+  referralLink: referralLinkSchema,
   whatsapp: whatsappSchema,
   username: usernameSchema,
   referredBy: z
@@ -46,12 +67,14 @@ export type SignupActionState = {
     email?: string;
     password?: string;
     passwordConfirmation?: string;
+    referralLink?: string;
     whatsapp?: string;
     username?: string;
     referredBy?: string;
   };
   formValues?: {
     email?: string;
+    referralLink?: string;
     username?: string;
     whatsapp?: string;
   };
@@ -69,9 +92,18 @@ function isUnknownWhatsappArgumentError(error: unknown) {
   return typeof error === "string" && error.includes("Unknown argument `whatsapp`");
 }
 
+function isUnknownReferralLinkArgumentError(error: unknown) {
+  if (error instanceof Error) {
+    return error.message.includes("Unknown argument `referralLink`");
+  }
+
+  return typeof error === "string" && error.includes("Unknown argument `referralLink`");
+}
+
 async function createProfileRecord(input: {
   email: string;
   password: string;
+  referralLink: string;
   referredBy: string | null;
   username: string;
   whatsapp: string;
@@ -83,6 +115,7 @@ async function createProfileRecord(input: {
       data: {
         email: input.email,
         passwordHash,
+        referralLink: input.referralLink,
         referredBy: input.referredBy,
         whatsapp: input.whatsapp,
         username: input.username,
@@ -92,13 +125,14 @@ async function createProfileRecord(input: {
       },
     });
   } catch (error) {
-    if (!isUnknownWhatsappArgumentError(error)) {
+    if (!isUnknownWhatsappArgumentError(error) && !isUnknownReferralLinkArgumentError(error)) {
       throw error;
     }
 
     const insertedProfiles = await prisma.$queryRaw<Array<{ id: string }>>`
       INSERT INTO "public"."profiles" (
         "email",
+        "referral_link",
         "whatsapp",
         "username",
         "password_hash",
@@ -106,6 +140,7 @@ async function createProfileRecord(input: {
       )
       VALUES (
         ${input.email},
+        ${input.referralLink},
         ${input.whatsapp},
         ${input.username},
         ${passwordHash},
@@ -134,6 +169,7 @@ export async function signUpAction(
     email: formData.get("email"),
     password: formData.get("password"),
     passwordConfirmation: formData.get("passwordConfirmation"),
+    referralLink: formData.get("referralLink"),
     whatsapp: formData.get("whatsapp"),
     username: formData.get("username"),
     referredBy: formData.get("referredBy"),
@@ -142,6 +178,7 @@ export async function signUpAction(
   if (!parsed.success) {
     const fieldErrors = parsed.error.flatten().fieldErrors;
     const email = formData.get("email");
+    const referralLink = formData.get("referralLink");
     const username = formData.get("username");
     const whatsapp = formData.get("whatsapp");
 
@@ -152,19 +189,21 @@ export async function signUpAction(
         email: fieldErrors.email?.[0],
         password: fieldErrors.password?.[0],
         passwordConfirmation: fieldErrors.passwordConfirmation?.[0],
+        referralLink: fieldErrors.referralLink?.[0],
         whatsapp: fieldErrors.whatsapp?.[0],
         username: fieldErrors.username?.[0],
         referredBy: fieldErrors.referredBy?.[0],
       },
       formValues: {
         email: typeof email === "string" ? email : "",
+        referralLink: typeof referralLink === "string" ? referralLink : "",
         username: typeof username === "string" ? username : "",
         whatsapp: typeof whatsapp === "string" ? whatsapp : "",
       },
     };
   }
 
-  const { email, password, username, referredBy, whatsapp } = parsed.data;
+  const { email, password, referralLink, username, referredBy, whatsapp } = parsed.data;
 
   const existingProfile = await prisma.profile.findFirst({
     where: {
@@ -185,6 +224,7 @@ export async function signUpAction(
       },
       formValues: {
         email,
+        referralLink,
         username,
         whatsapp,
       },
@@ -200,6 +240,7 @@ export async function signUpAction(
       },
       formValues: {
         email,
+        referralLink,
         username,
         whatsapp,
       },
@@ -223,6 +264,7 @@ export async function signUpAction(
         fieldErrors: {},
         formValues: {
           email,
+          referralLink,
           username,
           whatsapp,
         },
@@ -234,6 +276,7 @@ export async function signUpAction(
     const profile = await createProfileRecord({
       email,
       password,
+      referralLink,
       referredBy,
       username,
       whatsapp,
@@ -258,6 +301,7 @@ export async function signUpAction(
         },
         formValues: {
           email,
+          referralLink,
           username,
           whatsapp,
         },
@@ -270,6 +314,7 @@ export async function signUpAction(
       fieldErrors: {},
       formValues: {
         email,
+        referralLink,
         username,
         whatsapp,
       },

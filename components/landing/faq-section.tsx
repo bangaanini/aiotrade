@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { SectionBackgroundLayer } from "@/components/landing/section-background-layer";
 import type { FaqContent } from "@/components/landing/types";
 import { Reveal } from "@/components/ui/reveal";
 
@@ -14,8 +15,14 @@ export function FaqSection({ content }: FaqSectionProps) {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
-    <section className="bg-[#f4f2ec] py-20 text-[#111827]" id="faq">
-      <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
+    <section className="relative py-20 text-[#111827]" id="faq">
+      <SectionBackgroundLayer
+        config={content.background}
+        fallbackOverlayColor="#f4f2ec"
+        fallbackOverlayOpacity={18}
+        fallbackPreset="warm-ivory"
+      />
+      <div className="relative z-10 mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
         <Reveal className="overflow-hidden rounded-[28px] border border-[#e7dfd0] bg-white shadow-[0_24px_60px_rgba(15,23,42,0.12)]">
           <div className="bg-[#121a2d] px-6 py-8 text-center text-white sm:px-10 sm:py-10">
             <p className="text-[2.9rem] font-bold tracking-[0.04em] text-[#f7c85f] sm:text-[4rem]">

@@ -1,19 +1,31 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins } from "next/font/google";
+import localFont from "next/font/local";
+import { buildRootMetadata, getSiteSeoSettings } from "@/lib/site-seo";
 import "./globals.css";
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+const poppins = localFont({
+  src: [
+    { path: "./Poppins/Poppins-Light.ttf", weight: "300", style: "normal" },
+    { path: "./Poppins/Poppins-LightItalic.ttf", weight: "300", style: "italic" },
+    { path: "./Poppins/Poppins-Regular.ttf", weight: "400", style: "normal" },
+    { path: "./Poppins/Poppins-Italic.ttf", weight: "400", style: "italic" },
+    { path: "./Poppins/Poppins-Medium.ttf", weight: "500", style: "normal" },
+    { path: "./Poppins/Poppins-MediumItalic.ttf", weight: "500", style: "italic" },
+    { path: "./Poppins/Poppins-SemiBold.ttf", weight: "600", style: "normal" },
+    { path: "./Poppins/Poppins-SemiBoldItalic.ttf", weight: "600", style: "italic" },
+    { path: "./Poppins/Poppins-Bold.ttf", weight: "700", style: "normal" },
+    { path: "./Poppins/Poppins-BoldItalic.ttf", weight: "700", style: "italic" },
+  ],
   display: "swap",
-  variable: "--font-poppins",
   fallback: ["system-ui", "Arial", "sans-serif"],
+  variable: "--font-poppins",
 });
 
-export const metadata: Metadata = {
-  title: "Referral Landing Pages",
-  description: "Referral and replicated landing page system powered by Next.js and Supabase.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSiteSeoSettings();
+
+  return buildRootMetadata(seo);
+}
 
 export const viewport: Viewport = {
   width: "device-width",

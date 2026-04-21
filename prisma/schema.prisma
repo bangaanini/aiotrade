@@ -10,6 +10,7 @@ model Profile {
   id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email        String? @unique
   isAdmin      Boolean @default(false) @map("is_admin")
+  referralLink String? @map("referral_link")
   whatsapp     String?
   username     String  @unique
   passwordHash String  @map("password_hash")
@@ -34,4 +35,91 @@ model HomepageContent {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("homepage_content")
+}
+
+model HomepageAsset {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  label     String
+  publicId  String   @unique @map("public_id")
+  secureUrl String   @map("secure_url")
+  width     Int?
+  height    Int?
+  bytes     Int?
+  format    String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("homepage_assets")
+}
+
+model SiteSeoSettings {
+  id                     String   @id @default("site")
+  siteName               String   @map("site_name")
+  siteUrl                String   @map("site_url")
+  homeTitle              String   @map("home_title")
+  homeDescription        String   @map("home_description")
+  openGraphTitle         String   @map("open_graph_title")
+  openGraphDescription   String   @map("open_graph_description")
+  faviconAssetId         String?  @map("favicon_asset_id")
+  faviconUrl             String?  @map("favicon_url")
+  openGraphImageAssetId  String?  @map("open_graph_image_asset_id")
+  openGraphImageUrl      String?  @map("open_graph_image_url")
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+
+  @@map("site_seo_settings")
+}
+
+model BlogPost {
+  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title               String
+  slug                String   @unique
+  category            String   @default("Crypto News")
+  excerpt             String
+  content             String
+  seoTitle            String?  @map("seo_title")
+  seoDescription      String?  @map("seo_description")
+  thumbnailAssetId    String?  @map("thumbnail_asset_id")
+  thumbnailUrl        String?  @map("thumbnail_url")
+  openGraphAssetId    String?  @map("open_graph_asset_id")
+  openGraphImageUrl   String?  @map("open_graph_image_url")
+  isPublished         Boolean  @default(true) @map("is_published")
+  publishedAt         DateTime @default(now()) @map("published_at")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  @@index([isPublished, publishedAt], map: "blog_posts_published_idx")
+  @@map("blog_posts")
+}
+
+model MemberGuideAsset {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  label            String
+  publicId         String   @unique @map("public_id")
+  secureUrl        String   @map("secure_url")
+  originalFilename String?  @map("original_filename")
+  bytes            Int?
+  format           String?
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("member_guide_assets")
+}
+
+model MemberGuidePost {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type        String
+  title       String
+  description String
+  embedUrl    String?  @map("embed_url")
+  fileAssetId String?  @db.Uuid @map("file_asset_id")
+  fileUrl     String?  @map("file_url")
+  sortOrder   Int      @default(0) @map("sort_order")
+  isPublished Boolean  @default(true) @map("is_published")
+  publishedAt DateTime @default(now()) @map("published_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([isPublished, sortOrder, publishedAt], map: "member_guide_posts_published_idx")
+  @@map("member_guide_posts")
 }

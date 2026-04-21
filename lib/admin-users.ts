@@ -8,6 +8,7 @@ export type AdminUserRow = {
   isAdmin: boolean;
   isLpActive: boolean;
   referralCount: number;
+  referralLink: string | null;
   referredBy: string | null;
   username: string;
   whatsapp: string | null;
@@ -21,6 +22,7 @@ export async function getAdminUsers() {
       isAdmin: boolean;
       isLpActive: boolean;
       referralCount: bigint | number | string;
+      referralLink: string | null;
       referredBy: string | null;
       username: string;
       whatsapp: string | null;
@@ -33,6 +35,7 @@ export async function getAdminUsers() {
       p."whatsapp",
       p."is_admin" AS "isAdmin",
       p."is_lp_active" AS "isLpActive",
+      p."referral_link" AS "referralLink",
       p."referred_by" AS "referredBy",
       COUNT(r."id") AS "referralCount"
     FROM "public"."profiles" p
@@ -45,6 +48,7 @@ export async function getAdminUsers() {
       p."whatsapp",
       p."is_admin",
       p."is_lp_active",
+      p."referral_link",
       p."referred_by"
     ORDER BY p."username" ASC
   `;

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ExternalLink, Link2, Settings2, Sparkles } from "lucide-react";
-import { logoutAction } from "@/app/(protected)/dashboard/actions";
+import { logoutAction } from "@/app/(protected)/account/actions";
 import { buildProfileUrl, getSiteUrl } from "@/lib/site";
 import { requireCurrentProfile } from "@/lib/auth";
 import { ActivateLandingPageButton } from "@/components/dashboard/activate-lp-button";
@@ -73,6 +73,12 @@ export default async function DashboardPage() {
                 </p>
               </div>
               <div className="rounded-lg border border-stone-200 bg-stone-50 px-4 py-4">
+                <p className="text-xs font-medium uppercase tracking-wide text-stone-500">Link Referral</p>
+                <p className="mt-1 break-all text-base font-semibold text-stone-950">
+                  {profile.referralLink ?? "-"}
+                </p>
+              </div>
+              <div className="rounded-lg border border-stone-200 bg-stone-50 px-4 py-4">
                 <p className="text-xs font-medium uppercase tracking-wide text-stone-500">Referred by</p>
                 <p className="mt-1 text-base font-semibold text-stone-950">
                   {profile.referredBy ? `@${profile.referredBy}` : "Direct signup"}
@@ -107,9 +113,12 @@ export default async function DashboardPage() {
 
               {profile.isLpActive ? (
                 <div className="space-y-4">
-                  <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-5">
+              <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-5">
                     <p className="text-sm font-medium text-emerald-800">Your referral entry link</p>
                     <p className="mt-2 break-all text-sm text-emerald-900">{landingPageUrl}</p>
+                    <p className="mt-3 text-xs leading-6 text-emerald-700">
+                      Tombol Daftar Sekarang di landing page Anda akan mengikuti link referral yang tersimpan di profil.
+                    </p>
                   </div>
 
                   <div className="flex flex-col gap-3 sm:flex-row">
