@@ -16,6 +16,7 @@ import {
   updateOverviewSectionAction,
   updatePricingSectionAction,
   updateBannerAdsSectionAction,
+  updateRegisterReferralWhatsappAction,
   updateTestimonialSectionAction,
   updateVideoSectionAction,
 } from "@/app/(protected)/admin/actions";
@@ -33,6 +34,7 @@ type HomepageSettingsViewProps = {
   assets: HomepageAsset[];
   cloudinaryEnabled: boolean;
   content: HomepageContent;
+  registerReferralWhatsapp: string;
   status?: string;
   section?: string;
 };
@@ -249,11 +251,13 @@ export function HomepageSettingsView({
   assets,
   cloudinaryEnabled,
   content,
+  registerReferralWhatsapp,
   section,
   status,
 }: HomepageSettingsViewProps) {
   const [draft, setDraft] = useState(content);
   const [library, setLibrary] = useState(assets);
+  const [registerWhatsapp, setRegisterWhatsapp] = useState(registerReferralWhatsapp);
   const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile">("desktop");
   const [previewPreset, setPreviewPreset] = useState<PreviewPresetKey>("desktop-1440");
 
@@ -1123,6 +1127,32 @@ export function HomepageSettingsView({
                 Placeholder banner disiapkan dengan rasio memanjang agar tetap rapi di desktop dan mobile.
               </p>
               <Button type="submit">Simpan Banner Ads Section</Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        <Card className="scroll-mt-24" id="register-contact-section">
+          <CardHeader>
+            <CardTitle>Register Contact</CardTitle>
+            <CardDescription>
+              Atur nomor WhatsApp admin untuk username sistem <code>register</code>. Nomor ini akan dipakai
+              saat visitor membuka <code>domain/register</code> dan menekan floating WhatsApp.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <SectionAlert currentSection={section} label="Register contact" section="registerContact" status={status} />
+            <form action={updateRegisterReferralWhatsappAction} className="space-y-5">
+              <TextField
+                label="Nomor WhatsApp untuk domain/register"
+                name="whatsapp"
+                onChange={setRegisterWhatsapp}
+                value={registerWhatsapp}
+              />
+              <p className="text-sm leading-6 text-stone-500">
+                Saat disimpan, sistem akan insert/update nomor WhatsApp ke profile <code>register</code> dan
+                memastikan landing page referral khusus ini tetap aktif untuk dipakai sebagai jalur daftar default.
+              </p>
+              <Button type="submit">Simpan Register Contact</Button>
             </form>
           </CardContent>
         </Card>

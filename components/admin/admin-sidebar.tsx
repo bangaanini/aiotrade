@@ -27,6 +27,7 @@ const homepageItems = [
   { href: "/admin?section=testimonial#testimonial-section", label: "Testimoni Section", section: "testimonial" },
   { href: "/admin?section=blog#blog-section", label: "Blog Section", section: "blog" },
   { href: "/admin?section=bannerAds#banner-ads-section", label: "Banner Ads Section", section: "bannerAds" },
+  { href: "/admin?section=registerContact#register-contact-section", label: "Register Contact", section: "registerContact" },
   { href: "/admin?section=footer#footer-section", label: "Footer Section", section: "footer" },
 ] as const;
 

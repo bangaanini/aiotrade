@@ -38,21 +38,21 @@ type MemberStatCard = {
 
 const quickLinks = [
   {
-    description: "Kelola profil akun, status landing page, dan reset password dari satu grup menu.",
+    description: "Kelola profil akun dan landing page.",
     href: "/dashboard/account/profile",
     icon: UserRound,
     label: "Buka menu akun",
     title: "Akun",
   },
   {
-    description: "Masuk ke panduan video untuk mulai, setup bot, materi lanjutan, dan file PDF member.",
+    description: "Panduan video untuk setup bot, materi lanjutan, dan file PDF.",
     href: "/dashboard/guides/activation",
     icon: BookOpen,
     label: "Lihat panduan",
     title: "Panduan",
   },
   {
-    description: "Halaman ini disiapkan untuk fitur lanjutan member pada fase berikutnya.",
+    description: "Lihat masa aktif langganan anda.",
     href: "/dashboard/subscription",
     icon: CreditCard,
     label: "Cek langganan",
@@ -125,7 +125,7 @@ export default async function DashboardPage() {
       <div className="mx-auto max-w-6xl space-y-6">
         <MemberPageHeader
           badge="Dashboard"
-          description="Ini pusat statistik member Anda. Pantau referral, status landing page, dan jumlah materi panduan tanpa bercampur dengan info akun."
+          description="Ini pusat statistik member Anda."
           icon={Sparkles}
           title={`Halo, ${profile.username}`}
         />
@@ -138,7 +138,7 @@ export default async function DashboardPage() {
             <div>
               <h2 className={`text-[1.5rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>Statistik member</h2>
               <p className={`mt-1 text-sm leading-7 ${memberTextSecondaryClass}`}>
-                Ringkasan cepat performa referral dan ketersediaan panduan yang bisa Anda akses saat ini.
+                Ringkasan performa referral dan panduan yang bisa Anda akses saat ini.
               </p>
             </div>
           </div>
@@ -182,9 +182,7 @@ export default async function DashboardPage() {
               </span>
               <div>
                 <h2 className={`text-[1.5rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>Langganan aktif</h2>
-                <p className={`mt-1 text-sm leading-7 ${memberTextSecondaryClass}`}>
-                  Ringkasan paket member yang sedang berjalan di akun ini, lengkap dengan durasi dan masa aksesnya.
-                </p>
+                
               </div>
             </div>
 
@@ -208,10 +206,7 @@ export default async function DashboardPage() {
                       <h3 className={`mt-4 text-[1.7rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>
                         {membership.planLabel}
                       </h3>
-                      <p className={`mt-2 max-w-2xl text-sm leading-7 ${memberTextSecondaryClass}`}>
-                        Paket ini mengikuti transaksi yang benar-benar dipakai saat akun dibuat, jadi informasi durasi
-                        dan masa berlaku tidak lagi memakai angka global yang sama untuk semua member.
-                      </p>
+                      
                     </div>
 
                     <Link
@@ -252,38 +247,7 @@ export default async function DashboardPage() {
                   </div>
                 </article>
 
-                <article className="member-row-surface rounded-[26px] px-5 py-5 sm:px-6 sm:py-6">
-                  <div className="flex items-start gap-3">
-                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[rgba(227,244,253,0.96)] text-sky-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.52)]">
-                      <CreditCard className="h-5 w-5" />
-                    </span>
-                    <div>
-                      <p className={`text-lg font-semibold ${memberTextPrimaryClass}`}>Status membership</p>
-                      <p className={`mt-2 text-sm leading-7 ${memberTextSecondaryClass}`}>
-                        {membership.isLifetime
-                          ? "Akun ini memakai paket lifetime, jadi akses member tetap aktif tanpa tanggal akhir."
-                          : "Akun ini memakai paket berjangka. Anda bisa memantau tanggal berlaku langsung dari dashboard tanpa pindah menu."}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 space-y-3">
-                    <div className="rounded-[22px] bg-white/55 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]">
-                      <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>
-                        Paket
-                      </p>
-                      <p className={`mt-3 text-lg font-semibold ${memberTextPrimaryClass}`}>{membership.planLabel}</p>
-                    </div>
-                    <div className="rounded-[22px] bg-white/55 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]">
-                      <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>
-                        Referensi pembayaran
-                      </p>
-                      <p className={`mt-3 break-all font-mono text-sm font-semibold ${memberTextPrimaryClass}`}>
-                        {membership.paymentReferenceId ?? "-"}
-                      </p>
-                    </div>
-                  </div>
-                </article>
+                
               </div>
             ) : (
               <div className="member-row-surface mt-6 rounded-[26px] px-5 py-5 sm:px-6 sm:py-6">
@@ -314,9 +278,7 @@ export default async function DashboardPage() {
             </span>
             <div>
               <h2 className={`text-[1.5rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>Akses cepat</h2>
-              <p className={`mt-1 text-sm leading-7 ${memberTextSecondaryClass}`}>
-                Navigasi utama dipisahkan jelas: statistik di dashboard, detail di menu akun, dan materi belajar di menu panduan.
-              </p>
+              
             </div>
           </div>
 

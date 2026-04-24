@@ -1,6 +1,7 @@
 import "server-only";
 
 import { prisma } from "@/lib/prisma";
+import { HIDDEN_ADMIN_TABLE_USERNAMES } from "@/lib/username-rules";
 
 export type AdminUserRow = {
   email: string | null;
@@ -53,8 +54,10 @@ export async function getAdminUsers() {
     ORDER BY p."username" ASC
   `;
 
-  return rows.map((row) => ({
-    ...row,
-    referralCount: Number(row.referralCount),
-  })) satisfies AdminUserRow[];
+  return rows
+    .filter((row) => !HIDDEN_ADMIN_TABLE_USERNAMES.has(row.username))
+    .map((row) => ({
+      ...row,
+      referralCount: Number(row.referralCount),
+    })) satisfies AdminUserRow[];
 }

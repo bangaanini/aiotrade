@@ -9,7 +9,7 @@ import {
 } from "@/components/dashboard/member-ui";
 import { requireCurrentProfile } from "@/lib/auth";
 import { getMemberSubscription } from "@/lib/member-subscription";
-import { formatIdrCurrency } from "@/lib/payment-gateway-config";
+
 import { getPublicSignupPaymentSettings } from "@/lib/payment-gateway-settings";
 
 function formatMembershipDate(value: Date | null) {
@@ -53,10 +53,10 @@ export default async function DashboardSubscriptionPage() {
   return (
     <div className="space-y-6 px-4 py-6 sm:px-5 lg:px-6 lg:py-8">
       <MemberPageHeader
-        badge="Langganan"
-        description="Di sini Anda bisa melihat paket yang benar-benar aktif pada akun ini, lengkap dengan durasi dan masa berlakunya."
+        badge="Subscrption"
+        description="Lihat status subscription anda."
         icon={CreditCard}
-        title="Langganan member"
+        title="Member Subscription"
         toneClassName="bg-[linear-gradient(135deg,rgba(245,158,11,0.12)_0%,rgba(255,255,255,0)_44%,rgba(168,85,247,0.09)_100%)]"
       />
 
@@ -67,9 +67,7 @@ export default async function DashboardSubscriptionPage() {
           </span>
           <div>
             <h2 className={`text-[1.55rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>Paket akun Anda</h2>
-            <p className={`mt-2 max-w-3xl text-sm leading-7 ${memberTextSecondaryClass}`}>
-              Informasi ini mengikuti paket yang benar-benar dipakai saat akun Anda dibuat, bukan paket global untuk semua member.
-            </p>
+            
           </div>
         </div>
 
@@ -147,51 +145,7 @@ export default async function DashboardSubscriptionPage() {
           </div>
         )}
 
-        <div className="mt-6">
-          <div className="flex items-start gap-3">
-            <span className={memberIconSurfaceClass}>
-              <CalendarRange className="h-5 w-5" />
-            </span>
-            <div>
-              <h3 className={`text-[1.2rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>Paket yang tersedia</h3>
-              <p className={`mt-2 text-sm leading-7 ${memberTextSecondaryClass}`}>
-                Daftar ini mengikuti pengaturan admin. Paket aktif akun Anda akan ditandai jika ada yang sesuai.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-5 grid gap-4 lg:grid-cols-3">
-            {paymentSettings.plans.map((plan) => {
-              const isActivePlan = membership?.planId === plan.id;
-
-              return (
-                <article className={`${memberGlassRowClass} rounded-[24px] px-5 py-5`} key={plan.id}>
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className={`text-lg font-semibold ${memberTextPrimaryClass}`}>{plan.label}</p>
-                      <p className={`mt-2 text-sm leading-7 ${memberTextSecondaryClass}`}>{plan.description}</p>
-                    </div>
-                    {isActivePlan ? (
-                      <span className="rounded-full bg-[rgba(227,244,253,0.96)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-sky-800">
-                        Paket Anda
-                      </span>
-                    ) : null}
-                  </div>
-
-                  <div className="mt-5 flex items-center justify-between gap-3">
-                    <div className={`text-2xl font-semibold ${memberTextPrimaryClass}`}>
-                      {formatIdrCurrency(plan.price)}
-                    </div>
-                    <div className={`inline-flex items-center gap-2 text-sm ${memberTextSecondaryClass}`}>
-                      {plan.isLifetime ? <Infinity className="h-4 w-4" /> : <CalendarRange className="h-4 w-4" />}
-                      {formatPlanDuration(plan.durationMonths, plan.isLifetime)}
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        </div>
+        
       </section>
     </div>
   );

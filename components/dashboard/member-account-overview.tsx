@@ -1,6 +1,7 @@
 import { Link2, Mail, MessageCircle, UserRound, Users } from "lucide-react";
 import { requireCurrentProfile } from "@/lib/auth";
 import { extractMemberIdFromReferralLink } from "@/lib/member-id";
+import { SPECIAL_REFERRAL_USERNAMES } from "@/lib/username-rules";
 import {
   memberGlassPanelClass,
   memberGlassRowClass,
@@ -15,12 +16,19 @@ type CurrentProfile = Awaited<ReturnType<typeof requireCurrentProfile>>;
 
 export function MemberAccountOverview({ profile }: { profile: CurrentProfile }) {
   const memberId = extractMemberIdFromReferralLink(profile.referralLink);
+  const normalizedReferredBy = profile.referredBy?.trim().toLowerCase() ?? null;
+  const referredByLabel =
+    normalizedReferredBy && !SPECIAL_REFERRAL_USERNAMES.has(normalizedReferredBy)
+      ? `@${profile.referredBy}`
+      : normalizedReferredBy
+        ? "-"
+        : "Direct signup";
 
   return (
     <div className="space-y-6 px-4 py-6 sm:px-5 lg:px-6 lg:py-8">
       <MemberPageHeader
         badge="Akun Member"
-        description="Informasi utama akun Anda dirapikan di sini supaya lebih mudah dicek kapan pun dibutuhkan."
+        description="Informasi utama akun Anda."
         icon={UserRound}
         title="Profil akun"
         toneClassName="bg-[linear-gradient(135deg,rgba(59,130,246,0.12)_0%,rgba(255,255,255,0)_44%,rgba(16,185,129,0.1)_100%)]"
@@ -84,7 +92,7 @@ export function MemberAccountOverview({ profile }: { profile: CurrentProfile }) 
               <div>
                 <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>Referred By</p>
                 <p className={`mt-2 text-lg font-semibold ${memberTextPrimaryClass}`}>
-                  {profile.referredBy ? `@${profile.referredBy}` : "Direct signup"}
+                  {referredByLabel}
                 </p>
               </div>
             </div>

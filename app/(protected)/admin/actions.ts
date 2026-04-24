@@ -6,6 +6,7 @@ import { sectionBackgroundSchema } from "@/lib/homepage-backgrounds";
 import { normalizeMemberGuideVideoUrl } from "@/lib/member-guide-utils";
 import { requireAdminProfile } from "@/lib/auth";
 import { updateHomepageContentSection } from "@/lib/homepage-content";
+import { upsertRegisterReferralWhatsapp } from "@/lib/register-referral-profile";
 
 function readString(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
@@ -180,6 +181,10 @@ const footerSchema = z.object({
       href: z.string().min(1),
     }),
   ),
+});
+
+const registerReferralWhatsappSchema = z.object({
+  whatsapp: z.string().min(1),
 });
 
 export async function updateHeroSectionAction(formData: FormData) {
@@ -430,6 +435,21 @@ export async function updateFooterSectionAction(formData: FormData) {
 
   await updateHomepageContentSection("footer", parsed.data);
   redirectToSection("footer", "saved");
+}
+
+export async function updateRegisterReferralWhatsappAction(formData: FormData) {
+  await requireAdminProfile();
+
+  const parsed = registerReferralWhatsappSchema.safeParse({
+    whatsapp: readString(formData, "whatsapp"),
+  });
+
+  if (!parsed.success) {
+    redirectToSection("registerContact", "error");
+  }
+
+  await upsertRegisterReferralWhatsapp(parsed.data.whatsapp);
+  redirectToSection("registerContact", "saved");
 }
 
 export async function assertAdminActionAccess() {

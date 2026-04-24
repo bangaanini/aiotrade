@@ -13,6 +13,7 @@ export const RESERVED_USERNAMES = new Set([
 ]);
 
 export const SPECIAL_REFERRAL_USERNAMES = new Set(["register"]);
+export const HIDDEN_ADMIN_TABLE_USERNAMES = new Set(["admin", "mentor", "register"]);
 
 export function normalizeUsername(value: string) {
   return value.trim().toLowerCase();

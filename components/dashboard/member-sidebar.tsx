@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 
 type MemberSidebarProps = {
   isAdmin: boolean;
+  onNavigate?: () => void;
   onThemeChange: (theme: MemberTheme) => void;
   pathname: string;
   theme: MemberTheme;
@@ -43,7 +44,7 @@ const accountItems = [
   { href: "/dashboard/account/reset-password", label: "Reset Password" },
 ] as const;
 
-export function MemberSidebar({ isAdmin, onThemeChange, pathname, theme, username }: MemberSidebarProps) {
+export function MemberSidebar({ isAdmin, onNavigate, onThemeChange, pathname, theme, username }: MemberSidebarProps) {
   const resolvedPathname = usePathname() ?? pathname;
   const isGuidesRoute = resolvedPathname.startsWith("/dashboard/guides");
   const isAccountRoute =
@@ -87,6 +88,7 @@ export function MemberSidebar({ isAdmin, onThemeChange, pathname, theme, usernam
                 )}
                 href={item.href}
                 key={item.href}
+                onClick={onNavigate}
                 style={active ? { background: "var(--member-sidebar-active-bg)", boxShadow: "var(--member-sidebar-active-shadow)" } : undefined}
               >
                 <span
@@ -180,6 +182,7 @@ export function MemberSidebar({ isAdmin, onThemeChange, pathname, theme, usernam
                         )}
                         href={item.href}
                         key={item.href}
+                        onClick={onNavigate}
                         style={active ? { background: "var(--member-soft-button-hover-bg)", boxShadow: "var(--member-soft-button-hover-shadow)" } : undefined}
                       >
                         {active ? (
@@ -254,6 +257,7 @@ export function MemberSidebar({ isAdmin, onThemeChange, pathname, theme, usernam
                         )}
                         href={item.href}
                         key={item.href}
+                        onClick={onNavigate}
                         style={active ? { background: "var(--member-soft-button-hover-bg)", boxShadow: "var(--member-soft-button-hover-shadow)" } : undefined}
                       >
                         {active ? (
@@ -282,6 +286,7 @@ export function MemberSidebar({ isAdmin, onThemeChange, pathname, theme, usernam
           <Link
             className="member-admin-link mt-3 inline-flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold transition duration-300 hover:-translate-y-0.5"
             href="/admin"
+            onClick={onNavigate}
           >
             <Settings2 className="h-4 w-4" />
             Admin Panel
@@ -291,6 +296,7 @@ export function MemberSidebar({ isAdmin, onThemeChange, pathname, theme, usernam
         <form action={logoutAction}>
           <button
             className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-[var(--member-row-border)] px-4 py-3 text-sm font-medium text-[var(--member-text-primary)] transition duration-300"
+            onClick={onNavigate}
             style={{
               background: "var(--member-soft-button-bg)",
               boxShadow: "var(--member-soft-button-shadow)",
