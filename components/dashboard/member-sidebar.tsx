@@ -14,11 +14,17 @@ import {
 } from "lucide-react";
 import { logoutAction } from "@/app/(protected)/account/actions";
 import { MemberThemeToggle } from "@/components/dashboard/member-theme-toggle";
+import { SiteLanguageSelector } from "@/components/shared/site-language-selector";
+import { defaultMemberShellLabels, type MemberShellLabels } from "@/lib/member-shell-labels";
 import type { MemberTheme } from "@/lib/member-theme";
+import type { SiteLanguage, SiteLanguageOption } from "@/lib/site-language";
 import { cn } from "@/lib/utils";
 
 type MemberSidebarProps = {
+  currentLanguage: SiteLanguage;
   isAdmin: boolean;
+  labels?: MemberShellLabels;
+  languageOptions: SiteLanguageOption[];
   onNavigate?: () => void;
   onThemeChange: (theme: MemberTheme) => void;
   pathname: string;
@@ -26,25 +32,17 @@ type MemberSidebarProps = {
   username: string;
 };
 
-const primaryItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/dashboard/subscription", label: "Langganan", icon: CreditCard },
-] as const;
-
-const guideItems = [
-  { href: "/dashboard/guides/start", label: "Mulai" },
-  { href: "/dashboard/guides/activation", label: "Setup Bot" },
-  { href: "/dashboard/guides/bot-settings", label: "Materi Lanjutan" },
-  { href: "/dashboard/guides/files", label: "File PDF" },
-] as const;
-
-const accountItems = [
-  { href: "/dashboard/account/profile", label: "Profil" },
-  { href: "/dashboard/account/landing-page", label: "Landing Page" },
-  { href: "/dashboard/account/reset-password", label: "Reset Password" },
-] as const;
-
-export function MemberSidebar({ isAdmin, onNavigate, onThemeChange, pathname, theme, username }: MemberSidebarProps) {
+export function MemberSidebar({
+  currentLanguage,
+  isAdmin,
+  labels = defaultMemberShellLabels,
+  languageOptions,
+  onNavigate,
+  onThemeChange,
+  pathname,
+  theme,
+  username,
+}: MemberSidebarProps) {
   const resolvedPathname = usePathname() ?? pathname;
   const isGuidesRoute = resolvedPathname.startsWith("/dashboard/guides");
   const isAccountRoute =
@@ -53,6 +51,21 @@ export function MemberSidebar({ isAdmin, onNavigate, onThemeChange, pathname, th
   const [accountExpanded, setAccountExpanded] = useState(isAccountRoute);
   const guidesOpen = isGuidesRoute || guidesExpanded;
   const accountOpen = isAccountRoute || accountExpanded;
+  const primaryItems = [
+    { href: "/dashboard", label: labels.primaryItems.dashboard, icon: LayoutDashboard },
+    { href: "/dashboard/subscription", label: labels.primaryItems.subscription, icon: CreditCard },
+  ] as const;
+  const guideItems = [
+    { href: "/dashboard/guides/start", label: labels.guideItems.start },
+    { href: "/dashboard/guides/activation", label: labels.guideItems.setupBot },
+    { href: "/dashboard/guides/bot-settings", label: labels.guideItems.strategy },
+    { href: "/dashboard/guides/files", label: labels.guideItems.files },
+  ] as const;
+  const accountItems = [
+    { href: "/dashboard/account/profile", label: labels.accountItems.profile },
+    { href: "/dashboard/account/landing-page", label: labels.accountItems.landingPage },
+    { href: "/dashboard/account/reset-password", label: labels.accountItems.resetPassword },
+  ] as const;
 
   return (
     <div className="member-glass-panel flex h-full flex-col rounded-[30px] backdrop-blur-3xl">
@@ -60,13 +73,22 @@ export function MemberSidebar({ isAdmin, onNavigate, onThemeChange, pathname, th
         <div className="flex items-start justify-between gap-3">
           <div className="member-page-badge inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.24em]">
             <LayoutDashboard className="h-3.5 w-3.5" />
-            Member Area
+            {labels.memberArea}
           </div>
-          <MemberThemeToggle onChange={onThemeChange} theme={theme} />
+          <div className="flex items-center gap-2">
+            <SiteLanguageSelector
+              currentLanguage={currentLanguage}
+              languages={languageOptions}
+              variant="member"
+            />
+            <MemberThemeToggle onChange={onThemeChange} theme={theme} />
+          </div>
         </div>
-        <h1 className="mt-5 text-[1.65rem] font-semibold tracking-tight text-[var(--member-text-primary)]">Dashboard Member</h1>
+        <h1 className="mt-5 text-[1.65rem] font-semibold tracking-tight text-[var(--member-text-primary)]">
+          {labels.sidebarTitle}
+        </h1>
         <p className="mt-2 max-w-[16rem] text-sm leading-6 text-[var(--member-text-secondary)]">
-          Akses informasi akun dan panduan.
+          {labels.sidebarDescription}
         </p>
       </div>
 
@@ -156,7 +178,7 @@ export function MemberSidebar({ isAdmin, onNavigate, onThemeChange, pathname, th
                 >
                   <BookOpen className="h-4 w-4" />
                 </span>
-                Panduan
+                {labels.guideGroup}
               </span>
               <ChevronDown className={cn("relative z-10 h-4 w-4 transition-transform duration-300", guidesOpen && "rotate-180")} />
             </button>
@@ -231,7 +253,7 @@ export function MemberSidebar({ isAdmin, onNavigate, onThemeChange, pathname, th
                 >
                   <UserRound className="h-4 w-4" />
                 </span>
-                Akun
+                {labels.accountGroup}
               </span>
               <ChevronDown className={cn("relative z-10 h-4 w-4 transition-transform duration-300", accountOpen && "rotate-180")} />
             </button>
@@ -277,7 +299,7 @@ export function MemberSidebar({ isAdmin, onNavigate, onThemeChange, pathname, th
       <div className="px-5 pb-5">
         <div className="member-glass-row rounded-[24px] px-4 py-4">
           <p className="text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-[var(--member-text-muted)]">
-            Login sebagai
+            {labels.loginAs}
           </p>
           <p className="mt-2 text-base font-semibold text-[var(--member-text-primary)]">@{username}</p>
         </div>
@@ -289,7 +311,7 @@ export function MemberSidebar({ isAdmin, onNavigate, onThemeChange, pathname, th
             onClick={onNavigate}
           >
             <Settings2 className="h-4 w-4" />
-            Admin Panel
+            {labels.adminPanel}
           </Link>
         ) : null}
 
@@ -304,7 +326,7 @@ export function MemberSidebar({ isAdmin, onNavigate, onThemeChange, pathname, th
             type="submit"
           >
             <LogOut className="h-4 w-4" />
-            Log out
+            {labels.logout}
           </button>
         </form>
       </div>

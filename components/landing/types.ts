@@ -1,5 +1,7 @@
 import type { StaticImageData } from "next/image";
 import type { LucideIcon } from "lucide-react";
+import type { LandingTheme } from "@/lib/landing-theme";
+import type { SiteLanguage, SiteLanguageOption } from "@/lib/site-language";
 
 export type LandingPageUIProps = {
   banner?: string;
@@ -8,6 +10,10 @@ export type LandingPageUIProps = {
   ctaHref: string;
   ctaExternal?: boolean;
   ctaLabel?: string;
+  currentLanguage?: SiteLanguage;
+  initialTheme?: LandingTheme;
+  languageOptions?: SiteLanguageOption[];
+  navItems?: NavItem[];
   previewMode?: boolean;
   signupCtaExternal?: boolean;
   signupCtaHref?: string;

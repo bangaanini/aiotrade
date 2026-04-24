@@ -35,7 +35,7 @@ export const navItems: NavItem[] = [
   { label: "Feature", href: "#fitur", accent: "#10a7ff" },
   { label: "Harga", href: "#harga", accent: "#ffc84a" },
   { label: "FAQ", href: "#faq", accent: "#38bdf8" },
-  { label: "User Guide", href: "#panduan", accent: "#2563eb" },
+  { label: "Guide", href: "#panduan", accent: "#2563eb" },
   { label: "Blog", href: "#blog", accent: "#f6be4f" },
 ];
 

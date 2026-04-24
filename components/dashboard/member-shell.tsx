@@ -3,13 +3,19 @@
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { MemberSidebar } from "@/components/dashboard/member-sidebar";
+import { SiteLanguageSelector } from "@/components/shared/site-language-selector";
+import { defaultMemberShellLabels, type MemberShellLabels } from "@/lib/member-shell-labels";
 import { MEMBER_THEME_COOKIE, type MemberTheme } from "@/lib/member-theme";
+import type { SiteLanguage, SiteLanguageOption } from "@/lib/site-language";
 import { cn } from "@/lib/utils";
 
 type MemberShellProps = {
   children: React.ReactNode;
+  currentLanguage: SiteLanguage;
   initialTheme: MemberTheme;
   isAdmin: boolean;
+  labels?: MemberShellLabels;
+  languageOptions: SiteLanguageOption[];
   pathname: string;
   username: string;
 };
@@ -18,54 +24,63 @@ function setThemeCookie(theme: MemberTheme) {
   document.cookie = `${MEMBER_THEME_COOKIE}=${theme}; path=/dashboard; max-age=31536000; samesite=lax`;
 }
 
-function getMobileHeaderTitle(pathname: string) {
+function getMobileHeaderTitle(pathname: string, labels: MemberShellLabels) {
   if (pathname === "/dashboard") {
-    return "Dashboard";
+    return labels.mobileTitles.dashboard;
   }
 
   if (pathname === "/dashboard/subscription") {
-    return "Langganan";
+    return labels.mobileTitles.subscription;
   }
 
   if (pathname === "/dashboard/guides/start") {
-    return "Panduan: Mulai";
+    return labels.mobileTitles.guideStart;
   }
 
   if (pathname === "/dashboard/guides/activation") {
-    return "Panduan: Setup Bot";
+    return labels.mobileTitles.guideSetupBot;
   }
 
   if (pathname === "/dashboard/guides/bot-settings") {
-    return "Panduan: Materi Lanjutan";
+    return labels.mobileTitles.guideStrategy;
   }
 
   if (pathname === "/dashboard/guides/files" || pathname === "/dashboard/guides") {
-    return "Panduan: File PDF";
+    return labels.mobileTitles.guideFiles;
   }
 
   if (pathname === "/dashboard/account/profile" || pathname === "/dashboard/account") {
-    return "Akun: Profil";
+    return labels.mobileTitles.accountProfile;
   }
 
   if (pathname === "/dashboard/account/landing-page") {
-    return "Akun: Landing Page";
+    return labels.mobileTitles.accountLandingPage;
   }
 
   if (
     pathname === "/dashboard/account/reset-password" ||
     pathname === "/dashboard/reset-password"
   ) {
-    return "Akun: Reset Password";
+    return labels.mobileTitles.accountResetPassword;
   }
 
-  return "Dashboard Member";
+  return labels.mobileTitles.fallback;
 }
 
-export function MemberShell({ children, initialTheme, isAdmin, pathname, username }: MemberShellProps) {
+export function MemberShell({
+  children,
+  currentLanguage,
+  initialTheme,
+  isAdmin,
+  labels = defaultMemberShellLabels,
+  languageOptions,
+  pathname,
+  username,
+}: MemberShellProps) {
   const [theme, setTheme] = useState<MemberTheme>(initialTheme);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [mobileHeaderScrolled, setMobileHeaderScrolled] = useState(false);
-  const mobileHeaderTitle = getMobileHeaderTitle(pathname);
+  const mobileHeaderTitle = getMobileHeaderTitle(pathname, labels);
 
   function handleThemeChange(nextTheme: MemberTheme) {
     setTheme(nextTheme);
@@ -134,19 +149,26 @@ export function MemberShell({ children, initialTheme, isAdmin, pathname, usernam
         >
           <div>
             <p className="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-[var(--member-text-muted)]">
-              Member Area
+              {labels.memberArea}
             </p>
             <p className="mt-1 text-base font-semibold text-[var(--member-text-primary)]">{mobileHeaderTitle}</p>
           </div>
-          <button
-            aria-expanded={mobileSidebarOpen}
-            aria-label={mobileSidebarOpen ? "Tutup menu" : "Buka menu"}
-            className="member-row-surface inline-flex h-11 w-11 items-center justify-center rounded-2xl text-[var(--member-text-primary)] transition"
-            onClick={() => setMobileSidebarOpen((current) => !current)}
-            type="button"
-          >
-            {mobileSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          <div className="flex items-center gap-2">
+            <SiteLanguageSelector
+              currentLanguage={currentLanguage}
+              languages={languageOptions}
+              variant="member"
+            />
+            <button
+              aria-expanded={mobileSidebarOpen}
+              aria-label={mobileSidebarOpen ? labels.closeMenu : labels.openMenu}
+              className="member-row-surface inline-flex h-11 w-11 items-center justify-center rounded-2xl text-[var(--member-text-primary)] transition"
+              onClick={() => setMobileSidebarOpen((current) => !current)}
+              type="button"
+            >
+              {mobileSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
 
         <div
@@ -166,6 +188,9 @@ export function MemberShell({ children, initialTheme, isAdmin, pathname, usernam
           <div className="h-full lg:sticky lg:top-6 lg:h-[calc(100vh-3rem)]">
             <MemberSidebar
               isAdmin={isAdmin}
+              currentLanguage={currentLanguage}
+              labels={labels}
+              languageOptions={languageOptions}
               onNavigate={() => setMobileSidebarOpen(false)}
               onThemeChange={handleThemeChange}
               pathname={pathname}

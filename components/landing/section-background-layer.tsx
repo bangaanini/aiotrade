@@ -1,12 +1,5 @@
 import type { CSSProperties } from "react";
 import type { BackgroundPaletteKey, SectionBackgroundConfig } from "@/components/landing/types";
-import {
-  hexToRgba,
-  resolveImageUrl,
-  resolveOverlayColor,
-  resolveOverlayOpacity,
-  resolvePaletteBaseColor,
-} from "@/lib/homepage-backgrounds";
 
 type SectionBackgroundLayerProps = {
   config: SectionBackgroundConfig;
@@ -29,37 +22,14 @@ export function SectionBackgroundLayer({
   overlayClassName,
   paletteClassName,
 }: SectionBackgroundLayerProps) {
-  const resolvedImageUrl = resolveImageUrl(config, fallbackImageUrl);
-  const resolvedBaseColor = resolvePaletteBaseColor(config, fallbackPreset);
-  const resolvedOverlay = hexToRgba(
-    resolveOverlayColor(config, fallbackPreset, fallbackOverlayColor),
-    resolveOverlayOpacity(config, fallbackOverlayOpacity),
-  );
+  void config;
+  void fallbackImageUrl;
+  void fallbackOverlayColor;
+  void fallbackOverlayOpacity;
+  void fallbackPreset;
+  const className = imageClassName ?? overlayClassName ?? paletteClassName ?? "absolute inset-0";
 
   return (
-    <>
-      {config.mode === "image" && resolvedImageUrl ? (
-        <>
-          <div
-            className={imageClassName ?? "absolute inset-0 bg-cover bg-center bg-no-repeat"}
-            style={
-              {
-                backgroundImage: `url("${resolvedImageUrl}")`,
-              } as CSSProperties
-            }
-          />
-          <div
-            className={overlayClassName ?? "absolute inset-0"}
-            style={{ backgroundColor: resolvedOverlay }}
-          />
-        </>
-      ) : (
-        <div
-          className={paletteClassName ?? "absolute inset-0"}
-          style={{ backgroundColor: resolvedBaseColor }}
-        />
-      )}
-    </>
+    <div className={`${className} landing-section-background`} style={{} as CSSProperties} />
   );
 }
-

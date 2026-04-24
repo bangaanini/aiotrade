@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import Link from "next/link";
 import {
   ArrowUpRight,
@@ -17,7 +18,9 @@ import {
 } from "lucide-react";
 import { requireCurrentProfile } from "@/lib/auth";
 import { getMemberDashboardStats } from "@/lib/member-dashboard-stats";
+import { translateSimpleMemberCopy } from "@/lib/member-translations";
 import { getMemberSubscription } from "@/lib/member-subscription";
+import { parseSiteLanguage, SITE_LANGUAGE_COOKIE } from "@/lib/site-language";
 import {
   memberGlassPanelClass,
   memberIconSurfaceClass,
@@ -36,81 +39,132 @@ type MemberStatCard = {
   valueIcon?: LucideIcon;
 };
 
-const quickLinks = [
-  {
-    description: "Kelola profil akun dan landing page.",
-    href: "/dashboard/account/profile",
-    icon: UserRound,
-    label: "Buka menu akun",
-    title: "Akun",
-  },
-  {
-    description: "Panduan video untuk setup bot, materi lanjutan, dan file PDF.",
-    href: "/dashboard/guides/activation",
-    icon: BookOpen,
-    label: "Lihat panduan",
-    title: "Panduan",
-  },
-  {
-    description: "Lihat masa aktif langganan anda.",
-    href: "/dashboard/subscription",
-    icon: CreditCard,
-    label: "Cek langganan",
-    title: "Langganan",
-  },
-] as const;
-
-function formatMembershipDate(value: Date | null) {
+function formatMembershipDate(value: Date | null, language: string) {
   if (!value) {
     return "-";
   }
 
-  return new Intl.DateTimeFormat("id-ID", {
+  return new Intl.DateTimeFormat(language, {
     dateStyle: "long",
   }).format(value);
 }
 
-function formatPlanDuration(durationMonths: number, isLifetime: boolean) {
+function formatPlanDuration(durationMonths: number, isLifetime: boolean, labels: { lifetime: string; months: string }) {
   if (isLifetime) {
-    return "Lifetime";
+    return labels.lifetime;
   }
 
-  return `${durationMonths} bulan`;
+  return `${durationMonths} ${labels.months}`;
 }
 
 export default async function DashboardPage() {
-  const profile = await requireCurrentProfile();
-  const [stats, membership] = await Promise.all([
+  const [profile, cookieStore] = await Promise.all([requireCurrentProfile(), cookies()]);
+  const currentLanguage = parseSiteLanguage(cookieStore.get(SITE_LANGUAGE_COOKIE)?.value);
+  const [stats, membership, copy] = await Promise.all([
     getMemberDashboardStats({
       isLpActive: profile.isLpActive,
       username: profile.username,
     }),
     getMemberSubscription(profile.id),
+    translateSimpleMemberCopy(
+      {
+        active: "Aktif",
+        activeUntil: "Berlaku sampai",
+        badge: "Dashboard",
+        dashboardDescription: "Ini pusat statistik member Anda.",
+        detailSubscription: "Detail langganan",
+        duration: "Durasi paket",
+        emptyMembershipBody:
+          "Saat ini akun Anda belum memiliki membership yang tercatat. Data paket akan muncul otomatis di sini setelah pendaftaran dan pembayaran selesai.",
+        emptyMembershipTitle: "Belum ada data langganan",
+        fallbackOpenSubscription: "Buka menu langganan",
+        greeting: "Halo",
+        inactive: "Inactive",
+        landingPage: "Landing Page",
+        lifetime: "Lifetime",
+        months: "bulan",
+        membershipTitle: "Langganan aktif",
+        quickAccess: "Akses cepat",
+        quickAccountDescription: "Kelola profil akun dan landing page.",
+        quickAccountLabel: "Buka menu akun",
+        quickAccountTitle: "Akun",
+        quickGuideDescription: "Panduan video untuk setup bot, materi lanjutan, dan file PDF.",
+        quickGuideLabel: "Lihat panduan",
+        quickGuideTitle: "Panduan",
+        quickSubscriptionDescription: "Lihat masa aktif langganan anda.",
+        quickSubscriptionLabel: "Cek langganan",
+        quickSubscriptionTitle: "Langganan",
+        referralCount: "Referral Masuk",
+        startedAt: "Mulai aktif",
+        statsBody: "Ringkasan performa referral dan panduan yang bisa Anda akses saat ini.",
+        statsTitle: "Statistik member",
+        totalGuides: "Total Panduan",
+        videoPdf: "Video / PDF",
+        yesLifetime: "Lifetime",
+        yourMembership: "Langganan aktif",
+      },
+      currentLanguage,
+    ),
   ]);
+  const translatedMembershipCopy =
+    membership
+      ? await translateSimpleMemberCopy(
+          {
+            description: membership.isLifetime
+              ? "Akses tanpa batas waktu."
+              : `Akses aktif selama ${formatPlanDuration(membership.durationMonths, membership.isLifetime, copy)}.`,
+            planLabel: membership.planLabel,
+          },
+          currentLanguage,
+        )
+      : null;
+  const quickLinks = [
+    {
+      description: copy.quickAccountDescription,
+      href: "/dashboard/account/profile",
+      icon: UserRound,
+      label: copy.quickAccountLabel,
+      title: copy.quickAccountTitle,
+    },
+    {
+      description: copy.quickGuideDescription,
+      href: "/dashboard/guides/activation",
+      icon: BookOpen,
+      label: copy.quickGuideLabel,
+      title: copy.quickGuideTitle,
+    },
+    {
+      description: copy.quickSubscriptionDescription,
+      href: "/dashboard/subscription",
+      icon: CreditCard,
+      label: copy.quickSubscriptionLabel,
+      title: copy.quickSubscriptionTitle,
+    },
+  ] as const;
 
   const statCards: MemberStatCard[] = [
     {
       accentClassName: "bg-sky-500/12 text-sky-700",
       icon: Users,
-      label: "Referral Masuk",
+      label: copy.referralCount,
       value: String(stats.referralCount),
     },
     {
       accentClassName: stats.landingPageActive ? "bg-emerald-500/12 text-emerald-700" : "bg-slate-400/14 text-slate-700",
       icon: Link2,
-      label: "Landing Page",
-      value: stats.landingPageActive ? "Active" : "Inactive",
+      label: copy.landingPage,
+      value: stats.landingPageActive ? copy.active : copy.inactive,
     },
     {
       accentClassName: "bg-amber-500/12 text-amber-700",
       icon: BookOpen,
-      label: "Total Panduan",
+      label: copy.totalGuides,
       value: String(stats.publishedGuideCount),
     },
     {
       accentClassName: "bg-violet-500/12 text-violet-700",
       icon: PlayCircle,
-      label: "Video / PDF",
+      label: copy.videoPdf,
       value: `${stats.publishedVideoCount} / ${stats.publishedPdfCount}`,
       valueIcon: FileText,
     },
@@ -124,10 +178,10 @@ export default async function DashboardPage() {
     <main className="flex-1 px-4 py-6 sm:px-5 lg:px-6 lg:py-8">
       <div className="mx-auto max-w-6xl space-y-6">
         <MemberPageHeader
-          badge="Dashboard"
-          description="Ini pusat statistik member Anda."
+          badge={copy.badge}
+          description={copy.dashboardDescription}
           icon={Sparkles}
-          title={`Halo, ${profile.username}`}
+          title={`${copy.greeting}, ${profile.username}`}
         />
 
         <section className={`px-6 py-6 sm:px-7 sm:py-7 ${memberGlassPanelClass}`}>
@@ -136,9 +190,9 @@ export default async function DashboardPage() {
               <Sparkles className="h-5 w-5" />
             </span>
             <div>
-              <h2 className={`text-[1.5rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>Statistik member</h2>
+              <h2 className={`text-[1.5rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>{copy.statsTitle}</h2>
               <p className={`mt-1 text-sm leading-7 ${memberTextSecondaryClass}`}>
-                Ringkasan performa referral dan panduan yang bisa Anda akses saat ini.
+                {copy.statsBody}
               </p>
             </div>
           </div>
@@ -181,7 +235,7 @@ export default async function DashboardPage() {
                 <CreditCard className="h-5 w-5" />
               </span>
               <div>
-                <h2 className={`text-[1.5rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>Langganan aktif</h2>
+                <h2 className={`text-[1.5rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>{copy.membershipTitle}</h2>
                 
               </div>
             </div>
@@ -194,26 +248,28 @@ export default async function DashboardPage() {
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="inline-flex items-center gap-2 rounded-full bg-emerald-500/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">
                           <CheckCircle2 className="h-3.5 w-3.5" />
-                          Aktif
+                          {copy.active}
                         </span>
                         {membership.isLifetime ? (
                           <span className="inline-flex items-center gap-2 rounded-full bg-sky-500/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">
                             <Infinity className="h-3.5 w-3.5" />
-                            Lifetime
+                            {copy.yesLifetime}
                           </span>
                         ) : null}
                       </div>
                       <h3 className={`mt-4 text-[1.7rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>
-                        {membership.planLabel}
+                        {translatedMembershipCopy?.planLabel ?? membership.planLabel}
                       </h3>
-                      
+                      <p className={`mt-2 text-sm leading-7 ${memberTextSecondaryClass}`}>
+                        {translatedMembershipCopy?.description}
+                      </p>
                     </div>
 
                     <Link
                       className={`${memberSolidButtonClass} h-11 px-4`}
                       href="/dashboard/subscription"
                     >
-                      Detail langganan
+                      {copy.detailSubscription}
                       <ArrowUpRight className="h-4 w-4" />
                     </Link>
                   </div>
@@ -221,27 +277,27 @@ export default async function DashboardPage() {
                   <div className="mt-6 grid gap-3 sm:grid-cols-3">
                     <div className="rounded-[22px] bg-white/55 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]">
                       <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>
-                        Durasi paket
+                        {copy.duration}
                       </p>
                       <div className={`mt-3 inline-flex items-center gap-2 text-lg font-semibold ${memberTextPrimaryClass}`}>
                         {membership.isLifetime ? <Infinity className="h-4 w-4" /> : <CalendarRange className="h-4 w-4" />}
-                        {formatPlanDuration(membership.durationMonths, membership.isLifetime)}
+                        {formatPlanDuration(membership.durationMonths, membership.isLifetime, copy)}
                       </div>
                     </div>
                     <div className="rounded-[22px] bg-white/55 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]">
                       <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>
-                        Mulai aktif
+                        {copy.startedAt}
                       </p>
                       <p className={`mt-3 text-lg font-semibold ${memberTextPrimaryClass}`}>
-                        {formatMembershipDate(membership.startedAt)}
+                        {formatMembershipDate(membership.startedAt, currentLanguage)}
                       </p>
                     </div>
                     <div className="rounded-[22px] bg-white/55 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]">
                       <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>
-                        {membership.isLifetime ? "Masa akses" : "Berlaku sampai"}
+                        {membership.isLifetime ? copy.lifetime : copy.activeUntil}
                       </p>
                       <p className={`mt-3 text-lg font-semibold ${memberTextPrimaryClass}`}>
-                        {membership.isLifetime ? "Seumur hidup" : formatMembershipDate(membership.expiresAt)}
+                        {membership.isLifetime ? copy.lifetime : formatMembershipDate(membership.expiresAt, currentLanguage)}
                       </p>
                     </div>
                   </div>
@@ -254,15 +310,14 @@ export default async function DashboardPage() {
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                   <div>
                     <h3 className={`text-[1.35rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>
-                      Belum ada data langganan
+                      {copy.emptyMembershipTitle}
                     </h3>
                     <p className={`mt-2 max-w-2xl text-sm leading-7 ${memberTextSecondaryClass}`}>
-                      Saat ini akun Anda belum memiliki membership yang tercatat. Data paket akan muncul otomatis di sini
-                      setelah pendaftaran dan pembayaran selesai.
+                      {copy.emptyMembershipBody}
                     </p>
                   </div>
                   <Link className={`${memberSolidButtonClass} h-11 px-4`} href="/dashboard/subscription">
-                    Buka menu langganan
+                    {copy.fallbackOpenSubscription}
                     <ArrowUpRight className="h-4 w-4" />
                   </Link>
                 </div>
@@ -277,7 +332,7 @@ export default async function DashboardPage() {
               <Settings2 className="h-5 w-5" />
             </span>
             <div>
-              <h2 className={`text-[1.5rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>Akses cepat</h2>
+              <h2 className={`text-[1.5rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>{copy.quickAccess}</h2>
               
             </div>
           </div>

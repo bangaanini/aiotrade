@@ -14,7 +14,41 @@ import {
 
 type CurrentProfile = Awaited<ReturnType<typeof requireCurrentProfile>>;
 
-export function MemberAccountOverview({ profile }: { profile: CurrentProfile }) {
+type MemberAccountOverviewLabels = {
+  directSignup: string;
+  email: string;
+  memberId: string;
+  pageBadge: string;
+  pageDescription: string;
+  pageTitle: string;
+  referredBy: string;
+  sectionDescription: string;
+  sectionTitle: string;
+  username: string;
+  whatsapp: string;
+};
+
+const defaultLabels: MemberAccountOverviewLabels = {
+  directSignup: "Direct signup",
+  email: "Email",
+  memberId: "Member ID",
+  pageBadge: "Akun Member",
+  pageDescription: "Informasi utama akun Anda.",
+  pageTitle: "Profil akun",
+  referredBy: "Referred By",
+  sectionDescription: "Detail profil, kontak, dan informasi referral yang tersimpan pada akun member Anda.",
+  sectionTitle: "Info akun",
+  username: "Username",
+  whatsapp: "WhatsApp",
+};
+
+export function MemberAccountOverview({
+  labels = defaultLabels,
+  profile,
+}: {
+  labels?: MemberAccountOverviewLabels;
+  profile: CurrentProfile;
+}) {
   const memberId = extractMemberIdFromReferralLink(profile.referralLink);
   const normalizedReferredBy = profile.referredBy?.trim().toLowerCase() ?? null;
   const referredByLabel =
@@ -22,15 +56,15 @@ export function MemberAccountOverview({ profile }: { profile: CurrentProfile }) 
       ? `@${profile.referredBy}`
       : normalizedReferredBy
         ? "-"
-        : "Direct signup";
+        : labels.directSignup;
 
   return (
     <div className="space-y-6 px-4 py-6 sm:px-5 lg:px-6 lg:py-8">
       <MemberPageHeader
-        badge="Akun Member"
-        description="Informasi utama akun Anda."
+        badge={labels.pageBadge}
+        description={labels.pageDescription}
         icon={UserRound}
-        title="Profil akun"
+        title={labels.pageTitle}
         toneClassName="bg-[linear-gradient(135deg,rgba(59,130,246,0.12)_0%,rgba(255,255,255,0)_44%,rgba(16,185,129,0.1)_100%)]"
       />
 
@@ -40,9 +74,9 @@ export function MemberAccountOverview({ profile }: { profile: CurrentProfile }) 
             <UserRound className="h-5 w-5" />
           </span>
           <div>
-            <h2 className={`text-[1.55rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>Info akun</h2>
+            <h2 className={`text-[1.55rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>{labels.sectionTitle}</h2>
             <p className={`mt-1 text-sm leading-7 ${memberTextSecondaryClass}`}>
-              Detail profil, kontak, dan informasi referral yang tersimpan pada akun member Anda.
+              {labels.sectionDescription}
             </p>
           </div>
         </div>
@@ -54,7 +88,7 @@ export function MemberAccountOverview({ profile }: { profile: CurrentProfile }) 
                 <UserRound className="h-4 w-4" />
               </span>
               <div>
-                <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>Username</p>
+                <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>{labels.username}</p>
                 <p className={`mt-2 text-lg font-semibold ${memberTextPrimaryClass}`}>@{profile.username}</p>
               </div>
             </div>
@@ -66,7 +100,7 @@ export function MemberAccountOverview({ profile }: { profile: CurrentProfile }) 
                 <Mail className="h-4 w-4" />
               </span>
               <div className="min-w-0">
-                <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>Email</p>
+                <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>{labels.email}</p>
                 <p className={`mt-2 break-all text-lg font-semibold ${memberTextPrimaryClass}`}>{profile.email ?? "-"}</p>
               </div>
             </div>
@@ -78,7 +112,7 @@ export function MemberAccountOverview({ profile }: { profile: CurrentProfile }) 
                 <MessageCircle className="h-4 w-4" />
               </span>
               <div>
-                <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>WhatsApp</p>
+                <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>{labels.whatsapp}</p>
                 <p className={`mt-2 text-lg font-semibold ${memberTextPrimaryClass}`}>{profile.whatsapp ?? "-"}</p>
               </div>
             </div>
@@ -90,7 +124,7 @@ export function MemberAccountOverview({ profile }: { profile: CurrentProfile }) 
                 <Users className="h-4 w-4" />
               </span>
               <div>
-                <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>Referred By</p>
+                <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>{labels.referredBy}</p>
                 <p className={`mt-2 text-lg font-semibold ${memberTextPrimaryClass}`}>
                   {referredByLabel}
                 </p>
@@ -105,7 +139,7 @@ export function MemberAccountOverview({ profile }: { profile: CurrentProfile }) 
               <Link2 className="h-4 w-4" />
             </span>
             <div className="min-w-0">
-              <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>Member ID</p>
+              <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>{labels.memberId}</p>
               <p className={`mt-2 font-mono text-lg font-semibold ${memberTextPrimaryClass}`}>{memberId ?? "-"}</p>
               <p className={`mt-2 break-all text-sm ${memberTextSecondaryClass}`}>{profile.referralLink ?? "-"}</p>
             </div>

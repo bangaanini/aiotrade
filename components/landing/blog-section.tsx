@@ -37,7 +37,7 @@ export function BlogSection({ content, posts }: BlogSectionProps) {
       <div className="pointer-events-none absolute bottom-0 right-[-5%] h-60 w-60 rounded-full bg-[#75b9ff]/8 blur-[105px]" />
       <div className="relative z-10 mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
         <Reveal className="text-center lg:text-left">
-          <h2 className="text-[3rem] font-semibold leading-none tracking-[-0.05em] text-[#ffc84a] sm:text-[4.3rem]">
+          <h2 className="text-[3rem] font-semibold leading-none tracking-[-0.05em] text-[var(--landing-accent-gold)] sm:text-[4.3rem]">
             {content.title}
           </h2>
         </Reveal>
@@ -74,11 +74,11 @@ export function BlogSection({ content, posts }: BlogSectionProps) {
                 </div>
               </div>
               <div className="px-7 pb-7 pt-5">
-                <h3 className="text-[2rem] font-semibold leading-[1.18] tracking-[-0.035em] text-[#151b28]">
+                <h3 className="text-[2rem] font-semibold leading-[1.18] tracking-[-0.035em] text-[var(--landing-text-primary)]">
                   {article.title}
                 </h3>
                 <Link
-                  className="mt-7 inline-flex items-center gap-1 text-[0.98rem] font-medium uppercase tracking-[0.01em] text-[#5d6777] transition duration-300 hover:text-[#1b74df]"
+                  className="mt-7 inline-flex items-center gap-1 text-[0.98rem] font-medium uppercase tracking-[0.01em] text-[var(--landing-text-muted)] transition duration-300 hover:text-[var(--landing-accent-blue)]"
                   href={article.slug === "#blog" ? "/blog" : `/blog/${article.slug}`}
                 >
                   Read More

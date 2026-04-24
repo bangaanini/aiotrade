@@ -290,24 +290,20 @@ export function HomepageSettingsView({
         <Card className="scroll-mt-24" id="overview-section">
           <CardHeader>
             <CardTitle>Overview Section</CardTitle>
-            <CardDescription>Atur section pembuka homepage, deskripsi, CTA, dan background.</CardDescription>
+            <CardDescription>
+              Atur section pembuka homepage, deskripsi, CTA, dan background. Logo brand overview
+              sekarang mengikuti asset logo AIOTrade yang tetap.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <SectionAlert currentSection={section} label="Overview section" section="overview" status={status} />
             <form action={updateOverviewSectionAction} className="space-y-5">
-              <div className="grid gap-4 md:grid-cols-2">
-                <TextField
-                  label="Title Biru"
-                  name="titleBlue"
-                  onChange={(value) => updateSection("overview", { titleBlue: value })}
-                  value={draft.overview.titleBlue}
-                />
-                <TextField
-                  label="Title Putih"
-                  name="titleWhite"
-                  onChange={(value) => updateSection("overview", { titleWhite: value })}
-                  value={draft.overview.titleWhite}
-                />
+              <input name="titleBlue" type="hidden" value={draft.overview.titleBlue} />
+              <input name="titleWhite" type="hidden" value={draft.overview.titleWhite} />
+              <div className="rounded-2xl border border-sky-100 bg-sky-50/80 px-4 py-3 text-sm leading-6 text-slate-700">
+                Logo overview memakai asset brand yang sama dengan footer agar tampil konsisten di
+                desktop dan mobile. Judul teks lama disimpan otomatis supaya konfigurasi homepage
+                tetap aman.
               </div>
               <TextAreaField
                 label="Deskripsi"
@@ -1123,9 +1119,25 @@ export function HomepageSettingsView({
                   imageUrl: draft.bannerAds.imageUrl,
                 }}
               />
-              <p className="text-xs leading-6 text-stone-500">
-                Placeholder banner disiapkan dengan rasio memanjang agar tetap rapi di desktop dan mobile.
-              </p>
+              <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-4">
+                <p className="text-sm font-semibold text-stone-900">Panduan ukuran banner</p>
+                <div className="mt-3 grid gap-3 md:grid-cols-2">
+                  <div className="rounded-lg border border-stone-200 bg-white px-3 py-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">Desktop</p>
+                    <p className="mt-2 text-sm font-medium text-stone-900">2100 x 800 px</p>
+                    <p className="mt-1 text-xs leading-6 text-stone-500">
+                      Rasio utama memanjang sekitar 21:8 agar banner memenuhi section desktop dengan padding tipis.
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-stone-200 bg-white px-3 py-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">Mobile</p>
+                    <p className="mt-2 text-sm font-medium text-stone-900">1200 x 900 px</p>
+                    <p className="mt-1 text-xs leading-6 text-stone-500">
+                      Simpan area penting di tengah supaya tetap aman saat banner dipotong lebih tinggi pada layar mobile.
+                    </p>
+                  </div>
+                </div>
+              </div>
               <Button type="submit">Simpan Banner Ads Section</Button>
             </form>
           </CardContent>

@@ -17,18 +17,63 @@ import {
 type CurrentProfile = Awaited<ReturnType<typeof requireCurrentProfile>>;
 
 type MemberLandingPagePanelProps = {
+  labels?: {
+    activateButton: string;
+    activatePending: string;
+    activeStatus: string;
+    badge: string;
+    copiedLink: string;
+    copyLink: string;
+    description: string;
+    generateDescription: string;
+    inactiveHint: string;
+    inactiveStatus: string;
+    landingLinkDescription: string;
+    landingLinkLabel: string;
+    openEntryLink: string;
+    pageTitle: string;
+    sectionTitle: string;
+    statusLabel: string;
+  };
   landingPageUrl: string;
   profile: CurrentProfile;
 };
 
-export function MemberLandingPagePanel({ landingPageUrl, profile }: MemberLandingPagePanelProps) {
+const defaultLabels = {
+  activateButton: "Activate My Landing Page",
+  activatePending: "Activating...",
+  activeStatus: "Active and Shareable",
+  badge: "Landing Page",
+  copiedLink: "Copied",
+  copyLink: "Copy Link",
+  description:
+    "Generate halaman referral pribadi Anda, cek statusnya, lalu bagikan link yang sudah siap dipakai untuk entry member baru.",
+  generateDescription:
+    "Visitor akan masuk ke homepage utama dengan referral Anda tetap menempel. Praktis dan lebih rapi untuk dibagikan.",
+  inactiveHint:
+    "Landing page Anda belum aktif. Setelah diaktifkan, sistem akan membuat link shareable berbasis username member.",
+  inactiveStatus: "Belum diaktifkan",
+  landingLinkDescription:
+    "Tombol daftar di landing page Anda akan mengikuti referral link yang tersimpan pada profil member.",
+  landingLinkLabel: "Link landing page Anda",
+  openEntryLink: "Open Entry Link",
+  pageTitle: "Landing page referral",
+  sectionTitle: "Generate landing page",
+  statusLabel: "Status",
+};
+
+export function MemberLandingPagePanel({
+  labels = defaultLabels,
+  landingPageUrl,
+  profile,
+}: MemberLandingPagePanelProps) {
   return (
     <div className="space-y-6 px-4 py-6 sm:px-5 lg:px-6 lg:py-8">
       <MemberPageHeader
-        badge="Landing Page"
-        description="Generate halaman referral pribadi Anda, cek statusnya, lalu bagikan link yang sudah siap dipakai untuk entry member baru."
+        badge={labels.badge}
+        description={labels.description}
         icon={WalletCards}
-        title="Landing page referral"
+        title={labels.pageTitle}
         toneClassName="bg-[linear-gradient(135deg,rgba(16,185,129,0.12)_0%,rgba(255,255,255,0)_44%,rgba(59,130,246,0.09)_100%)]"
       />
 
@@ -38,9 +83,9 @@ export function MemberLandingPagePanel({ landingPageUrl, profile }: MemberLandin
             <WalletCards className="h-5 w-5" />
           </span>
           <div>
-            <h2 className={`text-[1.6rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>Generate landing page</h2>
+            <h2 className={`text-[1.6rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>{labels.sectionTitle}</h2>
             <p className={`mt-1 text-sm leading-7 ${memberTextSecondaryClass}`}>
-              Visitor akan masuk ke homepage utama dengan referral Anda tetap menempel. Praktis dan lebih rapi untuk dibagikan.
+              {labels.generateDescription}
             </p>
           </div>
         </div>
@@ -52,9 +97,9 @@ export function MemberLandingPagePanel({ landingPageUrl, profile }: MemberLandin
                 <Link2 className="h-5 w-5" />
               </span>
               <div>
-                <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>Status</p>
+                <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>{labels.statusLabel}</p>
                 <p className={`mt-2 text-[1.35rem] font-semibold ${memberTextPrimaryClass}`}>
-                  {profile.isLpActive ? "Active and Shareable" : "Belum diaktifkan"}
+                  {profile.isLpActive ? labels.activeStatus : labels.inactiveStatus}
                 </p>
               </div>
             </div>
@@ -66,35 +111,38 @@ export function MemberLandingPagePanel({ landingPageUrl, profile }: MemberLandin
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-emerald-900/72">
-                      Link landing page Anda
+                      {labels.landingLinkLabel}
                     </p>
                     <p className={`mt-2 break-all text-lg font-semibold ${memberTextPrimaryClass}`}>{landingPageUrl}</p>
                   </div>
                   <ArrowUpRight className="mt-1 h-5 w-5 shrink-0 text-emerald-900/70" />
                 </div>
                 <p className={`mt-4 text-sm leading-7 ${memberTextSecondaryClass}`}>
-                  Tombol daftar di landing page Anda akan mengikuti referral link yang tersimpan pada profil member.
+                  {labels.landingLinkDescription}
                 </p>
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row">
-                <CopyLinkButton link={landingPageUrl} />
+                <CopyLinkButton copiedLabel={labels.copiedLink} copyLabel={labels.copyLink} link={landingPageUrl} />
                 <Link
                   className={memberSoftButtonClass}
                   href={`/${profile.username}`}
                   target="_blank"
                 >
                   <ExternalLink className="h-4 w-4" />
-                  Open Entry Link
+                  {labels.openEntryLink}
                 </Link>
               </div>
             </>
           ) : (
             <div className="space-y-3">
               <div className={`rounded-[24px] px-5 py-5 text-sm leading-7 ${memberGlassRowClass} ${memberTextSecondaryClass}`}>
-                Landing page Anda belum aktif. Setelah diaktifkan, sistem akan membuat link shareable berbasis username member.
+                {labels.inactiveHint}
               </div>
-              <ActivateLandingPageButton />
+              <ActivateLandingPageButton
+                buttonLabel={labels.activateButton}
+                pendingLabel={labels.activatePending}
+              />
             </div>
           )}
         </div>

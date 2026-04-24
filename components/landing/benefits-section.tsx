@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { features, landingImages } from "@/components/landing/data";
+import { features } from "@/components/landing/data";
 import { SectionBackgroundLayer } from "@/components/landing/section-background-layer";
 import { Reveal } from "@/components/ui/reveal";
 import type { BenefitsContent } from "@/components/landing/types";
@@ -26,25 +26,24 @@ export function BenefitsSection({ content }: BenefitsSectionProps) {
   );
 
   return (
-    <section className="relative overflow-hidden py-20 text-white sm:py-24" ref={sectionRef}>
+    <section className="relative overflow-hidden py-20 text-[var(--landing-text-primary)] sm:py-24" ref={sectionRef}>
       <motion.div className="absolute inset-0" style={{ scale: backgroundScale, y: backgroundY }}>
         <SectionBackgroundLayer
           config={content.background}
-          fallbackImageUrl={landingImages.heroImage.src}
           fallbackOverlayColor="#070a12"
           fallbackOverlayOpacity={74}
           fallbackPreset="dark-slate-cinematic"
         />
       </motion.div>
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,10,18,0.7)_0%,rgba(7,10,18,0.78)_28%,rgba(7,10,18,0.74)_100%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,194,63,0.08)_0%,rgba(255,194,63,0)_28%)]" />
+      <div className="absolute left-[-6%] top-10 h-56 w-56 rounded-full blur-[110px]" style={{ background: "color-mix(in srgb, var(--landing-accent-blue) 10%, transparent)" }} />
+      <div className="absolute bottom-0 right-[-8%] h-64 w-64 rounded-full blur-[120px]" style={{ background: "color-mix(in srgb, var(--landing-accent-gold) 10%, transparent)" }} />
 
       <div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
         <Reveal className="mx-auto max-w-5xl text-center">
-          <p className="text-lg font-semibold text-[#f6be4f] sm:text-[2.2rem]">
+          <p className="text-lg font-semibold text-[var(--landing-accent-gold)] sm:text-[2.2rem]">
             {content.heading}
           </p>
-          <p className="mx-auto mt-4 max-w-4xl text-base leading-8 text-white/82 sm:text-[1.05rem]">
+          <p className="mx-auto mt-4 max-w-4xl text-base leading-8 text-[var(--landing-text-secondary)] sm:text-[1.05rem]">
             {content.description}
           </p>
         </Reveal>
@@ -66,10 +65,10 @@ export function BenefitsSection({ content }: BenefitsSectionProps) {
                 <span className="inline-flex h-16 w-16 items-center justify-center text-[#ffbf00]">
                   <Icon className="h-12 w-12" strokeWidth={2.1} />
                 </span>
-                <h3 className="mt-5 text-[1.9rem] font-semibold leading-tight text-white">
+                <h3 className="mt-5 text-[1.9rem] font-semibold leading-tight text-[var(--landing-text-primary)]">
                   {feature.title}
                 </h3>
-                <p className="mt-4 text-lg leading-8 text-white/72">{feature.description}</p>
+                <p className="mt-4 text-lg leading-8 text-[var(--landing-text-secondary)]">{feature.description}</p>
               </Reveal>
             );
           })}

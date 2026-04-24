@@ -22,7 +22,7 @@ export function LandingCtaButton({
   return (
     <Link
       className={cn(
-        "landing-glass-button group relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-[18px] text-[#0f3f67] transition-all duration-300",
+        "landing-glass-button group relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-[18px] text-[var(--landing-accent-blue)] transition-all duration-300",
         "hover:-translate-y-0.5",
         size === "default"
           ? "min-h-12 px-6 py-3 text-base font-semibold sm:min-h-14 sm:px-8 sm:py-4 sm:text-lg"

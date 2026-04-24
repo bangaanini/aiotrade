@@ -23,15 +23,15 @@ export function PricingSection({ content, ctaExternal = false, ctaHref }: Pricin
         fallbackOverlayOpacity={24}
         fallbackPreset="warm-ivory"
       />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-[linear-gradient(180deg,rgba(255,200,74,0.12)_0%,rgba(255,200,74,0)_100%)]" />
-      <div className="pointer-events-none absolute left-[-10%] top-16 h-64 w-64 rounded-full bg-[#ffd972]/18 blur-[110px]" />
-      <div className="pointer-events-none absolute bottom-8 right-[-6%] h-72 w-72 rounded-full bg-[#58a6ff]/10 blur-[120px]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-[linear-gradient(180deg,color-mix(in_srgb,var(--landing-accent-gold)_14%,transparent)_0%,transparent_100%)]" />
+      <div className="pointer-events-none absolute left-[-10%] top-16 h-64 w-64 rounded-full blur-[110px]" style={{ background: "color-mix(in srgb, var(--landing-accent-gold) 14%, transparent)" }} />
+      <div className="pointer-events-none absolute bottom-8 right-[-6%] h-72 w-72 rounded-full blur-[120px]" style={{ background: "color-mix(in srgb, var(--landing-accent-blue) 10%, transparent)" }} />
       <div className="relative z-10 mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
         <Reveal className="mx-auto max-w-4xl text-center">
-          <p className="text-[1.1rem] font-semibold tracking-[-0.015em] text-[#1b74df] sm:text-[2.05rem]">
+          <p className="text-[1.1rem] font-semibold tracking-[-0.015em] text-[var(--landing-accent-blue)] sm:text-[2.05rem]">
             {content.eyebrow}
           </p>
-          <h2 className="mt-4 text-[3rem] font-semibold leading-none tracking-[-0.04em] text-[#ffc84a] sm:text-[4.5rem]">
+          <h2 className="mt-4 text-[3rem] font-semibold leading-none tracking-[-0.04em] text-[var(--landing-accent-gold)] sm:text-[4.5rem]">
             {content.title}
           </h2>
         </Reveal>
@@ -71,20 +71,20 @@ export function PricingSection({ content, ctaExternal = false, ctaHref }: Pricin
                   )}
                 >
                   {!plan.emphasis ? (
-                    <p className="text-[4.55rem] font-bold leading-none tracking-[-0.05em] text-[#1b74df]">
+                    <p className="text-[4.55rem] font-bold leading-none tracking-[-0.05em] text-[var(--landing-accent-blue)]">
                       #{content.plans.slice(0, index + 1).filter((entry) => !entry.emphasis).length}
                     </p>
                   ) : null}
 
                   {plan.emphasis ? (
-                    <h3 className="text-[4rem] font-semibold leading-none tracking-[-0.055em] text-[#1b74df] sm:text-[4.9rem]">
+                    <h3 className="text-[4rem] font-semibold leading-none tracking-[-0.055em] text-[var(--landing-accent-blue)] sm:text-[4.9rem]">
                       {plan.name}
                     </h3>
                   ) : null}
 
                   <p
                     className={cn(
-                      "mt-3 font-semibold tracking-[-0.025em] text-[#111827]",
+                      "mt-3 font-semibold tracking-[-0.025em] text-[var(--landing-text-primary)]",
                       plan.emphasis ? "text-[2rem] sm:text-[2.2rem]" : "text-[1.78rem]",
                     )}
                   >
@@ -92,20 +92,20 @@ export function PricingSection({ content, ctaExternal = false, ctaHref }: Pricin
                   </p>
 
                   <div className="mt-6 flex items-end justify-center gap-3">
-                    <span className="text-[3.2rem] font-bold leading-none tracking-[-0.04em] text-[#101728]">
+                    <span className="text-[3.2rem] font-bold leading-none tracking-[-0.04em] text-[var(--landing-text-primary)]">
                       {plan.price}
                     </span>
-                    <span className="pb-1 text-[1.15rem] font-semibold text-[#22c55e]">Lifetime</span>
+                    <span className="pb-1 text-[1.15rem] font-semibold text-[var(--landing-accent-green)]">Lifetime</span>
                   </div>
 
-                  <p className="mx-auto mt-8 max-w-[24rem] text-[1.02rem] leading-[1.8] text-[#4b5563]">
+                  <p className="mx-auto mt-8 max-w-[24rem] text-[1.02rem] leading-[1.8] text-[var(--landing-text-secondary)]">
                     {plan.description}
                   </p>
 
                   <div className="mt-8 flex justify-center">
                     <LandingCtaButton
                       className={cn(
-                        "min-w-[212px]",
+                        "landing-pricing-cta min-w-[212px]",
                         plan.emphasis && "landing-glass-button-accent text-white",
                       )}
                       external={ctaExternal}

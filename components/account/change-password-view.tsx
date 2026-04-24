@@ -21,6 +21,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 type ChangePasswordViewProps = {
+  copy?: {
+    confirmPassword: string;
+    currentPassword: string;
+    currentPlaceholder: string;
+    description: string;
+    newPassword: string;
+    newPlaceholder: string;
+    noteBody: string;
+    noteTitle: string;
+    saveButton: string;
+    savePending: string;
+    title: string;
+  };
   description: string;
   title: string;
 };
@@ -68,7 +81,21 @@ function PasswordField({
   );
 }
 
-export function ChangePasswordView({ description, title }: ChangePasswordViewProps) {
+const defaultCopy = {
+  confirmPassword: "Konfirmasi Password Baru",
+  currentPassword: "Password Saat Ini",
+  currentPlaceholder: "Masukkan password saat ini",
+  description: "Masukkan password lama Anda, lalu simpan password baru yang ingin dipakai saat login.",
+  newPassword: "Password Baru",
+  newPlaceholder: "Minimal 8 karakter",
+  noteBody: "Setelah password diganti, login berikutnya akan memakai password baru ini.",
+  noteTitle: "Catatan",
+  saveButton: "Simpan Password Baru",
+  savePending: "Menyimpan password...",
+  title: "Reset Password",
+};
+
+export function ChangePasswordView({ copy = defaultCopy, description, title }: ChangePasswordViewProps) {
   const [state, formAction] = useActionState<ChangePasswordActionState, FormData>(
     changePasswordAction,
     initialChangePasswordState,
@@ -86,9 +113,9 @@ export function ChangePasswordView({ description, title }: ChangePasswordViewPro
 
       <Card className={`max-w-2xl rounded-[30px] border-transparent ${memberGlassPanelClass}`}>
         <CardHeader>
-          <CardTitle className={memberTextPrimaryClass}>Reset Password</CardTitle>
+          <CardTitle className={memberTextPrimaryClass}>{copy.title}</CardTitle>
           <CardDescription className={memberTextSecondaryClass}>
-            Masukkan password lama Anda, lalu simpan password baru yang ingin dipakai saat login.
+            {copy.description}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -105,9 +132,9 @@ export function ChangePasswordView({ description, title }: ChangePasswordViewPro
               error={state.fieldErrors.currentPassword}
               icon={KeyRound}
               id="currentPassword"
-              label="Password Saat Ini"
+              label={copy.currentPassword}
               name="currentPassword"
-              placeholder="Masukkan password saat ini"
+              placeholder={copy.currentPlaceholder}
             />
 
             <PasswordField
@@ -115,9 +142,9 @@ export function ChangePasswordView({ description, title }: ChangePasswordViewPro
               error={state.fieldErrors.newPassword}
               icon={LockKeyhole}
               id="newPassword"
-              label="Password Baru"
+              label={copy.newPassword}
               name="newPassword"
-              placeholder="Minimal 8 karakter"
+              placeholder={copy.newPlaceholder}
             />
 
             <PasswordField
@@ -125,23 +152,23 @@ export function ChangePasswordView({ description, title }: ChangePasswordViewPro
               error={state.fieldErrors.confirmPassword}
               icon={LockKeyhole}
               id="confirmPassword"
-              label="Konfirmasi Password Baru"
+              label={copy.confirmPassword}
               name="confirmPassword"
-              placeholder="Ulangi password baru"
+              placeholder={copy.confirmPassword}
             />
 
             <div className={`rounded-[24px] p-4 ${memberGlassRowClass}`}>
-              <p className={`text-sm font-medium ${memberTextPrimaryClass}`}>Catatan</p>
+              <p className={`text-sm font-medium ${memberTextPrimaryClass}`}>{copy.noteTitle}</p>
               <p className={`mt-2 text-sm leading-7 ${memberTextSecondaryClass}`}>
-                Setelah password diganti, login berikutnya akan memakai password baru ini.
+                {copy.noteBody}
               </p>
             </div>
 
             <SubmitButton
               className={`w-full sm:w-auto ${memberSolidButtonClass}`}
-              pendingText="Menyimpan password..."
+              pendingText={copy.savePending}
             >
-              Simpan Password Baru
+              {copy.saveButton}
             </SubmitButton>
           </form>
         </CardContent>

@@ -60,13 +60,13 @@ export function TestimonialSection({ content }: TestimonialSectionProps) {
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
         <Reveal className="mx-auto max-w-4xl text-center">
-          <p className="text-[1.05rem] font-semibold tracking-[-0.02em] text-[#1c74de] sm:text-[1.3rem]">
+          <p className="text-[1.05rem] font-semibold tracking-[-0.02em] text-[var(--landing-accent-blue)] sm:text-[1.3rem]">
             {content.eyebrow}
           </p>
-          <h2 className="mt-5 text-[3rem] font-semibold leading-none tracking-[-0.045em] text-[#ffc84a] sm:text-[4.45rem]">
+          <h2 className="mt-5 text-[3rem] font-semibold leading-none tracking-[-0.045em] text-[var(--landing-accent-gold)] sm:text-[4.45rem]">
             {content.title}
           </h2>
-          <p className="mx-auto mt-5 max-w-3xl text-[1.02rem] leading-[1.85] text-[#4b5563] sm:text-[1.08rem]">
+          <p className="mx-auto mt-5 max-w-3xl text-[1.02rem] leading-[1.85] text-[var(--landing-text-secondary)] sm:text-[1.08rem]">
             {content.subtitle}
           </p>
         </Reveal>
@@ -134,13 +134,13 @@ export function TestimonialSection({ content }: TestimonialSectionProps) {
               ))}
             </div>
 
-            <blockquote className="mt-6 text-[1.28rem] leading-[1.72] tracking-[-0.025em] text-[#1f2937] sm:text-[1.45rem]">
+            <blockquote className="mt-6 text-[1.28rem] leading-[1.72] tracking-[-0.025em] text-[var(--landing-text-primary)] sm:text-[1.45rem]">
               &ldquo;{activeItem.quote}&rdquo;
             </blockquote>
 
             <div className="mt-7 border-t border-white/60 pt-5">
-              <p className="text-[1.2rem] font-semibold tracking-[-0.03em] text-[#111827]">{activeItem.name}</p>
-              <p className="mt-1 text-sm font-medium uppercase tracking-[0.18em] text-[#6a7990]">{activeItem.role}</p>
+              <p className="text-[1.2rem] font-semibold tracking-[-0.03em] text-[var(--landing-text-primary)]">{activeItem.name}</p>
+              <p className="mt-1 text-sm font-medium uppercase tracking-[0.18em] text-[var(--landing-text-muted)]">{activeItem.role}</p>
             </div>
 
             <div className="mt-7 grid gap-3 sm:grid-cols-3">
@@ -153,7 +153,7 @@ export function TestimonialSection({ content }: TestimonialSectionProps) {
                       "overflow-hidden rounded-[20px] p-2 text-left transition duration-300",
                       active
                         ? "landing-glass-card bg-[#eef5ff]"
-                        : "landing-glass-card hover:bg-[#fbfaf7]",
+                        : "landing-glass-card",
                     )}
                     key={`${item.name}-${index}`}
                     onClick={() => setActiveIndex(index)}
@@ -175,8 +175,8 @@ export function TestimonialSection({ content }: TestimonialSectionProps) {
                       )}
                     </div>
                     <div className="px-1 pb-1 pt-3">
-                      <p className="truncate text-sm font-semibold text-[#111827]">{item.name}</p>
-                      <p className="mt-1 truncate text-xs uppercase tracking-[0.14em] text-[#7c8799]">{item.role}</p>
+                      <p className="truncate text-sm font-semibold text-[var(--landing-text-primary)]">{item.name}</p>
+                      <p className="mt-1 truncate text-xs uppercase tracking-[0.14em] text-[var(--landing-text-muted)]">{item.role}</p>
                     </div>
                   </button>
                 );

@@ -6,10 +6,16 @@ import { Button } from "@/components/ui/button";
 import { memberSoftButtonClass } from "@/components/dashboard/member-ui";
 
 type CopyLinkButtonProps = {
+  copiedLabel?: string;
+  copyLabel?: string;
   link: string;
 };
 
-export function CopyLinkButton({ link }: CopyLinkButtonProps) {
+export function CopyLinkButton({
+  copiedLabel = "Copied",
+  copyLabel = "Copy Link",
+  link,
+}: CopyLinkButtonProps) {
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
@@ -30,7 +36,7 @@ export function CopyLinkButton({ link }: CopyLinkButtonProps) {
       variant="outline"
     >
       {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-      {copied ? "Copied" : "Copy Link"}
+      {copied ? copiedLabel : copyLabel}
     </Button>
   );
 }

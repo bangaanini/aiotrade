@@ -70,18 +70,18 @@ export function TickerStrip({ className, previewMode = false }: TickerStripProps
   return (
     <Reveal
       className={[
-        "relative overflow-hidden border-t border-white/8 bg-[rgba(8,14,27,0.62)] py-4 text-white",
+        "relative overflow-hidden bg-transparent py-4 text-[var(--landing-text-primary)]",
         className,
       ]
         .filter(Boolean)
         .join(" ")}
     >
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-[linear-gradient(90deg,rgba(8,14,27,0.96)_0%,rgba(8,14,27,0)_100%)]" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-[linear-gradient(270deg,rgba(8,14,27,0.96)_0%,rgba(8,14,27,0)_100%)]" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-[linear-gradient(90deg,var(--landing-panel-bg)_0%,rgba(255,255,255,0)_100%)]" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-[linear-gradient(270deg,var(--landing-panel-bg)_0%,rgba(255,255,255,0)_100%)]" />
 
       <motion.div
         animate={prefersReducedMotion ? { x: "0%" } : { x: ["0%", "-50%"] }}
-        className="flex w-max items-stretch gap-3 px-4 sm:gap-4 sm:px-8 lg:px-10"
+        className="flex w-max items-stretch gap-3 px-3 sm:gap-4 sm:px-5 lg:px-6"
         transition={
           prefersReducedMotion
             ? undefined
@@ -94,7 +94,7 @@ export function TickerStrip({ className, previewMode = false }: TickerStripProps
       >
         {tickerItems.map((item, index) => (
           <article
-            className="min-w-[156px] rounded-lg border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.06)] px-3 py-3 backdrop-blur-sm sm:min-w-[190px] sm:px-4"
+            className="landing-glass-card min-w-[144px] rounded-[20px] px-3.5 py-3.5 sm:min-w-[168px] sm:px-4"
             key={`${item.symbol}-${index}`}
           >
             <div className="flex items-center justify-between gap-2 sm:gap-4">
@@ -110,12 +110,12 @@ export function TickerStrip({ className, previewMode = false }: TickerStripProps
                     unoptimized
                   />
                 ) : (
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/8 text-[0.55rem] font-semibold tracking-[0.08em] text-white/84 sm:h-7 sm:w-7 sm:text-[0.62rem]">
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-[0.55rem] font-semibold tracking-[0.08em] text-[var(--landing-text-primary)] sm:h-7 sm:w-7 sm:text-[0.62rem]">
                     {getTickerInitials(item.symbol)}
                   </span>
                 )}
                 <div className="min-w-0">
-                  <p className="truncate text-xs font-semibold tracking-[0.05em] text-white sm:text-sm sm:tracking-[0.08em]">{item.symbol}</p>
+                  <p className="truncate text-[0.82rem] font-semibold tracking-[0.02em] text-[var(--landing-text-primary)] sm:text-[0.9rem]">{item.symbol}</p>
                   
                 </div>
               </div>
@@ -123,7 +123,7 @@ export function TickerStrip({ className, previewMode = false }: TickerStripProps
                 {item.change}
               </span>
             </div>
-            <p className="mt-2 text-lg font-semibold text-white sm:text-xl">{item.price}</p>
+            <p className="mt-2.5 text-[1.22rem] font-semibold tracking-[-0.03em] text-[var(--landing-text-primary)] sm:text-[1.4rem]">{item.price}</p>
           </article>
         ))}
       </motion.div>

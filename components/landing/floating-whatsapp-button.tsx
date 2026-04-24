@@ -23,7 +23,7 @@ export function FloatingWhatsAppButton({ href }: FloatingWhatsAppButtonProps) {
   }, []);
 
   return (
-    <div className="fixed bottom-5 right-4 z-[70] flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
+    <div className="fixed bottom-20 right-4 z-[70] flex flex-col items-end gap-3 sm:bottom-24 sm:right-6">
       <div
         className={`w-[min(calc(100vw-2rem),336px)] origin-bottom-right transition duration-300 ${
           isOpen

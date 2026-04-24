@@ -15,7 +15,15 @@ const initialActivateLandingPageState: ActivateLandingPageState = {
   message: null,
 };
 
-export function ActivateLandingPageButton() {
+type ActivateLandingPageButtonProps = {
+  buttonLabel?: string;
+  pendingLabel?: string;
+};
+
+export function ActivateLandingPageButton({
+  buttonLabel = "Activate My Landing Page",
+  pendingLabel = "Activating...",
+}: ActivateLandingPageButtonProps) {
   const [state, formAction] = useActionState(
     activateLandingPageAction,
     initialActivateLandingPageState,
@@ -32,9 +40,9 @@ export function ActivateLandingPageButton() {
     <form action={formAction} className="space-y-3">
       <SubmitButton
         className={`min-w-[250px] ${memberSolidButtonClass}`}
-        pendingText="Activating..."
+        pendingText={pendingLabel}
       >
-        Activate My Landing Page
+        {buttonLabel}
       </SubmitButton>
       {state.message ? (
         <Alert variant={state.status === "error" ? "error" : "success"}>{state.message}</Alert>

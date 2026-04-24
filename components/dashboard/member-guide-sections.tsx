@@ -18,6 +18,13 @@ type MemberVideoGuideSectionProps = {
   description: string;
   emptyMessage: string;
   guides: MemberGuidePost[];
+  labels?: {
+    listDescription: string;
+    listTitle: string;
+    nowPlaying: string;
+    sectionDescription: string;
+    videoTitle: string;
+  };
   title: string;
 };
 
@@ -26,6 +33,11 @@ type MemberPdfGuideSectionProps = {
   description: string;
   emptyMessage: string;
   guides: MemberGuidePost[];
+  labels?: {
+    openPdf: string;
+    sectionDescription: string;
+    sectionTitle: string;
+  };
   title: string;
 };
 
@@ -34,6 +46,13 @@ export function MemberVideoGuideSection({
   description,
   emptyMessage,
   guides,
+  labels = {
+    listDescription: "Semua materi yang masuk kategori ini akan muncul di sini.",
+    listTitle: "Daftar video",
+    nowPlaying: "Sedang diputar",
+    sectionDescription: "Pilih materi di samping untuk melihat preview utama dan mulai belajar lebih cepat.",
+    videoTitle: "Video panduan",
+  },
   title,
 }: MemberVideoGuideSectionProps) {
   const videoGuides = useMemo(() => guides.filter((guide) => guide.type === "video"), [guides]);
@@ -52,9 +71,9 @@ export function MemberVideoGuideSection({
 
       <section className="space-y-4">
         <div className="px-1">
-          <h2 className={`text-[1.7rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>Video panduan</h2>
+          <h2 className={`text-[1.7rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>{labels.videoTitle}</h2>
           <p className={`mt-1 text-sm leading-7 ${memberTextSecondaryClass}`}>
-            Pilih materi di samping untuk melihat preview utama dan mulai belajar lebih cepat.
+            {labels.sectionDescription}
           </p>
         </div>
 
@@ -71,7 +90,7 @@ export function MemberVideoGuideSection({
                 />
               </div>
               <div className="px-6 py-6 sm:px-7">
-                <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>Sedang diputar</p>
+                <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.24em] ${memberTextMutedClass}`}>{labels.nowPlaying}</p>
                 <h3 className={`mt-3 text-[1.6rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>{selectedVideo.title}</h3>
                 <p className={`mt-3 text-sm leading-7 ${memberTextSecondaryClass}`}>{selectedVideo.description}</p>
               </div>
@@ -79,8 +98,8 @@ export function MemberVideoGuideSection({
 
             <div className={`px-5 py-5 ${memberGlassPanelClass}`}>
               <div className="px-1">
-                <h3 className={`text-[1.35rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>Daftar video</h3>
-                <p className={`mt-1 text-sm leading-7 ${memberTextSecondaryClass}`}>Semua materi yang masuk kategori ini akan muncul di sini.</p>
+                <h3 className={`text-[1.35rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>{labels.listTitle}</h3>
+                <p className={`mt-1 text-sm leading-7 ${memberTextSecondaryClass}`}>{labels.listDescription}</p>
               </div>
 
               <div className="mt-5 space-y-3">
@@ -128,7 +147,18 @@ export function MemberVideoGuideSection({
   );
 }
 
-export function MemberPdfGuideSection({ badge, description, emptyMessage, guides, title }: MemberPdfGuideSectionProps) {
+export function MemberPdfGuideSection({
+  badge,
+  description,
+  emptyMessage,
+  guides,
+  labels = {
+    openPdf: "Buka PDF",
+    sectionDescription: "Buka dokumen untuk membaca materi lebih lengkap, lebih tenang, dan bisa diulang kapan saja.",
+    sectionTitle: "File PDF",
+  },
+  title,
+}: MemberPdfGuideSectionProps) {
   const pdfGuides = useMemo(() => guides.filter((guide) => guide.type === "pdf"), [guides]);
 
   return (
@@ -143,9 +173,9 @@ export function MemberPdfGuideSection({ badge, description, emptyMessage, guides
 
       <section className="space-y-4">
         <div className="px-1">
-          <h2 className={`text-[1.7rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>File PDF</h2>
+          <h2 className={`text-[1.7rem] font-semibold tracking-tight ${memberTextPrimaryClass}`}>{labels.sectionTitle}</h2>
           <p className={`mt-1 text-sm leading-7 ${memberTextSecondaryClass}`}>
-            Buka dokumen untuk membaca materi lebih lengkap, lebih tenang, dan bisa diulang kapan saja.
+            {labels.sectionDescription}
           </p>
         </div>
 
@@ -170,7 +200,7 @@ export function MemberPdfGuideSection({ badge, description, emptyMessage, guides
                     target="_blank"
                   >
                     <ExternalLink className="h-4 w-4" />
-                    Buka PDF
+                    {labels.openPdf}
                   </Link>
                 </div>
               </div>

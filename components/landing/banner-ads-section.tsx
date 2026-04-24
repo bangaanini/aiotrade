@@ -35,8 +35,8 @@ export function BannerAdsSection({ content }: BannerAdsSectionProps) {
 
       <div className="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 lg:px-10">
         <Reveal>
-          <div className="landing-glass-card relative overflow-hidden rounded-[30px]">
-            <div className="relative aspect-[21/8] min-h-[180px] w-full sm:min-h-[220px] lg:min-h-[300px]">
+          <div className="landing-glass-card relative overflow-hidden rounded-[30px] p-3 sm:p-4">
+            <div className="relative aspect-[21/8] min-h-[200px] w-full overflow-hidden rounded-[26px] sm:min-h-[240px] lg:min-h-[340px]">
               {content.imageUrl ? (
                 <>
                   <Image

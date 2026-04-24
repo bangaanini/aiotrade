@@ -2,13 +2,17 @@ import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, FileText } from "lucide-react";
+import { SiteLanguageSelector } from "@/components/shared/site-language-selector";
 import { FloatingWhatsAppButton } from "@/components/landing/floating-whatsapp-button";
 import { navItems } from "@/components/landing/data";
 import type { PublicGuidePdfPost } from "@/lib/public-guide-types";
+import { translateHomepageContent, translateLandingNavItems, translatePublicGuidePdfPosts } from "@/lib/public-translations";
 import { getPublishedPublicGuidePdfPosts } from "@/lib/public-guides";
 import { getHomepageContent } from "@/lib/homepage-content";
 import { LANDING_REFERRAL_COOKIE_NAME, resolveHomepageReferralState } from "@/lib/referral";
+import { parseSiteLanguage, SITE_LANGUAGE_COOKIE } from "@/lib/site-language";
 import { getSiteSeoSettings } from "@/lib/site-seo";
+import { getSupportedSiteLanguages, translateRecordStrings } from "@/lib/translatex";
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSiteSeoSettings();
@@ -26,14 +30,37 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function GuidePage() {
-  const [pdfs, content, cookieStore] = await Promise.all([
+  const cookieStore = await cookies();
+  const currentLanguage = parseSiteLanguage(cookieStore.get(SITE_LANGUAGE_COOKIE)?.value);
+  const [pdfs, content, languageOptions, translatedNavItems, guideCopy] = await Promise.all([
     getPublishedPublicGuidePdfPosts(),
     getHomepageContent(),
-    cookies(),
+    getSupportedSiteLanguages(),
+    translateLandingNavItems(navItems, currentLanguage),
+    translateRecordStrings({
+      record: {
+        backToHome: "Kembali ke beranda",
+        empty: "Belum ada panduan PDF yang dipublish.",
+        fallbackDescription: "File panduan resmi AIOTrade yang bisa Anda buka langsung dari halaman ini.",
+        footerBlog: "Blog",
+        footerFaq: "FAQ",
+        footerFeature: "Feature",
+        footerGuide: "User Guide",
+        footerHarga: "Harga",
+        heading: "Guide PDF",
+        openPdf: "Buka PDF",
+        pageEyebrow: "Panduan resmi AIOTrade",
+      },
+      targetLanguage: currentLanguage,
+    }),
   ]);
   const referralState = await resolveHomepageReferralState(
     cookieStore.get(LANDING_REFERRAL_COOKIE_NAME)?.value ?? null,
   );
+  const [translatedPdfs, translatedContent] = await Promise.all([
+    translatePublicGuidePdfPosts(pdfs, currentLanguage),
+    translateHomepageContent(content, currentLanguage),
+  ]);
 
   return (
     <main className="min-h-screen bg-[#f4f2ec] text-[#111827]" id="top">
@@ -44,44 +71,51 @@ export default async function GuidePage() {
             href="/"
           >
             <ArrowLeft className="h-4 w-4" />
-            Kembali ke beranda
+            {guideCopy.backToHome}
           </Link>
 
-          <nav className="no-scrollbar flex max-w-full items-center gap-2 overflow-x-auto text-[0.82rem] text-white/80 sm:gap-6 sm:text-[1rem]">
-            {navItems.map((item, index) => {
-              const href = item.label === "Blog" ? "/blog" : item.label === "User Guide" ? "/guide" : `/${item.href}`;
-              const isActive = item.label === "User Guide";
+          <div className="flex items-center gap-3">
+            <nav className="no-scrollbar flex max-w-full items-center gap-2 overflow-x-auto text-[0.82rem] text-white/80 sm:gap-6 sm:text-[1rem]">
+              {translatedNavItems.map((item, index) => {
+                const href = item.href === "#blog" ? "/blog" : item.href === "#panduan" ? "/guide" : `/${item.href}`;
+                const isActive = item.href === "#panduan";
 
-              return (
-                <div className="flex items-center gap-2 sm:gap-6" key={item.href}>
-                  {index > 0 ? <span className="text-white/28">|</span> : null}
-                  <Link
-                    className="relative inline-flex whitespace-nowrap rounded-md px-2 py-2 transition duration-300 hover:text-white sm:px-3"
-                    href={href}
-                    style={
-                      isActive
-                        ? {
-                            color: item.accent,
-                            textShadow: `0 0 18px ${item.accent}22`,
-                          }
-                        : undefined
-                    }
-                  >
-                    <span>{item.label}</span>
-                    {isActive ? (
-                      <span
-                        className="absolute inset-x-2 bottom-0 h-[2px] rounded-full sm:inset-x-3"
-                        style={{
-                          backgroundColor: item.accent,
-                          boxShadow: `0 0 18px ${item.accent}73`,
-                        }}
-                      />
-                    ) : null}
-                  </Link>
-                </div>
-              );
-            })}
-          </nav>
+                return (
+                  <div className="flex items-center gap-2 sm:gap-6" key={item.href}>
+                    {index > 0 ? <span className="text-white/28">|</span> : null}
+                    <Link
+                      className="relative inline-flex whitespace-nowrap rounded-md px-2 py-2 transition duration-300 hover:text-white sm:px-3"
+                      href={href}
+                      style={
+                        isActive
+                          ? {
+                              color: item.accent,
+                              textShadow: `0 0 18px ${item.accent}22`,
+                            }
+                          : undefined
+                      }
+                    >
+                      <span>{item.label}</span>
+                      {isActive ? (
+                        <span
+                          className="absolute inset-x-2 bottom-0 h-[2px] rounded-full sm:inset-x-3"
+                          style={{
+                            backgroundColor: item.accent,
+                            boxShadow: `0 0 18px ${item.accent}73`,
+                          }}
+                        />
+                      ) : null}
+                    </Link>
+                  </div>
+                );
+              })}
+            </nav>
+            <SiteLanguageSelector
+              currentLanguage={currentLanguage}
+              languages={languageOptions}
+              variant="landing"
+            />
+          </div>
         </div>
       </header>
 
@@ -94,10 +128,10 @@ export default async function GuidePage() {
           <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
             <div className="max-w-4xl">
               <p className="text-[1.05rem] font-semibold tracking-[-0.02em] text-[#1c74de] sm:text-[1.3rem]">
-                Panduan resmi AIOTrade
+                {guideCopy.pageEyebrow}
               </p>
               <h1 className="mt-5 text-[3rem] font-semibold leading-none tracking-[-0.045em] text-[#ffc84a] sm:text-[4.45rem]">
-                Guide PDF
+                {guideCopy.heading}
               </h1>
               
             </div>
@@ -106,8 +140,8 @@ export default async function GuidePage() {
           </div>
 
           <div className="mt-14 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {pdfs.length ? (
-              pdfs.map((pdf: PublicGuidePdfPost, index: number) => (
+            {translatedPdfs.length ? (
+              translatedPdfs.map((pdf: PublicGuidePdfPost, index: number) => (
                 <article
                   className="relative overflow-hidden rounded-[26px] border border-[#e6e1d6] bg-[linear-gradient(180deg,#ffffff_0%,#f9f8f4_100%)] px-7 py-8 shadow-[0_24px_50px_rgba(15,23,42,0.10)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_56px_rgba(15,23,42,0.14)]"
                   key={pdf.id}
@@ -129,7 +163,7 @@ export default async function GuidePage() {
                       {pdf.title}
                     </h2>
                     <p className="mt-5 min-h-[7.5rem] text-[1rem] leading-[1.85] text-[#4b5563]">
-                      {pdf.description || "File panduan resmi AIOTrade yang bisa Anda buka langsung dari halaman ini."}
+                      {pdf.description || guideCopy.fallbackDescription}
                     </p>
 
                     <div className="mt-7 flex items-end justify-between gap-4">
@@ -141,7 +175,7 @@ export default async function GuidePage() {
                         rel="noreferrer"
                         target="_blank"
                       >
-                        Buka PDF
+                        {guideCopy.openPdf}
                         <ExternalLink className="h-4 w-4" />
                       </Link>
                     </div>
@@ -150,7 +184,7 @@ export default async function GuidePage() {
               ))
             ) : (
               <div className="rounded-[28px] border border-dashed border-[#d9d1c3] bg-[rgba(255,255,255,0.82)] px-8 py-16 text-center text-[#667085] shadow-[0_18px_46px_rgba(15,23,42,0.08)] md:col-span-2 xl:col-span-3">
-                Belum ada panduan PDF yang dipublish.
+                {guideCopy.empty}
               </div>
             )}
           </div>
@@ -167,24 +201,24 @@ export default async function GuidePage() {
               <span className="text-[#10a7ff]">AIO</span>
               <span className="text-white">TRADE</span>
             </Link>
-            <p className="mt-4 text-[1rem] leading-[1.75] text-white/70">{content.footer.description}</p>
+            <p className="mt-4 text-[1rem] leading-[1.75] text-white/70">{translatedContent.footer.description}</p>
           </div>
 
           <div className="flex flex-wrap gap-x-6 gap-y-3 text-[0.98rem] text-white/72">
             <Link className="transition hover:text-white" href="/#fitur">
-              Feature
+              {guideCopy.footerFeature}
             </Link>
             <Link className="transition hover:text-white" href="/#harga">
-              Harga
+              {guideCopy.footerHarga}
             </Link>
             <Link className="transition hover:text-white" href="/#faq">
-              FAQ
+              {guideCopy.footerFaq}
             </Link>
             <Link className="transition hover:text-white" href="/guide">
-              User Guide
+              {guideCopy.footerGuide}
             </Link>
             <Link className="transition hover:text-white" href="/blog">
-              Blog
+              {guideCopy.footerBlog}
             </Link>
           </div>
         </div>
