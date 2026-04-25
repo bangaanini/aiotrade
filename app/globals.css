@@ -285,6 +285,542 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
+.admin-theme-scope {
+  color: var(--admin-text-primary);
+}
+
+.admin-theme-scope[data-theme="light"] {
+  --admin-shell-bg: linear-gradient(180deg, #f8fbff 0%, #f3f7fb 42%, #edf2f8 100%);
+  --admin-shell-overlay: linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.36) 24%, rgba(235, 243, 250, 0.18) 100%);
+  --admin-grid-y: rgba(148, 163, 184, 0.08);
+  --admin-grid-x: rgba(148, 163, 184, 0.07);
+  --admin-text-primary: #0f172a;
+  --admin-text-secondary: #475569;
+  --admin-text-muted: #64748b;
+  --admin-panel-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 251, 255, 0.82) 100%);
+  --admin-panel-border: rgba(255, 255, 255, 0.82);
+  --admin-panel-shadow: 0 28px 70px rgba(148, 163, 184, 0.22), 0 10px 28px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  --admin-row-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(245, 249, 255, 0.74) 100%);
+  --admin-row-border: rgba(255, 255, 255, 0.9);
+  --admin-row-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.94), 0 18px 38px rgba(148, 163, 184, 0.16), 0 8px 20px rgba(15, 23, 42, 0.04);
+  --admin-row-hover-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(247, 250, 255, 0.84) 100%);
+  --admin-row-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.94);
+  --admin-pill-bg: rgba(255, 255, 255, 0.48);
+  --admin-pill-text: #0f3f67;
+  --admin-pill-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.74);
+  --admin-icon-surface: rgba(15, 23, 42, 0.05);
+  --admin-icon-foreground: #0f172a;
+  --admin-solid-button-bg: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+  --admin-solid-button-hover-bg: linear-gradient(135deg, #111c31 0%, #234770 100%);
+  --admin-solid-button-text: #ffffff;
+  --admin-solid-button-shadow: 0 20px 38px rgba(15, 23, 42, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  --admin-sidebar-active-bg: linear-gradient(135deg, #e3f4fd 0%, #dceefe 100%);
+  --admin-sidebar-active-text: #0f3f67;
+  --admin-sidebar-active-shadow: 0 18px 36px rgba(37, 99, 235, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  --admin-soft-button-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.78) 0%, rgba(248, 250, 252, 0.62) 100%);
+  --admin-soft-button-hover-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.72) 100%);
+  --admin-soft-button-shadow: 0 16px 28px rgba(148, 163, 184, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.88);
+  --admin-soft-button-hover-shadow: 0 20px 34px rgba(148, 163, 184, 0.2), 0 8px 18px rgba(15, 23, 42, 0.06);
+  --admin-focus-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.94),
+    0 18px 38px rgba(148, 163, 184, 0.16),
+    0 8px 20px rgba(15, 23, 42, 0.04),
+    0 0 0 4px rgba(96, 165, 250, 0.14);
+  --admin-note-bg: linear-gradient(180deg, rgba(239, 248, 255, 0.84) 0%, rgba(232, 242, 253, 0.76) 100%);
+  --admin-note-border: rgba(125, 211, 252, 0.24);
+  --admin-note-text: #334155;
+  --admin-note-accent: #0369a1;
+  --admin-success-bg: rgba(16, 185, 129, 0.12);
+  --admin-success-border: rgba(16, 185, 129, 0.2);
+  --admin-success-text: #047857;
+  --admin-warning-bg: rgba(245, 158, 11, 0.12);
+  --admin-warning-border: rgba(245, 158, 11, 0.22);
+  --admin-warning-text: #b45309;
+  --admin-danger-bg: rgba(244, 63, 94, 0.11);
+  --admin-danger-border: rgba(244, 63, 94, 0.18);
+  --admin-danger-text: #be123c;
+  --admin-info-bg: rgba(14, 165, 233, 0.12);
+  --admin-info-border: rgba(14, 165, 233, 0.22);
+  --admin-info-text: #0369a1;
+  --admin-preview-shell-bg: linear-gradient(180deg, rgba(221, 231, 243, 0.9) 0%, rgba(235, 241, 248, 0.96) 100%);
+  --admin-preview-shell-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  --admin-preview-frame-bg: #ffffff;
+  --admin-preview-frame-shadow: 0 24px 48px rgba(15, 23, 42, 0.14);
+  --admin-link-color: #0369a1;
+  --admin-link-hover: #0f3f67;
+}
+
+.admin-theme-scope[data-theme="dark"] {
+  color-scheme: dark;
+  --admin-shell-bg: linear-gradient(180deg, #08101d 0%, #0f172a 46%, #131c31 100%);
+  --admin-shell-overlay: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 22%, rgba(59, 130, 246, 0.05) 100%);
+  --admin-grid-y: rgba(255, 255, 255, 0.05);
+  --admin-grid-x: rgba(255, 255, 255, 0.04);
+  --admin-text-primary: #f8fafc;
+  --admin-text-secondary: rgba(226, 232, 240, 0.82);
+  --admin-text-muted: rgba(203, 213, 225, 0.66);
+  --admin-panel-bg: linear-gradient(180deg, rgba(12, 18, 31, 0.84) 0%, rgba(14, 22, 38, 0.76) 100%);
+  --admin-panel-border: rgba(148, 163, 184, 0.16);
+  --admin-panel-shadow: 0 30px 72px rgba(2, 6, 23, 0.4), 0 12px 28px rgba(15, 23, 42, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --admin-row-bg: linear-gradient(180deg, rgba(22, 31, 49, 0.78) 0%, rgba(13, 20, 35, 0.66) 100%);
+  --admin-row-border: rgba(148, 163, 184, 0.16);
+  --admin-row-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 18px 34px rgba(2, 6, 23, 0.3);
+  --admin-row-hover-bg: linear-gradient(180deg, rgba(33, 46, 70, 0.82) 0%, rgba(16, 24, 40, 0.7) 100%);
+  --admin-row-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --admin-pill-bg: rgba(255, 255, 255, 0.06);
+  --admin-pill-text: #e2e8f0;
+  --admin-pill-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --admin-icon-surface: rgba(255, 255, 255, 0.06);
+  --admin-icon-foreground: #e2e8f0;
+  --admin-solid-button-bg: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+  --admin-solid-button-hover-bg: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%);
+  --admin-solid-button-text: #ffffff;
+  --admin-solid-button-shadow: 0 22px 42px rgba(14, 165, 233, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  --admin-sidebar-active-bg: linear-gradient(135deg, rgba(227, 244, 253, 0.96) 0%, rgba(210, 235, 250, 0.88) 100%);
+  --admin-sidebar-active-text: #113b5c;
+  --admin-sidebar-active-shadow: 0 18px 40px rgba(2, 6, 23, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  --admin-soft-button-bg: linear-gradient(180deg, rgba(30, 41, 59, 0.72) 0%, rgba(15, 23, 42, 0.58) 100%);
+  --admin-soft-button-hover-bg: linear-gradient(180deg, rgba(51, 65, 85, 0.8) 0%, rgba(15, 23, 42, 0.64) 100%);
+  --admin-soft-button-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 18px 32px rgba(2, 6, 23, 0.3);
+  --admin-soft-button-hover-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 20px 36px rgba(2, 6, 23, 0.36);
+  --admin-focus-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 18px 34px rgba(2, 6, 23, 0.3),
+    0 0 0 4px rgba(56, 189, 248, 0.16);
+  --admin-note-bg: linear-gradient(180deg, rgba(14, 35, 56, 0.94) 0%, rgba(10, 27, 46, 0.88) 100%);
+  --admin-note-border: rgba(56, 189, 248, 0.18);
+  --admin-note-text: rgba(226, 232, 240, 0.86);
+  --admin-note-accent: #7dd3fc;
+  --admin-success-bg: rgba(16, 185, 129, 0.16);
+  --admin-success-border: rgba(52, 211, 153, 0.24);
+  --admin-success-text: #86efac;
+  --admin-warning-bg: rgba(245, 158, 11, 0.16);
+  --admin-warning-border: rgba(251, 191, 36, 0.24);
+  --admin-warning-text: #fcd34d;
+  --admin-danger-bg: rgba(244, 63, 94, 0.16);
+  --admin-danger-border: rgba(251, 113, 133, 0.24);
+  --admin-danger-text: #fda4af;
+  --admin-info-bg: rgba(14, 165, 233, 0.16);
+  --admin-info-border: rgba(56, 189, 248, 0.24);
+  --admin-info-text: #7dd3fc;
+  --admin-preview-shell-bg: linear-gradient(180deg, rgba(16, 28, 46, 0.96) 0%, rgba(11, 20, 36, 0.92) 100%);
+  --admin-preview-shell-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 18px 34px rgba(2, 6, 23, 0.24);
+  --admin-preview-frame-bg: #0b1323;
+  --admin-preview-frame-shadow: 0 24px 48px rgba(2, 6, 23, 0.28);
+  --admin-link-color: #7dd3fc;
+  --admin-link-hover: #bae6fd;
+}
+
+.admin-shell-bg {
+  background: var(--admin-shell-bg);
+}
+
+.admin-shell-overlay {
+  background: var(--admin-shell-overlay);
+}
+
+.admin-shell-grid {
+  background-image:
+    linear-gradient(var(--admin-grid-y) 1px, transparent 1px),
+    linear-gradient(90deg, var(--admin-grid-x) 1px, transparent 1px);
+  background-position: center;
+  background-size: 72px 72px;
+  opacity: 0.7;
+}
+
+.admin-glass-panel {
+  background: var(--admin-panel-bg);
+  border: 1px solid var(--admin-panel-border);
+  box-shadow: var(--admin-panel-shadow);
+}
+
+.admin-glass-row {
+  background: var(--admin-row-bg);
+  border: 1px solid var(--admin-row-border);
+  box-shadow: var(--admin-row-shadow);
+}
+
+.admin-row-surface {
+  background: var(--admin-row-bg);
+  border: 1px solid var(--admin-row-border);
+  box-shadow: var(--admin-row-shadow);
+}
+
+.admin-row-surface-hover:hover {
+  background: var(--admin-row-hover-bg);
+}
+
+.admin-page-badge {
+  background: var(--admin-pill-bg);
+  box-shadow: var(--admin-pill-shadow);
+  color: var(--admin-pill-text);
+}
+
+.admin-icon-surface {
+  background: var(--admin-icon-surface);
+  color: var(--admin-icon-foreground);
+}
+
+.admin-solid-button {
+  background: var(--admin-solid-button-bg);
+  color: var(--admin-solid-button-text);
+  box-shadow: var(--admin-solid-button-shadow);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.admin-solid-button:hover {
+  background: var(--admin-solid-button-hover-bg);
+}
+
+.admin-soft-button {
+  background: var(--admin-soft-button-bg);
+  border: 1px solid var(--admin-row-border);
+  box-shadow: var(--admin-soft-button-shadow);
+}
+
+.admin-soft-button:hover {
+  background: var(--admin-soft-button-hover-bg);
+  box-shadow: var(--admin-soft-button-hover-shadow);
+}
+
+.admin-note-surface {
+  background: var(--admin-note-bg);
+  border: 1px solid var(--admin-note-border);
+  color: var(--admin-note-text);
+  box-shadow: var(--admin-row-shadow);
+}
+
+.admin-note-accent {
+  color: var(--admin-note-accent);
+}
+
+.admin-preview-shell-surface {
+  background: var(--admin-preview-shell-bg);
+  box-shadow: var(--admin-preview-shell-shadow);
+}
+
+.admin-preview-frame-surface {
+  background: var(--admin-preview-frame-bg);
+  box-shadow: var(--admin-preview-frame-shadow);
+}
+
+.admin-active-surface {
+  background: var(--admin-sidebar-active-bg);
+  box-shadow: var(--admin-sidebar-active-shadow);
+  color: var(--admin-sidebar-active-text);
+}
+
+.admin-theme-scope .rounded-lg.border.border-stone-200.bg-white {
+  background: var(--admin-panel-bg);
+  border-color: var(--admin-panel-border);
+  border-radius: 30px;
+  box-shadow: var(--admin-panel-shadow);
+}
+
+.admin-theme-scope .rounded-lg.border.border-stone-200.bg-white .border-b.border-stone-200 {
+  border-color: rgba(148, 163, 184, 0.14);
+}
+
+.admin-theme-scope label {
+  color: var(--admin-text-secondary);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.admin-theme-scope input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+.admin-theme-scope select,
+.admin-theme-scope textarea {
+  background: var(--admin-row-bg);
+  border-color: var(--admin-row-border);
+  box-shadow: var(--admin-row-shadow);
+  color: var(--admin-text-primary);
+}
+
+.admin-theme-scope input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"])::placeholder,
+.admin-theme-scope textarea::placeholder {
+  color: var(--admin-text-muted);
+}
+
+.admin-theme-scope input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus,
+.admin-theme-scope select:focus,
+.admin-theme-scope textarea:focus {
+  border-color: rgba(96, 165, 250, 0.42);
+  box-shadow: var(--admin-focus-shadow);
+}
+
+.admin-theme-scope .rounded-xl.border.border-stone-200.bg-stone-50,
+.admin-theme-scope .rounded-xl.border.border-stone-200.bg-white,
+.admin-theme-scope .rounded-2xl.border.border-stone-200.bg-white,
+.admin-theme-scope .rounded-2xl.border.border-stone-200.bg-stone-50,
+.admin-theme-scope .rounded-2xl.border.border-dashed.border-stone-300.bg-stone-50 {
+  background: var(--admin-row-bg);
+  border-color: var(--admin-row-border);
+  box-shadow: var(--admin-row-shadow);
+}
+
+.admin-theme-scope .border-dashed.border-stone-300 {
+  border-color: rgba(148, 163, 184, 0.32);
+}
+
+.admin-theme-scope button.bg-emerald-600.text-white,
+.admin-theme-scope button.bg-stone-900.text-white {
+  background: var(--admin-solid-button-bg);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: var(--admin-solid-button-shadow);
+  color: var(--admin-solid-button-text);
+}
+
+.admin-theme-scope button.bg-emerald-600.text-white:hover,
+.admin-theme-scope button.bg-stone-900.text-white:hover {
+  background: var(--admin-solid-button-hover-bg);
+}
+
+.admin-theme-scope button.border.border-stone-300.bg-white.text-stone-900 {
+  background: var(--admin-row-bg);
+  border-color: var(--admin-row-border);
+  box-shadow: var(--admin-row-shadow);
+  color: var(--admin-text-primary);
+}
+
+.admin-theme-scope button.border.border-stone-300.bg-white.text-stone-900:hover {
+  background: var(--admin-row-hover-bg);
+}
+
+.admin-data-table {
+  border-collapse: separate;
+  border-spacing: 0 14px;
+}
+
+.admin-data-table thead th {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.admin-data-table .admin-data-row td {
+  background: var(--admin-row-bg);
+  border-bottom: 1px solid var(--admin-row-border);
+  border-top: 1px solid var(--admin-row-border);
+  box-shadow: var(--admin-row-highlight);
+}
+
+.admin-data-table .admin-data-row td:first-child {
+  border-bottom-left-radius: 22px;
+  border-left: 1px solid var(--admin-row-border);
+  border-top-left-radius: 22px;
+}
+
+.admin-data-table .admin-data-row td:last-child {
+  border-bottom-right-radius: 22px;
+  border-right: 1px solid var(--admin-row-border);
+  border-top-right-radius: 22px;
+}
+
+.admin-data-table .admin-data-row:hover td {
+  background: var(--admin-row-hover-bg);
+}
+
+.admin-homepage-composer .admin-panel-card {
+  background: var(--admin-panel-bg);
+  border: 1px solid var(--admin-panel-border);
+  box-shadow: var(--admin-panel-shadow);
+  overflow: hidden;
+}
+
+.admin-homepage-composer .admin-panel-card .border-b.border-stone-200 {
+  border-color: rgba(148, 163, 184, 0.14);
+}
+
+.admin-homepage-composer label {
+  color: var(--admin-text-secondary);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.admin-homepage-composer input:not([type="checkbox"]),
+.admin-homepage-composer select,
+.admin-homepage-composer textarea {
+  background: var(--admin-row-bg);
+  border-color: var(--admin-row-border);
+  box-shadow: var(--admin-row-shadow);
+  color: var(--admin-text-primary);
+}
+
+.admin-homepage-composer input:not([type="checkbox"])::placeholder,
+.admin-homepage-composer textarea::placeholder {
+  color: var(--admin-text-muted);
+}
+
+.admin-homepage-composer input:not([type="checkbox"]):focus,
+.admin-homepage-composer select:focus,
+.admin-homepage-composer textarea:focus {
+  border-color: rgba(96, 165, 250, 0.42);
+  box-shadow: var(--admin-focus-shadow);
+}
+
+.admin-homepage-composer .rounded-xl.border.border-stone-200.bg-stone-50,
+.admin-homepage-composer .rounded-xl.border.border-stone-200.bg-stone-50.p-1,
+.admin-homepage-composer .rounded-xl.border.border-stone-200.bg-stone-50\/80 {
+  background: var(--admin-row-bg);
+  border-color: var(--admin-row-border);
+  box-shadow: var(--admin-row-shadow);
+}
+
+.admin-homepage-composer .rounded-lg.border.border-stone-200.bg-white {
+  background: var(--admin-row-bg);
+  border-color: var(--admin-row-border);
+  box-shadow: var(--admin-row-shadow);
+}
+
+.admin-homepage-composer button[type="submit"] {
+  background: var(--admin-solid-button-bg);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: var(--admin-solid-button-shadow);
+  color: var(--admin-solid-button-text);
+}
+
+.admin-homepage-composer button[type="submit"]:hover {
+  background: var(--admin-solid-button-hover-bg);
+}
+
+.admin-theme-scope[data-theme="dark"] .text-black,
+.admin-theme-scope[data-theme="dark"] .text-stone-950,
+.admin-theme-scope[data-theme="dark"] .text-stone-900,
+.admin-theme-scope[data-theme="dark"] .text-stone-800 {
+  color: var(--admin-text-primary) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .text-stone-700,
+.admin-theme-scope[data-theme="dark"] .text-stone-600,
+.admin-theme-scope[data-theme="dark"] .text-slate-700 {
+  color: var(--admin-text-secondary) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .text-stone-500,
+.admin-theme-scope[data-theme="dark"] .text-stone-400,
+.admin-theme-scope[data-theme="dark"] .text-slate-500 {
+  color: var(--admin-text-muted) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .text-sky-700,
+.admin-theme-scope[data-theme="dark"] .text-sky-600,
+.admin-theme-scope[data-theme="dark"] .text-sky-800 {
+  color: var(--admin-link-color) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .text-emerald-700,
+.admin-theme-scope[data-theme="dark"] .text-emerald-600,
+.admin-theme-scope[data-theme="dark"] .text-emerald-800 {
+  color: var(--admin-success-text) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .text-amber-800 {
+  color: var(--admin-warning-text) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .text-rose-700,
+.admin-theme-scope[data-theme="dark"] .text-rose-600 {
+  color: var(--admin-danger-text) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .bg-white,
+.admin-theme-scope[data-theme="dark"] .bg-stone-50,
+.admin-theme-scope[data-theme="dark"] .bg-stone-100 {
+  background: var(--admin-row-bg) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .bg-sky-50,
+.admin-theme-scope[data-theme="dark"] .bg-sky-50\/70,
+.admin-theme-scope[data-theme="dark"] .bg-sky-50\/80,
+.admin-theme-scope[data-theme="dark"] .bg-sky-100 {
+  background: var(--admin-info-bg) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .bg-emerald-50,
+.admin-theme-scope[data-theme="dark"] .bg-emerald-100 {
+  background: var(--admin-success-bg) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .bg-amber-50,
+.admin-theme-scope[data-theme="dark"] .bg-amber-100 {
+  background: var(--admin-warning-bg) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .bg-rose-50,
+.admin-theme-scope[data-theme="dark"] .bg-rose-100 {
+  background: var(--admin-danger-bg) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .border-stone-200,
+.admin-theme-scope[data-theme="dark"] .border-stone-300,
+.admin-theme-scope[data-theme="dark"] .divide-stone-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--admin-row-border) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .border-sky-100,
+.admin-theme-scope[data-theme="dark"] .border-sky-300 {
+  border-color: var(--admin-info-border) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .border-emerald-200,
+.admin-theme-scope[data-theme="dark"] .border-emerald-300,
+.admin-theme-scope[data-theme="dark"] .border-emerald-500 {
+  border-color: var(--admin-success-border) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .border-amber-200,
+.admin-theme-scope[data-theme="dark"] .border-amber-300 {
+  border-color: var(--admin-warning-border) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .border-rose-200,
+.admin-theme-scope[data-theme="dark"] .border-rose-300 {
+  border-color: var(--admin-danger-border) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .border-dashed.border-stone-300 {
+  border-color: rgba(148, 163, 184, 0.24) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .bg-stone-900,
+.admin-theme-scope[data-theme="dark"] .hover\:bg-stone-900:hover {
+  background: var(--admin-solid-button-bg) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .hover\:bg-stone-100:hover,
+.admin-theme-scope[data-theme="dark"] .hover\:bg-stone-50:hover {
+  background: var(--admin-row-hover-bg) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .hover\:bg-sky-100:hover {
+  background: color-mix(in srgb, var(--admin-info-bg) 76%, rgba(255, 255, 255, 0.04)) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .hover\:bg-amber-100:hover {
+  background: color-mix(in srgb, var(--admin-warning-bg) 78%, rgba(255, 255, 255, 0.04)) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .hover\:bg-rose-100:hover,
+.admin-theme-scope[data-theme="dark"] .hover\:bg-rose-50:hover {
+  background: color-mix(in srgb, var(--admin-danger-bg) 78%, rgba(255, 255, 255, 0.04)) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .underline.decoration-sky-300 {
+  text-decoration-color: rgba(125, 211, 252, 0.4) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] a[class*="text-sky"] {
+  color: var(--admin-link-color) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] a[class*="text-sky"]:hover {
+  color: var(--admin-link-hover) !important;
+}
+
+.admin-theme-scope[data-theme="dark"] .shadow-sm,
+.admin-theme-scope[data-theme="dark"] .shadow-\[0_18px_38px_rgba\(15\,23\,42\,0\.08\)\],
+.admin-theme-scope[data-theme="dark"] .shadow-\[0_28px_90px_rgba\(15\,23\,42\,0\.28\)\] {
+  box-shadow: var(--admin-row-shadow) !important;
+}
+
 .landing-theme-scope {
   color: var(--landing-page-text);
 }
@@ -513,6 +1049,130 @@ body {
   box-shadow:
     0 22px 44px rgba(37, 99, 235, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+.guide-page-shell {
+  position: relative;
+}
+
+.guide-page-header {
+  background: var(--landing-header-bg);
+  border-bottom: 1px solid var(--landing-header-border);
+}
+
+.guide-page-nav {
+  color: var(--landing-header-text);
+}
+
+.guide-page-back-link {
+  color: var(--landing-header-text);
+}
+
+.guide-page-back-link:hover {
+  color: var(--landing-header-active-text);
+}
+
+.guide-page-eyebrow {
+  color: var(--landing-accent-blue);
+}
+
+.guide-page-title {
+  color: var(--landing-accent-gold);
+}
+
+.guide-page-card {
+  background: var(--landing-surface-bg);
+  border: 1px solid var(--landing-surface-border);
+  box-shadow: var(--landing-surface-shadow);
+  backdrop-filter: blur(18px);
+}
+
+.guide-page-card:hover {
+  background: var(--landing-surface-hover-bg);
+  box-shadow: var(--landing-surface-hover-shadow);
+}
+
+.guide-page-card-glow {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--landing-accent-blue) 10%, transparent) 0%,
+      rgba(255, 255, 255, 0) 100%
+    );
+}
+
+.guide-page-card-line {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      color-mix(in srgb, var(--landing-accent-blue) 28%, rgba(255, 255, 255, 0.12)) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+}
+
+.guide-page-card-icon {
+  background: color-mix(in srgb, var(--landing-accent-blue) 12%, transparent);
+  color: var(--landing-accent-blue);
+  border: 1px solid color-mix(in srgb, var(--landing-accent-blue) 14%, transparent);
+}
+
+.guide-page-card-badge {
+  background: linear-gradient(180deg, #ffe197 0%, #ffc84a 48%, #f0a722 100%);
+  color: #1f2937;
+  box-shadow:
+    0 14px 30px rgba(255, 200, 74, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.guide-page-card-title {
+  color: var(--landing-text-primary);
+}
+
+.guide-page-card-description {
+  color: var(--landing-text-secondary);
+}
+
+.guide-page-card-button {
+  background: var(--landing-button-bg);
+  border: 1px solid var(--landing-button-border);
+  box-shadow: var(--landing-button-shadow);
+  color: var(--landing-accent-blue);
+  backdrop-filter: blur(16px);
+}
+
+.guide-page-card-button:hover {
+  background: var(--landing-button-hover-bg);
+  box-shadow: var(--landing-button-hover-shadow);
+}
+
+.guide-page-empty {
+  background: var(--landing-surface-bg);
+  border-color: color-mix(in srgb, var(--landing-surface-border) 70%, rgba(148, 163, 184, 0.32));
+  box-shadow: var(--landing-surface-shadow);
+  color: var(--landing-text-muted);
+}
+
+.guide-page-cta-panel {
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--landing-accent-gold) 16%, transparent) 0%, transparent 30%),
+    radial-gradient(circle at bottom right, color-mix(in srgb, var(--landing-accent-blue) 18%, transparent) 0%, transparent 28%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--landing-header-bg) 94%, black 6%) 0%,
+      color-mix(in srgb, var(--landing-header-bg) 72%, var(--landing-accent-blue) 28%) 54%,
+      color-mix(in srgb, var(--landing-header-bg) 68%, var(--landing-accent-blue) 32%) 100%
+    );
+  border: 1px solid var(--landing-header-border);
+  box-shadow:
+    0 30px 70px rgba(11, 19, 34, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.guide-page-cta-badge {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--landing-accent-gold);
 }
 
 .landing-button-palette-brand-blue,

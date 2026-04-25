@@ -9,12 +9,16 @@ import {
   KeyRound,
   LayoutDashboard,
   LogOut,
+  Moon,
   Newspaper,
   Search,
   Settings2,
+  Sun,
   Users,
 } from "lucide-react";
 import { logoutAction } from "@/app/(protected)/account/actions";
+import { AdminThemeToggle } from "@/components/admin/admin-theme-toggle";
+import type { AdminTheme } from "@/lib/admin-theme";
 import { cn } from "@/lib/utils";
 
 const homepageItems = [
@@ -44,11 +48,40 @@ const memberPostItems = [
 ] as const;
 
 type AdminSidebarProps = {
+  onThemeChange: (theme: AdminTheme) => void;
   pathname: string;
+  theme: AdminTheme;
   username: string;
 };
 
-export function AdminSidebar({ pathname, username }: AdminSidebarProps) {
+function primaryLinkClass(active: boolean) {
+  return cn(
+    "flex items-center gap-3 rounded-[22px] px-4 py-3.5 text-sm font-semibold transition duration-300",
+    active
+      ? "admin-active-surface text-[var(--admin-sidebar-active-text)]"
+      : "admin-row-surface admin-row-surface-hover text-[var(--admin-text-secondary)] hover:-translate-y-0.5 hover:text-[var(--admin-text-primary)]",
+  );
+}
+
+function groupTriggerClass(active: boolean) {
+  return cn(
+    "flex w-full items-center justify-between gap-3 rounded-[22px] px-4 py-3.5 text-left text-sm font-semibold transition duration-300",
+    active
+      ? "admin-active-surface text-[var(--admin-sidebar-active-text)]"
+      : "admin-soft-button text-[var(--admin-text-secondary)] hover:text-[var(--admin-text-primary)]",
+  );
+}
+
+function subItemClass(active: boolean) {
+  return cn(
+    "block w-full rounded-[18px] px-3.5 py-2.5 text-left text-sm font-medium transition duration-300",
+    active
+      ? "admin-active-surface text-[var(--admin-sidebar-active-text)]"
+      : "admin-soft-button text-[var(--admin-text-secondary)] hover:text-[var(--admin-text-primary)]",
+  );
+}
+
+export function AdminSidebar({ onThemeChange, pathname, theme, username }: AdminSidebarProps) {
   const resolvedPathname = usePathname() ?? pathname;
   const searchParams = useSearchParams();
   const currentHomepageSection = searchParams.get("section");
@@ -72,6 +105,7 @@ export function AdminSidebar({ pathname, username }: AdminSidebarProps) {
   const homepageOpen = isHomepageRoute || homepageExpanded;
   const postsOpen = isPostsRoute || postsExpanded;
   const memberPostsOpen = isMemberPostsRoute || memberPostsExpanded;
+  const ThemePreviewIcon = theme === "dark" ? Moon : Sun;
 
   const homepageSectionIds = useMemo(
     () => homepageItems.map((item) => item.id),
@@ -152,29 +186,31 @@ export function AdminSidebar({ pathname, username }: AdminSidebarProps) {
   }
 
   return (
-    <div className="flex h-full flex-col rounded-2xl border border-stone-200 bg-white shadow-sm">
-      <div className="border-b border-stone-200 px-5 py-5">
-        <div className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-sky-800">
-          <Settings2 className="h-3.5 w-3.5" />
-          Admin Panel
+    <div className="admin-glass-panel flex h-full flex-col rounded-[30px] border-transparent text-[var(--admin-text-primary)] backdrop-blur-2xl">
+      <div className="px-5 py-5">
+        <div className="flex items-center justify-between gap-3">
+          <div className="admin-page-badge inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em]">
+            <Settings2 className="h-3.5 w-3.5" />
+            Admin Panel
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="admin-row-surface inline-flex h-10 items-center gap-2 rounded-full px-3 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-[var(--admin-text-muted)]">
+              <ThemePreviewIcon className="h-3.5 w-3.5" />
+              {theme}
+            </span>
+            <AdminThemeToggle onChange={onThemeChange} theme={theme} />
+          </div>
         </div>
-        <h1 className="mt-4 text-xl font-semibold tracking-tight text-stone-950">Control Center</h1>
-        <p className="mt-2 text-sm leading-6 text-stone-600">
+        <h1 className="mt-4 text-[1.75rem] font-semibold tracking-tight text-[var(--admin-text-primary)]">Control Center</h1>
+        <p className="mt-2 text-sm leading-7 text-[var(--admin-text-secondary)]">
           Kelola homepage, data user, dan pengaturan lain.
         </p>
       </div>
 
-      
       <div className="flex-1 overflow-y-auto px-4 py-4">
-        <nav className="space-y-2">
-
+        <nav className="space-y-2.5">
           <Link
-            className={cn(
-              "flex items-center gap-3 rounded-xl border px-3 py-3 text-sm font-semibold transition",
-              isUsersRoute
-                ? "border-stone-900 bg-stone-900 text-white"
-                : "border-stone-200 bg-stone-50/80 text-stone-800 hover:bg-stone-100",
-            )}
+            className={primaryLinkClass(isUsersRoute)}
             href="/admin/users"
           >
             <Users className="h-4 w-4" />
@@ -182,28 +218,16 @@ export function AdminSidebar({ pathname, username }: AdminSidebarProps) {
           </Link>
 
           <Link
-            className={cn(
-              "flex items-center gap-3 rounded-xl border px-3 py-3 text-sm font-semibold transition",
-              isPaymentsRoute
-                ? "border-stone-900 bg-stone-900 text-white"
-                : "border-stone-200 bg-stone-50/80 text-stone-800 hover:bg-stone-100",
-            )}
+            className={primaryLinkClass(isPaymentsRoute)}
             href="/admin/payments"
           >
             <CreditCard className="h-4 w-4" />
             Payment Settings
           </Link>
 
-          
-
-          <div className="rounded-xl border border-stone-200 bg-stone-50/80">
+          <div className="admin-glass-row rounded-[24px] border-transparent p-1.5">
             <button
-              className={cn(
-                "flex w-full items-center justify-between gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold transition",
-                isMemberPostsRoute
-                  ? "bg-stone-900 text-white"
-                  : "text-stone-800 hover:bg-stone-100",
-              )}
+              className={groupTriggerClass(isMemberPostsRoute)}
               onClick={() => setMemberPostsExpanded((current) => !current)}
               type="button"
             >
@@ -226,7 +250,7 @@ export function AdminSidebar({ pathname, username }: AdminSidebarProps) {
               )}
             >
               <div className="min-h-0">
-                <div className="space-y-1 px-2 pb-2">
+                <div className="space-y-1 px-2 pb-2 pt-1">
                   {memberPostItems.map((item) => {
                     const active =
                       (item.href === "/admin/member-posts" && isMemberPostComposerRoute) ||
@@ -234,12 +258,7 @@ export function AdminSidebar({ pathname, username }: AdminSidebarProps) {
 
                     return (
                       <Link
-                        className={cn(
-                          "block rounded-lg px-3 py-2 text-sm font-medium transition",
-                          active
-                            ? "bg-white text-stone-950 shadow-sm"
-                            : "text-stone-600 hover:bg-white hover:text-stone-950",
-                        )}
+                        className={subItemClass(active)}
                         href={item.href}
                         key={item.href}
                       >
@@ -252,14 +271,9 @@ export function AdminSidebar({ pathname, username }: AdminSidebarProps) {
             </div>
           </div>
 
-          <div className="rounded-xl border border-stone-200 bg-stone-50/80">
+          <div className="admin-glass-row rounded-[24px] border-transparent p-1.5">
             <button
-              className={cn(
-                "flex w-full items-center justify-between gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold transition",
-                isPostsRoute
-                  ? "bg-stone-900 text-white"
-                  : "text-stone-800 hover:bg-stone-100",
-              )}
+              className={groupTriggerClass(isPostsRoute)}
               onClick={() => setPostsExpanded((current) => !current)}
               type="button"
             >
@@ -282,7 +296,7 @@ export function AdminSidebar({ pathname, username }: AdminSidebarProps) {
               )}
             >
               <div className="min-h-0">
-                <div className="space-y-1 px-2 pb-2">
+                <div className="space-y-1 px-2 pb-2 pt-1">
                   {postItems.map((item) => {
                     const active =
                       (item.href === "/admin/posts" && isPostComposerRoute) ||
@@ -292,12 +306,7 @@ export function AdminSidebar({ pathname, username }: AdminSidebarProps) {
 
                     return (
                       <Link
-                        className={cn(
-                          "block rounded-lg px-3 py-2 text-sm font-medium transition",
-                          active
-                            ? "bg-white text-stone-950 shadow-sm"
-                            : "text-stone-600 hover:bg-white hover:text-stone-950",
-                        )}
+                        className={subItemClass(active)}
                         href={item.href}
                         key={item.href}
                       >
@@ -310,14 +319,9 @@ export function AdminSidebar({ pathname, username }: AdminSidebarProps) {
             </div>
           </div>
 
-          <div className="rounded-xl border border-stone-200 bg-stone-50/80">
+          <div className="admin-glass-row rounded-[24px] border-transparent p-1.5">
             <button
-              className={cn(
-                "flex w-full items-center justify-between gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold transition",
-                isHomepageRoute
-                  ? "bg-stone-900 text-white"
-                  : "text-stone-800 hover:bg-stone-100",
-              )}
+              className={groupTriggerClass(isHomepageRoute)}
               onClick={() => setHomepageExpanded((current) => !current)}
               type="button"
             >
@@ -340,14 +344,9 @@ export function AdminSidebar({ pathname, username }: AdminSidebarProps) {
               )}
             >
               <div className="min-h-0">
-                <div className="space-y-1 px-2 pb-2">
+                <div className="space-y-1 px-2 pb-2 pt-1">
                   <Link
-                    className={cn(
-                      "relative block rounded-lg px-3 py-2 text-sm font-medium transition",
-                      isHomepageRoute && !activeHomepageSection
-                        ? "bg-white text-stone-950 shadow-sm ring-1 ring-sky-200/90 before:absolute before:bottom-2 before:left-0 before:top-2 before:w-1 before:rounded-r-full before:bg-sky-500"
-                        : "text-stone-600 hover:bg-white hover:text-stone-950",
-                    )}
+                    className={subItemClass(isHomepageRoute && !activeHomepageSection)}
                     href="/admin"
                     onClick={(event) => {
                       if (!isHomepageRoute) {
@@ -365,12 +364,7 @@ export function AdminSidebar({ pathname, username }: AdminSidebarProps) {
                   {homepageItems.map((item) =>
                     isHomepageRoute ? (
                       <button
-                        className={cn(
-                          "relative block w-full rounded-lg px-3 py-2 text-left text-sm font-medium transition",
-                          activeHomepageSection === item.section
-                            ? "bg-white text-stone-950 shadow-sm ring-1 ring-sky-200/90 before:absolute before:bottom-2 before:left-0 before:top-2 before:w-1 before:rounded-r-full before:bg-sky-500"
-                            : "text-stone-600 hover:bg-white hover:text-stone-950",
-                        )}
+                        className={subItemClass(activeHomepageSection === item.section)}
                         key={item.id}
                         onClick={() => scrollToHomepageSection(item.id, item.section)}
                         type="button"
@@ -379,7 +373,7 @@ export function AdminSidebar({ pathname, username }: AdminSidebarProps) {
                       </button>
                     ) : (
                       <Link
-                        className="block rounded-lg px-3 py-2 text-sm font-medium text-stone-600 transition hover:bg-white hover:text-stone-950"
+                        className={subItemClass(false)}
                         href={item.href}
                         key={item.id}
                       >
@@ -393,43 +387,31 @@ export function AdminSidebar({ pathname, username }: AdminSidebarProps) {
           </div>
 
           <Link
-            className={cn(
-              "flex items-center gap-3 rounded-xl border px-3 py-3 text-sm font-semibold transition",
-              isSeoRoute
-                ? "border-stone-900 bg-stone-900 text-white"
-                : "border-stone-200 bg-stone-50/80 text-stone-800 hover:bg-stone-100",
-            )}
+            className={primaryLinkClass(isSeoRoute)}
             href="/admin/seo"
           >
             <Search className="h-4 w-4" />
             SEO Settings
           </Link>
-
-          
         </nav>
       </div>
 
-      <div className="border-t border-stone-200 px-4 py-4">
-        <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3">
-          <p className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500">
+      <div className="px-4 py-4">
+        <div className="admin-glass-row rounded-[24px] border-transparent px-4 py-4">
+          <p className="text-xs font-medium uppercase tracking-[0.16em] text-[var(--admin-text-muted)]">
             Login sebagai
           </p>
-          <p className="mt-1 text-sm font-semibold text-stone-950">@{username}</p>
+          <p className="mt-1 text-sm font-semibold text-[var(--admin-text-primary)]">@{username}</p>
         </div>
         <Link
-          className={cn(
-            "mt-3 flex items-center gap-3 rounded-xl border px-3 py-3 text-sm font-semibold transition",
-            isResetPasswordRoute
-              ? "border-stone-900 bg-stone-900 text-white"
-              : "border-stone-200 bg-stone-50/80 text-stone-800 hover:bg-stone-100",
-          )}
+          className={cn("mt-3", primaryLinkClass(isResetPasswordRoute))}
           href="/admin/reset-password"
         >
           <KeyRound className="h-4 w-4" />
           Reset Password
         </Link>
         <Link
-          className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium text-stone-900 transition hover:bg-stone-50"
+          className="admin-row-surface admin-row-surface-hover mt-3 inline-flex w-full items-center justify-center gap-2 rounded-[20px] px-4 py-3 text-sm font-medium text-[var(--admin-text-primary)] transition duration-300 hover:-translate-y-0.5"
           href="/dashboard"
         >
           <LayoutDashboard className="h-4 w-4" />
@@ -437,7 +419,7 @@ export function AdminSidebar({ pathname, username }: AdminSidebarProps) {
         </Link>
         <form action={logoutAction}>
           <button
-            className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium text-stone-900 transition hover:bg-stone-50"
+            className="admin-solid-button mt-3 inline-flex w-full items-center justify-center gap-2 rounded-[20px] px-4 py-3 text-sm font-semibold transition duration-300 hover:-translate-y-0.5"
             type="submit"
           >
             <LogOut className="h-4 w-4" />

@@ -48,11 +48,19 @@ type FieldProps = {
   value: string;
 };
 
+const adminCardClass = "admin-panel-card rounded-[30px] border-transparent";
+
 function TextField({ label, name, onChange, value }: FieldProps) {
   return (
     <div className="grid gap-2">
       <Label htmlFor={name}>{label}</Label>
-      <Input id={name} name={name} onChange={(event) => onChange(event.target.value)} value={value} />
+      <Input
+        className="rounded-[18px] border-transparent px-4"
+        id={name}
+        name={name}
+        onChange={(event) => onChange(event.target.value)}
+        value={value}
+      />
     </div>
   );
 }
@@ -72,6 +80,7 @@ function NumberField({
     <div className="grid gap-2">
       <Label htmlFor={name}>{label}</Label>
       <Input
+        className="rounded-[18px] border-transparent px-4"
         id={name}
         min={150}
         name={name}
@@ -145,7 +154,7 @@ function SelectField({
     <div className="grid gap-2">
       <Label htmlFor={name}>{label}</Label>
       <select
-        className="h-10 rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/15"
+        className="h-11 rounded-[18px] border border-transparent px-4 text-sm outline-none transition"
         id={name}
         name={name}
         onChange={(event) => onChange(event.target.value)}
@@ -227,7 +236,7 @@ function TextAreaField({ label, name, onChange, rows = 4, value }: FieldProps) {
     <div className="grid gap-2">
       <Label htmlFor={name}>{label}</Label>
       <textarea
-        className="min-h-28 w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/15"
+        className="min-h-28 w-full rounded-[18px] border border-transparent px-4 py-3 text-sm outline-none transition"
         id={name}
         name={name}
         onChange={(event) => onChange(event.target.value)}
@@ -370,21 +379,21 @@ function PreviewViewport({ content, preset }: PreviewViewportProps) {
   return (
     <div
       className={cn(
-        "rounded-[24px] border border-stone-200 bg-[radial-gradient(circle_at_top,#f6f6f6_0%,#efefef_100%)] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]",
+        "admin-glass-row rounded-[28px] border-transparent p-3",
         config.frameAspect,
       )}
       ref={frameRef}
     >
-      <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-[18px] border border-stone-300 bg-[#dfe3ea]">
+      <div className="admin-preview-shell-surface flex h-full w-full items-center justify-center overflow-hidden rounded-[22px] p-3">
         <div
-          className="relative shrink-0 overflow-hidden rounded-[16px] border border-stone-300 bg-white shadow-[0_24px_48px_rgba(15,23,42,0.14)]"
+          className="admin-preview-frame-surface relative shrink-0 overflow-hidden rounded-[18px]"
           style={{
             height: `${scaledHeight}px`,
             width: `${scaledWidth}px`,
           }}
         >
           <iframe
-            className="origin-top-left border-0 bg-white"
+            className="origin-top-left border-0 bg-[var(--admin-preview-frame-bg)]"
             onLoad={() => {
               if (!iframeRef.current?.contentWindow) {
                 return;
@@ -462,9 +471,9 @@ export function HomepageSettingsView({
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,0.94fr)_minmax(360px,0.86fr)]">
-      <div className="space-y-6">
-        <Card>
+    <div className="admin-homepage-composer grid gap-6 xl:min-h-[calc(100vh-7rem)] xl:grid-cols-[minmax(0,0.94fr)_minmax(380px,0.86fr)] xl:items-start">
+      <div className="space-y-6 xl:max-h-[calc(100vh-7rem)] xl:overflow-y-auto xl:pr-2">
+        <Card className={adminCardClass}>
           <CardHeader>
             <CardTitle>Homepage Content Manager</CardTitle>
             <CardDescription>
@@ -474,7 +483,7 @@ export function HomepageSettingsView({
           </CardHeader>
         </Card>
 
-        <Card className="scroll-mt-24" id="overview-section">
+        <Card className={cn(adminCardClass, "scroll-mt-24")} id="overview-section">
           <CardHeader>
             <CardTitle>Overview Section</CardTitle>
             <CardDescription>
@@ -487,7 +496,7 @@ export function HomepageSettingsView({
             <form action={updateOverviewSectionAction} className="space-y-5">
               <input name="titleBlue" type="hidden" value={draft.overview.titleBlue} />
               <input name="titleWhite" type="hidden" value={draft.overview.titleWhite} />
-              <div className="rounded-2xl border border-sky-100 bg-sky-50/80 px-4 py-3 text-sm leading-6 text-slate-700">
+              <div className="admin-note-surface rounded-2xl px-4 py-3 text-sm leading-6">
                 Logo overview memakai asset brand yang sama dengan footer agar tampil konsisten di
                 desktop dan mobile. Ukuran tampilnya bisa kamu atur di bawah tanpa mengganti asset
                 logo. Judul teks lama disimpan otomatis supaya konfigurasi homepage tetap aman.
@@ -585,7 +594,7 @@ export function HomepageSettingsView({
                     <div className="rounded-lg border border-stone-200 bg-white px-3 py-3" key={option.key}>
                       <p className="text-sm font-semibold text-stone-900">{option.label}</p>
                       <p className="mt-1 text-xs leading-6 text-stone-500">{option.description}</p>
-                      <p className="mt-2 text-xs font-medium text-sky-700">{option.recommendation}</p>
+                      <p className="admin-note-accent mt-2 text-xs font-medium">{option.recommendation}</p>
                     </div>
                   ))}
                 </div>
@@ -599,7 +608,7 @@ export function HomepageSettingsView({
           </CardContent>
         </Card>
 
-        <Card className="scroll-mt-24" id="benefits-section">
+        <Card className={cn(adminCardClass, "scroll-mt-24")} id="benefits-section">
           <CardHeader>
             <CardTitle>Benefit Section</CardTitle>
             <CardDescription>Atur heading, card benefit, dan background section manfaat.</CardDescription>
@@ -688,7 +697,7 @@ export function HomepageSettingsView({
           </CardContent>
         </Card>
 
-        <Card className="scroll-mt-24" id="pricing-section">
+        <Card className={cn(adminCardClass, "scroll-mt-24")} id="pricing-section">
           <CardHeader>
             <CardTitle>Pricing Section</CardTitle>
             <CardDescription>Atur judul harga, paket, dan background section pricing.</CardDescription>
@@ -822,7 +831,7 @@ export function HomepageSettingsView({
           </CardContent>
         </Card>
 
-        <Card className="scroll-mt-24" id="video-section">
+        <Card className={cn(adminCardClass, "scroll-mt-24")} id="video-section">
           <CardHeader>
             <CardTitle>Video Section</CardTitle>
             <CardDescription>Atur section video embed yang tampil setelah pricing section.</CardDescription>
@@ -877,7 +886,7 @@ export function HomepageSettingsView({
           </CardContent>
         </Card>
 
-        <Card className="scroll-mt-24" id="faq-section">
+        <Card className={cn(adminCardClass, "scroll-mt-24")} id="faq-section">
           <CardHeader>
             <CardTitle>FAQ Section</CardTitle>
             <CardDescription>Atur judul FAQ, item pertanyaan, dan background.</CardDescription>
@@ -952,7 +961,7 @@ export function HomepageSettingsView({
           </CardContent>
         </Card>
 
-        <Card className="scroll-mt-24" id="guide-section">
+        <Card className={cn(adminCardClass, "scroll-mt-24")} id="guide-section">
           <CardHeader>
             <CardTitle>Guide Section</CardTitle>
             <CardDescription>Atur panduan langkah dan background section user guide.</CardDescription>
@@ -1069,7 +1078,7 @@ export function HomepageSettingsView({
           </CardContent>
         </Card>
 
-        <Card className="scroll-mt-24" id="testimonial-section">
+        <Card className={cn(adminCardClass, "scroll-mt-24")} id="testimonial-section">
           <CardHeader>
             <CardTitle>Testimoni Section</CardTitle>
             <CardDescription>Atur slider foto testimonial yang tampil setelah guide section.</CardDescription>
@@ -1268,7 +1277,7 @@ export function HomepageSettingsView({
           </CardContent>
         </Card>
 
-        <Card className="scroll-mt-24" id="blog-section">
+        <Card className={cn(adminCardClass, "scroll-mt-24")} id="blog-section">
           <CardHeader>
             <CardTitle>Blog Section</CardTitle>
             <CardDescription>Atur judul blog card, item artikel, dan background.</CardDescription>
@@ -1351,7 +1360,7 @@ export function HomepageSettingsView({
           </CardContent>
         </Card>
 
-        <Card className="scroll-mt-24" id="banner-ads-section">
+        <Card className={cn(adminCardClass, "scroll-mt-24")} id="banner-ads-section">
           <CardHeader>
             <CardTitle>Banner Ads Section</CardTitle>
             <CardDescription>Atur banner promosi memanjang yang tampil setelah blog section.</CardDescription>
@@ -1447,7 +1456,7 @@ export function HomepageSettingsView({
           </CardContent>
         </Card>
 
-        <Card className="scroll-mt-24" id="register-contact-section">
+        <Card className={cn(adminCardClass, "scroll-mt-24")} id="register-contact-section">
           <CardHeader>
             <CardTitle>Register Contact</CardTitle>
             <CardDescription>
@@ -1473,7 +1482,7 @@ export function HomepageSettingsView({
           </CardContent>
         </Card>
 
-        <Card className="scroll-mt-24" id="footer-section">
+        <Card className={cn(adminCardClass, "scroll-mt-24")} id="footer-section">
           <CardHeader>
             <CardTitle>Footer Section</CardTitle>
             <CardDescription>Atur footer, link, dan background penutup homepage.</CardDescription>
@@ -1594,8 +1603,8 @@ export function HomepageSettingsView({
         </Card>
       </div>
 
-      <div className="xl:sticky xl:top-6 xl:self-start">
-        <Card className="overflow-hidden">
+      <div className="xl:sticky xl:top-8 xl:self-start">
+        <Card className={cn(adminCardClass, "overflow-hidden xl:flex xl:max-h-[calc(100vh-7rem)] xl:flex-col")}>
           <CardHeader className="border-b border-stone-200">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
@@ -1606,27 +1615,37 @@ export function HomepageSettingsView({
               </div>
               <div className="inline-flex rounded-xl border border-stone-200 bg-stone-50 p-1">
                 <Button
-                  className={cn(previewDevice === "desktop" ? "shadow-sm" : "shadow-none")}
+                  className={cn(
+                    "rounded-[14px]",
+                    previewDevice === "desktop"
+                      ? "bg-[var(--admin-solid-button-bg)] text-white shadow-[var(--admin-solid-button-shadow)] hover:bg-[var(--admin-solid-button-hover-bg)]"
+                      : "admin-soft-button text-[var(--admin-text-secondary)] shadow-none hover:text-[var(--admin-text-primary)]",
+                  )}
                   onClick={() => {
                     setPreviewDevice("desktop");
                     setPreviewPreset("desktop-1440");
                   }}
                   size="sm"
                   type="button"
-                  variant={previewDevice === "desktop" ? "secondary" : "ghost"}
+                  variant="ghost"
                 >
                   <Monitor className="h-4 w-4" />
                   Desktop
                 </Button>
                 <Button
-                  className={cn(previewDevice === "mobile" ? "shadow-sm" : "shadow-none")}
+                  className={cn(
+                    "rounded-[14px]",
+                    previewDevice === "mobile"
+                      ? "bg-[var(--admin-solid-button-bg)] text-white shadow-[var(--admin-solid-button-shadow)] hover:bg-[var(--admin-solid-button-hover-bg)]"
+                      : "admin-soft-button text-[var(--admin-text-secondary)] shadow-none hover:text-[var(--admin-text-primary)]",
+                  )}
                   onClick={() => {
                     setPreviewDevice("mobile");
                     setPreviewPreset("mobile-390");
                   }}
                   size="sm"
                   type="button"
-                  variant={previewDevice === "mobile" ? "secondary" : "ghost"}
+                  variant="ghost"
                 >
                   <Smartphone className="h-4 w-4" />
                   Mobile
@@ -1634,15 +1653,15 @@ export function HomepageSettingsView({
               </div>
             </div>
           </CardHeader>
-          <CardContent className="bg-stone-100 p-4">
-            <div className="space-y-3">
-              <div className="flex flex-col gap-3 rounded-xl border border-stone-200 bg-white px-3 py-3 text-xs font-medium text-stone-500 sm:flex-row sm:items-center sm:justify-between">
+          <CardContent className="bg-transparent p-4 xl:min-h-0 xl:flex-1 xl:overflow-hidden">
+            <div className="space-y-3 xl:flex xl:h-full xl:flex-col">
+              <div className="admin-glass-row flex flex-col gap-3 rounded-[24px] border-transparent px-4 py-3 text-xs font-medium text-[var(--admin-text-muted)] sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-3">
                   <span>
                     {previewDevice === "desktop" ? "Desktop Landscape" : "Mobile Portrait"}
                   </span>
                   <select
-                    className="h-9 rounded-lg border border-stone-300 bg-white px-3 text-xs font-medium text-stone-700 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/15"
+                    className="h-9 rounded-[16px] border border-transparent px-3 text-xs font-medium outline-none transition"
                     onChange={(event) => setPreviewPreset(event.target.value as PreviewPresetKey)}
                     value={previewPreset}
                   >
@@ -1657,7 +1676,7 @@ export function HomepageSettingsView({
                   {previewPresets[previewPreset].width} x {previewPresets[previewPreset].height}
                 </span>
               </div>
-              <div className="max-h-[84vh] overflow-auto rounded-2xl border border-stone-200 bg-white p-3 shadow-[0_20px_46px_rgba(15,23,42,0.08)]">
+              <div className="admin-glass-row max-h-[84vh] overflow-auto rounded-[28px] border-transparent p-3 xl:min-h-0 xl:flex-1">
                 <PreviewViewport content={draft} preset={previewPreset} />
               </div>
             </div>

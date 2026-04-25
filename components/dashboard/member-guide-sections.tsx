@@ -128,7 +128,7 @@ export function MemberVideoGuideSection({
                         </span>
                         <div className="min-w-0">
                           <p className="text-sm font-semibold">{guide.title}</p>
-                          <p className={`mt-2 text-xs leading-6 ${active ? "text-white/68" : "text-[var(--member-text-muted)]"}`}>
+                          <p className={`mt-2 text-xs leading-6 ${active ? "opacity-75" : "text-[var(--member-text-muted)]"}`}>
                             {guide.description}
                           </p>
                         </div>

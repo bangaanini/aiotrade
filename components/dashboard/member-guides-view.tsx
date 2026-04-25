@@ -96,7 +96,7 @@ export function MemberGuidesView({ guides }: MemberGuidesViewProps) {
                         </span>
                         <div className="min-w-0">
                           <p className="text-sm font-semibold">{guide.title}</p>
-                          <p className={`mt-2 text-xs leading-6 ${active ? "text-white/68" : "text-stone-500"}`}>
+                          <p className={`mt-2 text-xs leading-6 ${active ? "opacity-75" : "text-stone-500"}`}>
                             {guide.description}
                           </p>
                         </div>
