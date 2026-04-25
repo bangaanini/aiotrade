@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowUp } from "lucide-react";
-import { landingImages, navItems as defaultNavItems } from "@/components/landing/data";
+import { navItems as defaultNavItems } from "@/components/landing/data";
+import { LandingThemeLogo } from "@/components/landing/landing-theme-logo";
 import { SectionBackgroundLayer } from "@/components/landing/section-background-layer";
 import type { FooterContent, NavItem } from "@/components/landing/types";
 import { Reveal } from "@/components/ui/reveal";
@@ -44,13 +44,10 @@ export function FooterSection({
       <div className="relative z-10 mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
         <div className="grid gap-12 lg:grid-cols-[1.45fr_0.72fr_0.52fr] lg:gap-14">
           <Reveal className="mx-auto max-w-[36rem] text-center lg:mx-0 lg:text-left">
-            <Link className="mx-auto inline-flex items-center justify-center lg:mx-0 lg:justify-start" href="#top">
-              <Image
-                alt="AIOTrade"
-                className="h-auto w-[176px] object-contain sm:w-[208px]"
-                priority={false}
+            <Link className="inline-flex items-center justify-center lg:justify-start" href="#top">
+              <LandingThemeLogo
+                className="mx-auto w-[176px] lg:mx-0 sm:w-[208px]"
                 sizes="(max-width: 640px) 176px, 208px"
-                src={landingImages.logoImage}
               />
             </Link>
             <p className="mt-5 max-w-[35rem] text-[1.02rem] leading-[1.72] text-[var(--landing-text-secondary)] sm:text-[1.06rem]">

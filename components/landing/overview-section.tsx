@@ -6,6 +6,7 @@ import { LogIn } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { landingImages, partnerLogos } from "@/components/landing/data";
 import { LandingCtaButton } from "@/components/landing/landing-cta-button";
+import { LandingThemeLogo } from "@/components/landing/landing-theme-logo";
 import { SectionBackgroundLayer } from "@/components/landing/section-background-layer";
 import { TickerStrip } from "@/components/landing/ticker-strip";
 import { useLightLandingMotion } from "@/components/landing/use-light-landing-motion";
@@ -60,8 +61,8 @@ export function OverviewSection({
       >
         <div className="landing-hero-shell relative flex flex-1 flex-col justify-center">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_28%_42%,color-mix(in_srgb,var(--landing-accent-blue)_10%,transparent),transparent_28%),radial-gradient(circle_at_78%_28%,color-mix(in_srgb,var(--landing-accent-gold)_10%,transparent),transparent_28%)]" />
-          <div className="relative z-10 grid items-center gap-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-12">
-            <div className="relative flex min-h-[240px] items-center justify-center lg:min-h-[560px] lg:justify-start">
+          <div className="relative z-10 grid items-center gap-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-start lg:gap-12">
+            <div className="relative flex min-h-[240px] items-center justify-center lg:min-h-0 lg:items-start lg:justify-start">
               <div className="landing-hero-phone-wrap relative mx-auto w-full max-w-[285px] sm:max-w-[440px] lg:mx-0 lg:max-w-[560px] lg:-ml-3">
                 <div className="landing-hero-phone-glow absolute inset-x-[8%] bottom-6 h-16 rounded-full sm:bottom-8 sm:h-24" />
                 <Image
@@ -76,14 +77,11 @@ export function OverviewSection({
 
             <div className="relative mx-auto flex w-full max-w-[24rem] flex-col items-center text-center lg:max-w-none lg:items-start lg:text-left">
               <Reveal className="w-full" delay={0.02} distance={lightMotion ? 14 : 24} duration={lightMotion ? 0.7 : 1.12} stable>
-                <div className="mx-auto w-full max-w-[22rem] sm:max-w-[31rem] lg:mx-0 lg:max-w-[35rem]">
+                <div className="w-full max-w-[22rem] mx-auto sm:max-w-[31rem] lg:mx-0 lg:max-w-[35rem]">
                   <div className="flex justify-center lg:justify-start">
-                    <Image
-                      alt="AIOTrade"
-                      className="landing-overview-logo-image h-auto w-[188px] object-contain sm:w-[228px] lg:w-[274px]"
-                      priority={false}
+                    <LandingThemeLogo
+                      className="landing-overview-logo-image w-[188px] sm:w-[228px] lg:w-[274px]"
                       sizes="(max-width: 640px) 188px, (max-width: 1024px) 228px, 274px"
-                      src={landingImages.logoImage}
                     />
                   </div>
                   <p className="landing-overview-description mx-auto mt-5 max-w-[21rem] text-[0.92rem] leading-[1.86] text-[var(--landing-text-secondary)] sm:mt-6 sm:max-w-[27rem] sm:text-[1.04rem] sm:leading-[1.94] lg:mx-0 lg:max-w-[31rem] lg:text-[1.12rem] lg:leading-[2]">

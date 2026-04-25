@@ -7,7 +7,8 @@ import {
   ChartLine,
 } from "lucide-react";
 import heroImage from "@/bahan foto/hero.jpg";
-import logoImage from "@/bahan foto/Logo-AIOTrade.png";
+import logoDarkImage from "@/bahan foto/Logo-AIOTrade-dark.png";
+import logoLightImage from "@/bahan foto/Logo-AIOTrade-light.png";
 import phoneImage from "@/bahan foto/phone.png";
 import chartImage from "@/bahan foto/chart.webp";
 import binanceLogo from "@/bahan foto/binance.webp";
@@ -26,7 +27,8 @@ import type {
 
 export const landingImages = {
   heroImage,
-  logoImage,
+  logoDarkImage,
+  logoLightImage,
   phoneImage,
   chartImage,
 } as const;
