@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { LANDING_PAGE_VISIT_SECRET_HEADER, getLandingPageVisitSecret } from "@/lib/landing-page-visits";
 import {
   LANDING_REFERRAL_COOKIE_MAX_AGE,
   LANDING_REFERRAL_COOKIE_NAME,
@@ -41,6 +42,22 @@ export async function proxy(request: NextRequest) {
 
   if (!referralOwner) {
     return nextResponse();
+  }
+
+  try {
+    await fetch(new URL("/api/landing-page-visit", request.url), {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        [LANDING_PAGE_VISIT_SECRET_HEADER]: getLandingPageVisitSecret(),
+      },
+      body: JSON.stringify({
+        username: referralOwner.username,
+      }),
+      cache: "no-store",
+    });
+  } catch (error) {
+    console.error("[proxy] Failed to track landing page visit", error);
   }
 
   const redirectResponse = NextResponse.redirect(new URL("/", request.url), 307);

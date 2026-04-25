@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 export type MemberDashboardStats = {
   landingPageActive: boolean;
+  landingPageVisitCount: number;
   publishedGuideCount: number;
   publishedPdfCount: number;
   publishedVideoCount: number;
@@ -27,6 +28,22 @@ async function getReferralCount(username: string) {
   `;
 
   return Number(rows[0]?.count ?? 0);
+}
+
+async function getLandingPageVisitCount(username: string) {
+  try {
+    const rows = await prisma.$queryRaw<Array<{ landingPageVisitCount: bigint | number | string | null }>>`
+      SELECT "landing_page_visit_count" AS "landingPageVisitCount"
+      FROM "public"."profiles"
+      WHERE "username" = ${username}
+      LIMIT 1
+    `;
+
+    return Number(rows[0]?.landingPageVisitCount ?? 0);
+  } catch (error) {
+    console.error("[member-dashboard-stats] Failed to load landing page visit count", error);
+    return 0;
+  }
 }
 
 async function getPublishedGuideStats() {
@@ -80,13 +97,15 @@ export async function getMemberDashboardStats(input: {
   isLpActive: boolean;
   username: string;
 }): Promise<MemberDashboardStats> {
-  const [referralCount, guideStats] = await Promise.all([
+  const [landingPageVisitCount, referralCount, guideStats] = await Promise.all([
+    getLandingPageVisitCount(input.username),
     getReferralCount(input.username),
     getPublishedGuideStats(),
   ]);
 
   return {
     landingPageActive: input.isLpActive,
+    landingPageVisitCount,
     publishedGuideCount: guideStats.publishedGuideCount,
     publishedPdfCount: guideStats.publishedPdfCount,
     publishedVideoCount: guideStats.publishedVideoCount,

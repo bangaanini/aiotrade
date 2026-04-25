@@ -2,6 +2,7 @@ import { Link2, Mail, MessageCircle, UserRound, Users } from "lucide-react";
 import { requireCurrentProfile } from "@/lib/auth";
 import { extractMemberIdFromReferralLink } from "@/lib/member-id";
 import { SPECIAL_REFERRAL_USERNAMES } from "@/lib/username-rules";
+import { MemberAccountProfileForm } from "@/components/dashboard/member-account-profile-form";
 import {
   memberGlassPanelClass,
   memberGlassRowClass,
@@ -16,36 +17,52 @@ type CurrentProfile = Awaited<ReturnType<typeof requireCurrentProfile>>;
 
 type MemberAccountOverviewLabels = {
   directSignup: string;
+  editDescription: string;
+  editNote: string;
+  editTitle: string;
   email: string;
   memberId: string;
+  memberIdPlaceholder: string;
   pageBadge: string;
   pageDescription: string;
   pageTitle: string;
   referredBy: string;
+  saveProfileChanges: string;
+  saveProfilePending: string;
   sectionDescription: string;
   sectionTitle: string;
   username: string;
   whatsapp: string;
+  whatsappPlaceholder: string;
 };
 
 const defaultLabels: MemberAccountOverviewLabels = {
   directSignup: "Direct signup",
+  editDescription: "Perbarui nomor WhatsApp dan member ID Anda dari sini.",
+  editNote: "Saat member ID diubah, direct signup link Anda juga akan ikut diperbarui.",
+  editTitle: "Edit info akun",
   email: "Email",
   memberId: "Member ID",
+  memberIdPlaceholder: "Masukkan member ID",
   pageBadge: "Akun Member",
   pageDescription: "Informasi utama akun Anda.",
   pageTitle: "Profil akun",
   referredBy: "Referred By",
+  saveProfileChanges: "Simpan perubahan",
+  saveProfilePending: "Menyimpan perubahan...",
   sectionDescription: "Detail profil, kontak, dan informasi referral yang tersimpan pada akun member Anda.",
   sectionTitle: "Info akun",
   username: "Username",
   whatsapp: "WhatsApp",
+  whatsappPlaceholder: "Masukkan nomor WhatsApp",
 };
 
 export function MemberAccountOverview({
+  currentLanguage,
   labels = defaultLabels,
   profile,
 }: {
+  currentLanguage: string;
   labels?: MemberAccountOverviewLabels;
   profile: CurrentProfile;
 }) {
@@ -145,6 +162,23 @@ export function MemberAccountOverview({
             </div>
           </div>
         </div>
+
+        <MemberAccountProfileForm
+          currentLanguage={currentLanguage}
+          initialMemberId={memberId ?? ""}
+          initialWhatsapp={profile.whatsapp ?? ""}
+          labels={{
+            editDescription: labels.editDescription,
+            editNote: labels.editNote,
+            editTitle: labels.editTitle,
+            memberId: labels.memberId,
+            memberIdPlaceholder: labels.memberIdPlaceholder,
+            saveChanges: labels.saveProfileChanges,
+            savePending: labels.saveProfilePending,
+            whatsapp: labels.whatsapp,
+            whatsappPlaceholder: labels.whatsappPlaceholder,
+          }}
+        />
       </section>
     </div>
   );

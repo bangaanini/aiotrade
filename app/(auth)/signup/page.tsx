@@ -4,7 +4,6 @@ import { ShieldCheck } from "lucide-react";
 import { AuthPageShell } from "@/components/auth/auth-page-shell";
 import { SignupForm } from "@/components/auth/signup-form";
 import { getCurrentProfile } from "@/lib/auth";
-import { generateMemberId } from "@/lib/member-id";
 import { getPublicSignupPaymentSettings } from "@/lib/payment-gateway-settings";
 import {
   getActiveReferralOwner,
@@ -47,7 +46,6 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
   }
 
   const referredBy = referralOwner.username;
-  const initialMemberId = generateMemberId();
   const [shellCopy, formCopy] = await Promise.all([
     translateRecordStrings({
       record: {
@@ -73,6 +71,7 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
         emailPlaceholder: "you@example.com",
         invitedSaved: "Undangan sudah tersimpan",
         memberId: "Member ID",
+        memberIdPlaceholder: "Masukkan member ID",
         password: "Password",
         passwordCheckDescriptionEmpty: "Mulai ketik password untuk melihat kekuatannya.",
         passwordCheckDescriptionMatch: "Password sudah cocok dan siap dipakai.",
@@ -119,7 +118,6 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
       title={shellCopy.title}
     >
       <SignupForm
-        initialMemberId={initialMemberId}
         labels={formCopy}
         paymentSettings={paymentSettings}
         referredBy={referredBy}

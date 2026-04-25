@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, FileText } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, ExternalLink, FileText, Sparkles } from "lucide-react";
 import { SiteLanguageSelector } from "@/components/shared/site-language-selector";
 import { FloatingWhatsAppButton } from "@/components/landing/floating-whatsapp-button";
 import { navItems } from "@/components/landing/data";
@@ -40,6 +40,11 @@ export default async function GuidePage() {
     translateRecordStrings({
       record: {
         backToHome: "Kembali ke beranda",
+        ctaButton: "Masuk ke Member Area",
+        ctaDescription:
+          "Dapatkan akses penuh ke guide, materi member, dan alur setup yang lebih terarah setelah Anda membuat akun.",
+        ctaEyebrow: "KHUSUS MEMBER",
+        ctaTitle: "Akses member area untuk panduan lengkap.",
         empty: "Belum ada panduan PDF yang dipublish.",
         fallbackDescription: "File panduan resmi AIOTrade yang bisa Anda buka langsung dari halaman ini.",
         footerBlog: "Blog",
@@ -191,7 +196,42 @@ export default async function GuidePage() {
         </div>
       </section>
 
-      
+      <section className="relative overflow-hidden px-6 pb-18 sm:px-8 sm:pb-24 lg:px-10">
+        <div className="mx-auto max-w-7xl">
+          <div className="relative overflow-hidden rounded-[32px] border border-[#0b1322]/8 bg-[linear-gradient(135deg,#0b1322_0%,#102340_54%,#15457a_100%)] px-7 py-8 text-white shadow-[0_30px_70px_rgba(11,19,34,0.24)] sm:px-10 sm:py-10 lg:px-12 lg:py-12">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,200,74,0.2)_0%,rgba(255,200,74,0)_32%),radial-gradient(circle_at_bottom_right,rgba(16,167,255,0.2)_0%,rgba(16,167,255,0)_28%)]" />
+            <div className="pointer-events-none absolute -left-10 top-10 h-36 w-36 rounded-full bg-[#ffc84a]/14 blur-[76px]" />
+            <div className="pointer-events-none absolute -right-8 bottom-4 h-40 w-40 rounded-full bg-[#10a7ff]/18 blur-[86px]" />
+
+            <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-3xl">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/8 px-4 py-2 text-[0.78rem] font-semibold uppercase tracking-[0.2em] text-[#ffd972]">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  {guideCopy.ctaEyebrow}
+                </div>
+                <h2 className="mt-5 text-[2rem] font-semibold leading-[1.02] tracking-[-0.045em] text-white sm:text-[2.7rem] lg:text-[3.2rem]">
+                  {guideCopy.ctaTitle}
+                </h2>
+                <p className="mt-5 max-w-2xl text-[1rem] leading-[1.9] text-white/74 sm:text-[1.06rem]">
+                  {guideCopy.ctaDescription}
+                </p>
+              </div>
+
+              <div className="flex shrink-0 items-center">
+                <Link
+                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[18px] bg-[#ffc84a] px-6 py-3 text-[1rem] font-semibold text-[#0b1322] shadow-[0_18px_36px_rgba(255,200,74,0.26)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#ffd972]"
+                  href={referralState.signupHref}
+                  rel={referralState.signupExternal ? "noreferrer" : undefined}
+                  target={referralState.signupExternal ? "_blank" : undefined}
+                >
+                  {guideCopy.ctaButton}
+                  <ArrowUpRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <footer className="relative overflow-hidden border-t border-white/10 bg-[#0b1322] px-6 py-10 text-white sm:px-8 lg:px-10">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(17,167,255,0.08)_0%,rgba(17,167,255,0)_34%)]" />

@@ -6,7 +6,6 @@ import { ensureEnvAdmin } from "@/lib/admin-bootstrap";
 import { createUserSession, hashPassword } from "@/lib/auth";
 import {
   buildMemberReferralLink,
-  generateMemberId,
   isValidMemberId,
   normalizeMemberId,
 } from "@/lib/member-id";
@@ -54,8 +53,19 @@ const referredBySchema = z.string().trim().transform((value, ctx) => {
   return normalizedValue;
 });
 
+const memberIdSchema = z
+  .string()
+  .trim()
+  .min(1, "Enter a member ID.")
+  .transform((value) => normalizeMemberId(value))
+  .refine(
+    (value) => isValidMemberId(value),
+    "Member ID must be exactly 8 letters or numbers.",
+  );
+
 const signUpSchema = z.object({
   email: z.string().trim().email("Enter a valid email address.").transform((value) => value.toLowerCase()),
+  memberId: memberIdSchema,
   password: z.string().min(8, "Password must be at least 8 characters."),
   passwordConfirmation: z.string().min(1, "Repeat your password."),
   whatsapp: whatsappSchema,
@@ -71,6 +81,7 @@ export type SignupActionState = {
   message: string | null;
   fieldErrors: {
     email?: string;
+    memberId?: string;
     password?: string;
     passwordConfirmation?: string;
     whatsapp?: string;
@@ -177,29 +188,6 @@ async function referralLinkExists(referralLink: string) {
   return Boolean(existingProfile);
 }
 
-async function resolveAvailableMemberId(candidate: FormDataEntryValue | null) {
-  const normalizedCandidate = normalizeMemberId(typeof candidate === "string" ? candidate : "");
-
-  if (isValidMemberId(normalizedCandidate)) {
-    const candidateLink = buildMemberReferralLink(normalizedCandidate);
-
-    if (!(await referralLinkExists(candidateLink))) {
-      return normalizedCandidate;
-    }
-  }
-
-  for (let attempt = 0; attempt < 24; attempt += 1) {
-    const generatedId = generateMemberId();
-    const generatedLink = buildMemberReferralLink(generatedId);
-
-    if (!(await referralLinkExists(generatedLink))) {
-      return generatedId;
-    }
-  }
-
-  throw new Error("Unable to generate a unique member ID right now.");
-}
-
 export async function signUpAction(
   _prevState: SignupActionState,
   formData: FormData,
@@ -208,6 +196,7 @@ export async function signUpAction(
 
   const parsed = signUpSchema.safeParse({
     email: formData.get("email"),
+    memberId: formData.get("memberId"),
     password: formData.get("password"),
     passwordConfirmation: formData.get("passwordConfirmation"),
     whatsapp: formData.get("whatsapp"),
@@ -227,6 +216,7 @@ export async function signUpAction(
       message: "Please fix the highlighted fields.",
       fieldErrors: {
         email: fieldErrors.email?.[0],
+        memberId: fieldErrors.memberId?.[0],
         password: fieldErrors.password?.[0],
         passwordConfirmation: fieldErrors.passwordConfirmation?.[0],
         whatsapp: fieldErrors.whatsapp?.[0],
@@ -242,8 +232,7 @@ export async function signUpAction(
     };
   }
 
-  const { email, password, username, referredBy, whatsapp } = parsed.data;
-  const memberId = await resolveAvailableMemberId(formData.get("memberId"));
+  const { email, memberId, password, username, referredBy, whatsapp } = parsed.data;
   const referralLink = buildMemberReferralLink(memberId);
   const paymentSettings = await getPaymentGatewaySettings();
   const paymentReferenceId = String(formData.get("paymentReferenceId") ?? "").trim();
@@ -286,6 +275,22 @@ export async function signUpAction(
       message: "That email is already registered.",
       fieldErrors: {
         email: "Use a different email or sign in.",
+      },
+      formValues: {
+        email,
+        memberId,
+        username,
+        whatsapp,
+      },
+    };
+  }
+
+  if (await referralLinkExists(referralLink)) {
+    return {
+      status: "error",
+      message: "That member ID is already taken.",
+      fieldErrors: {
+        memberId: "Choose a different member ID.",
       },
       formValues: {
         email,
@@ -408,12 +413,25 @@ export async function signUpAction(
     await createUserSession(profile.id);
   } catch (error) {
     if (isUniqueConstraintError(error)) {
+      const conflictingProfile = await prisma.profile.findFirst({
+        where: {
+          OR: [{ email }, { username }, { referralLink }],
+        },
+        select: {
+          email: true,
+          referralLink: true,
+          username: true,
+        },
+      });
+
       return {
         status: "error",
         message: "This account could not be created because one of the fields is already in use.",
         fieldErrors: {
-          email: "Use a different email.",
-          username: "Choose a different username.",
+          email: conflictingProfile?.email === email ? "Use a different email." : undefined,
+          memberId:
+            conflictingProfile?.referralLink === referralLink ? "Choose a different member ID." : undefined,
+          username: conflictingProfile?.username === username ? "Choose a different username." : undefined,
         },
         formValues: {
           email,

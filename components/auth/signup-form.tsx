@@ -35,7 +35,6 @@ import { cn } from "@/lib/utils";
 import { getUsernameValidationMessage } from "@/lib/username-rules";
 
 type SignupFormProps = {
-  initialMemberId: string;
   labels?: {
     accountReady: string;
     backToLogin: string;
@@ -47,6 +46,7 @@ type SignupFormProps = {
     emailPlaceholder: string;
     invitedSaved: string;
     memberId: string;
+    memberIdPlaceholder: string;
     password: string;
     passwordCheckDescriptionEmpty: string;
     passwordCheckDescriptionMatch: string;
@@ -115,6 +115,7 @@ const defaultLabels = {
   emailPlaceholder: "you@example.com",
   invitedSaved: "Undangan sudah tersimpan",
   memberId: "Member ID",
+  memberIdPlaceholder: "Masukkan member ID",
   password: "Password",
   passwordCheckDescriptionEmpty: "Mulai ketik password untuk melihat kekuatannya.",
   passwordCheckDescriptionMatch: "Password sudah cocok dan siap dipakai.",
@@ -198,13 +199,13 @@ function getServerHydrationSnapshot() {
 }
 
 export function SignupForm({
-  initialMemberId,
   labels = defaultLabels,
   paymentSettings,
   referredBy,
 }: SignupFormProps) {
   const [state, formAction] = useActionState(signUpAction, initialSignupState);
   const fieldErrors = state?.fieldErrors ?? {};
+  const [memberId, setMemberId] = useState(state.formValues?.memberId ?? "");
   const hasHydrated = useSyncExternalStore(
     subscribeHydration,
     getClientHydrationSnapshot,
@@ -237,6 +238,7 @@ export function SignupForm({
 
   const normalizedUsername = username.trim().toLowerCase();
   const normalizedEmail = email.trim().toLowerCase();
+  const normalizedMemberId = memberId.trim().toUpperCase();
   const normalizedWhatsapp = whatsapp.trim();
 
   const usernameLocalIssue = useMemo(() => {
@@ -405,7 +407,6 @@ export function SignupForm({
     usernameStatus.tone === "invalid" ||
     usernameStatus.tone === "taken" ||
     usernameStatus.tone === "checking";
-  const memberId = state.formValues?.memberId ?? initialMemberId;
   const selectedPlan =
     paymentSettings.plans.find((plan) => plan.id === selectedPlanId) ??
     paymentSettings.plans.find((plan) => plan.id === paymentSettings.defaultPlanId) ??
@@ -423,7 +424,14 @@ export function SignupForm({
   );
   const isPaymentRequired = paymentSettings.isEnabled;
   const canCreatePayment =
-    Boolean(normalizedUsername && normalizedEmail && normalizedWhatsapp && selectedChannelCode && selectedPlanId) &&
+    Boolean(
+      normalizedMemberId &&
+        normalizedUsername &&
+        normalizedEmail &&
+        normalizedWhatsapp &&
+        selectedChannelCode &&
+        selectedPlanId,
+    ) &&
     !isUsernameBlocked &&
     paymentFlow.status !== "creating";
   const isSignupLocked = isPaymentRequired && paymentFlow.status !== "paid";
@@ -620,7 +628,6 @@ export function SignupForm({
 
   return (
     <form action={formAction} className="space-y-5">
-      <input name="memberId" type="hidden" value={memberId} />
       <input name="paymentReferenceId" type="hidden" value={paymentFlow.referenceId ?? ""} />
       <input name="selectedPlanId" type="hidden" value={selectedPlan?.id ?? ""} />
       <input name="referredBy" type="hidden" value={referredBy ?? ""} />
@@ -765,20 +772,28 @@ export function SignupForm({
         </div>
 
         <div className="space-y-2 sm:col-span-2">
-          <AuthFieldShell>
+          <AuthFieldShell error={fieldErrors.memberId}>
             <Label className="mb-2 inline-flex items-center gap-2 text-slate-700" htmlFor="memberId">
               <Hash className="h-4 w-4 text-sky-500" />
               {labels.memberId}
             </Label>
             <Input
+              autoCapitalize="characters"
               className="border-0 bg-transparent px-0 text-base shadow-none focus:ring-0"
               id="memberId"
-              readOnly
+              maxLength={8}
+              name="memberId"
+              onChange={(event) => {
+                setMemberId(event.target.value.replace(/\s+/g, "").toUpperCase());
+              }}
+              placeholder={labels.memberIdPlaceholder}
+              required
+              spellCheck={false}
               type="text"
               value={memberId}
             />
-
           </AuthFieldShell>
+          {fieldErrors.memberId ? <p className="text-sm text-rose-600">{fieldErrors.memberId}</p> : null}
         </div>
 
         <div className="space-y-2">

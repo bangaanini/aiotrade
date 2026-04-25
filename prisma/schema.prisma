@@ -10,6 +10,7 @@ model Profile {
   id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email        String? @unique
   isAdmin      Boolean @default(false) @map("is_admin")
+  landingPageVisitCount Int @default(0) @map("landing_page_visit_count")
   referralLink String? @map("referral_link")
   whatsapp     String?
   username     String  @unique

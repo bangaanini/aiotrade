@@ -10,19 +10,26 @@ export default async function DashboardAccountProfilePage() {
   const labels = await translateSimpleMemberCopy(
     {
       directSignup: "Direct signup",
+      editDescription: "Perbarui nomor WhatsApp dan member ID Anda dari sini.",
+      editNote: "Saat member ID diubah, direct signup link Anda juga akan ikut diperbarui.",
+      editTitle: "Edit info akun",
       email: "Email",
       memberId: "Member ID",
+      memberIdPlaceholder: "Masukkan member ID",
       pageBadge: "Akun Member",
       pageDescription: "Informasi utama akun Anda.",
       pageTitle: "Profil akun",
       referredBy: "Referred By",
+      saveProfileChanges: "Simpan perubahan",
+      saveProfilePending: "Menyimpan perubahan...",
       sectionDescription: "Detail profil, kontak, dan informasi referral yang tersimpan pada akun member Anda.",
       sectionTitle: "Info akun",
       username: "Username",
       whatsapp: "WhatsApp",
+      whatsappPlaceholder: "Masukkan nomor WhatsApp",
     },
     currentLanguage,
   );
 
-  return <MemberAccountOverview labels={labels} profile={profile} />;
+  return <MemberAccountOverview currentLanguage={currentLanguage} labels={labels} profile={profile} />;
 }
