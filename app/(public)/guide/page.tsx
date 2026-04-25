@@ -220,9 +220,7 @@ export default async function GuidePage() {
               <div className="flex shrink-0 items-center">
                 <Link
                   className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[18px] bg-[#ffc84a] px-6 py-3 text-[1rem] font-semibold text-[#0b1322] shadow-[0_18px_36px_rgba(255,200,74,0.26)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#ffd972]"
-                  href={referralState.signupHref}
-                  rel={referralState.signupExternal ? "noreferrer" : undefined}
-                  target={referralState.signupExternal ? "_blank" : undefined}
+                  href="/signup"
                 >
                   {guideCopy.ctaButton}
                   <ArrowUpRight className="h-4 w-4" />
