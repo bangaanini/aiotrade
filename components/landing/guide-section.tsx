@@ -61,10 +61,11 @@ export function GuideSection({ content }: GuideSectionProps) {
 
         <Reveal className="mt-10 flex justify-center" delay={0.12} distance={lightMotion ? 12 : 24} duration={lightMotion ? 0.7 : 1}>
           <Link
-            className="landing-glass-button inline-flex min-h-12 items-center justify-center gap-2 rounded-[16px] px-6 text-[0.96rem] font-medium text-[var(--landing-accent-blue)] transition duration-300 hover:-translate-y-0.5 sm:text-[1.02rem] lg:text-[1.05rem]"
+            className="landing-glass-button inline-flex min-h-12 touch-manipulation items-center justify-center gap-2 rounded-[16px] px-6 text-[0.96rem] font-medium text-[var(--landing-accent-blue)] transition duration-300 active:scale-[0.985] hover:-translate-y-0.5 sm:text-[1.02rem] lg:text-[1.05rem]"
             href="/guide"
+            prefetch
           >
-            <BookOpen className="h-4 w-4" />
+            <BookOpen className="pointer-events-none h-4 w-4" />
             {content.buttonLabel}
           </Link>
         </Reveal>
