@@ -961,6 +961,7 @@ export function SignupForm({
                 const Icon = paymentChannelIcon(channel.type);
                 const active = paymentSettings.defaultChannelCode === channel.code;
                 const selected = selectedChannelCode === channel.code;
+                const showDefaultBadge = active && channel.type !== "qris";
 
                 return (
                   <button
@@ -995,7 +996,7 @@ export function SignupForm({
                       </span>
                     </span>
                     <span className="flex items-center gap-2">
-                      {active ? (
+                      {showDefaultBadge ? (
                         <span className="rounded-full bg-white px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-sky-700">
                           Default
                         </span>
