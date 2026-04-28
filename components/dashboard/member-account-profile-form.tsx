@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
-import { AlertCircle, Link2, MessageCircle, Save } from "lucide-react";
+import { useActionState, useEffect } from "react";
+import type { LucideIcon } from "lucide-react";
+import { AlertCircle, MessageCircle, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   updateMemberProfileAction,
@@ -21,14 +22,11 @@ import { Label } from "@/components/ui/label";
 
 type MemberAccountProfileFormProps = {
   currentLanguage: string;
-  initialMemberId: string;
   initialWhatsapp: string;
   labels: {
     editDescription: string;
     editNote: string;
     editTitle: string;
-    memberId: string;
-    memberIdPlaceholder: string;
     saveChanges: string;
     savePending: string;
     whatsapp: string;
@@ -56,7 +54,7 @@ function ProfileField({
   children: React.ReactNode;
   error?: string;
   htmlFor: string;
-  icon: typeof Link2;
+  icon: LucideIcon;
   label: string;
 }) {
   return (
@@ -73,7 +71,6 @@ function ProfileField({
 
 export function MemberAccountProfileForm({
   currentLanguage,
-  initialMemberId,
   initialWhatsapp,
   labels,
 }: MemberAccountProfileFormProps) {
@@ -82,15 +79,7 @@ export function MemberAccountProfileForm({
     initialUpdateMemberProfileState,
   );
   const router = useRouter();
-  const [memberId, setMemberId] = useState(initialMemberId);
-  const [whatsapp, setWhatsapp] = useState(initialWhatsapp);
-
-  useEffect(() => {
-    if (state.formValues.memberId || state.formValues.whatsapp) {
-      setMemberId(state.formValues.memberId || initialMemberId);
-      setWhatsapp(state.formValues.whatsapp || initialWhatsapp);
-    }
-  }, [initialMemberId, initialWhatsapp, state.formValues.memberId, state.formValues.whatsapp]);
+  const whatsappValue = state.formValues.whatsapp || initialWhatsapp;
 
   useEffect(() => {
     if (state.status === "success") {
@@ -132,34 +121,13 @@ export function MemberAccountProfileForm({
           <Input
             autoComplete="tel"
             className="member-row-surface text-[var(--member-text-primary)] placeholder:text-[var(--member-text-muted)]"
+            defaultValue={whatsappValue}
             id="profileWhatsapp"
+            key={whatsappValue}
             name="whatsapp"
-            onChange={(event) => setWhatsapp(event.target.value)}
             placeholder={labels.whatsappPlaceholder}
             required
             type="tel"
-            value={whatsapp}
-          />
-        </ProfileField>
-
-        <ProfileField
-          error={state.fieldErrors.memberId}
-          htmlFor="profileMemberId"
-          icon={Link2}
-          label={labels.memberId}
-        >
-          <Input
-            autoCapitalize="none"
-            className="member-row-surface font-mono text-[var(--member-text-primary)] placeholder:text-[var(--member-text-muted)]"
-            id="profileMemberId"
-            maxLength={8}
-            name="memberId"
-            onChange={(event) => setMemberId(event.target.value.replace(/\s+/g, ""))}
-            placeholder={labels.memberIdPlaceholder}
-            required
-            spellCheck={false}
-            type="text"
-            value={memberId}
           />
         </ProfileField>
       </div>

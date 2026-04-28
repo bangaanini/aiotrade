@@ -46,6 +46,7 @@ type SignupFormProps = {
     emailPlaceholder: string;
     invitedSaved: string;
     memberId: string;
+    memberIdWarning: string;
     memberIdPlaceholder: string;
     password: string;
     passwordCheckDescriptionEmpty: string;
@@ -117,6 +118,7 @@ const defaultLabels = {
   emailPlaceholder: "you@example.com",
   invitedSaved: "Undangan sudah tersimpan",
   memberId: "Member ID",
+  memberIdWarning: "Pastikan Member ID sudah benar, Member ID tidak dapat di ubah setelah pendaftaran",
   memberIdPlaceholder: "Masukkan member ID",
   password: "Password",
   passwordCheckDescriptionEmpty: "Mulai ketik password untuk melihat kekuatannya.",
@@ -797,6 +799,9 @@ export function SignupForm({
               value={memberId}
             />
           </AuthFieldShell>
+          <p className="px-4 text-xs leading-5 text-slate-500">
+            {labels.memberIdWarning}
+          </p>
           {fieldErrors.memberId ? <p className="text-sm text-rose-600">{fieldErrors.memberId}</p> : null}
         </div>
 

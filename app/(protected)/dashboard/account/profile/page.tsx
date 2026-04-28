@@ -10,12 +10,11 @@ export default async function DashboardAccountProfilePage() {
   const labels = await translateSimpleMemberCopy(
     {
       directSignup: "Direct signup",
-      editDescription: "Perbarui nomor WhatsApp dan member ID Anda dari sini.",
-      editNote: "Saat member ID diubah, direct signup link Anda juga akan ikut diperbarui.",
+      editDescription: "Perbarui nomor WhatsApp Anda dari sini.",
+      editNote: "Member ID dikunci agar direct signup link Anda tetap konsisten.",
       editTitle: "Edit info akun",
       email: "Email",
       memberId: "Member ID",
-      memberIdPlaceholder: "Masukkan member ID",
       pageBadge: "Akun Member",
       pageDescription: "Informasi utama akun Anda.",
       pageTitle: "Profil akun",

@@ -22,7 +22,6 @@ type MemberAccountOverviewLabels = {
   editTitle: string;
   email: string;
   memberId: string;
-  memberIdPlaceholder: string;
   pageBadge: string;
   pageDescription: string;
   pageTitle: string;
@@ -38,12 +37,11 @@ type MemberAccountOverviewLabels = {
 
 const defaultLabels: MemberAccountOverviewLabels = {
   directSignup: "Direct signup",
-  editDescription: "Perbarui nomor WhatsApp dan member ID Anda dari sini.",
-  editNote: "Saat member ID diubah, direct signup link Anda juga akan ikut diperbarui.",
+  editDescription: "Perbarui nomor WhatsApp Anda dari sini.",
+  editNote: "Member ID dikunci agar direct signup link Anda tetap konsisten.",
   editTitle: "Edit info akun",
   email: "Email",
   memberId: "Member ID",
-  memberIdPlaceholder: "Masukkan member ID",
   pageBadge: "Akun Member",
   pageDescription: "Informasi utama akun Anda.",
   pageTitle: "Profil akun",
@@ -165,14 +163,11 @@ export function MemberAccountOverview({
 
         <MemberAccountProfileForm
           currentLanguage={currentLanguage}
-          initialMemberId={memberId ?? ""}
           initialWhatsapp={profile.whatsapp ?? ""}
           labels={{
             editDescription: labels.editDescription,
             editNote: labels.editNote,
             editTitle: labels.editTitle,
-            memberId: labels.memberId,
-            memberIdPlaceholder: labels.memberIdPlaceholder,
             saveChanges: labels.saveProfileChanges,
             savePending: labels.saveProfilePending,
             whatsapp: labels.whatsapp,

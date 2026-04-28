@@ -71,6 +71,7 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
         emailPlaceholder: "you@example.com",
         invitedSaved: "Undangan sudah tersimpan",
         memberId: "Member ID",
+        memberIdWarning: "Pastikan Member ID sudah benar, Member ID tidak dapat di ubah setelah pendaftaran",
         memberIdPlaceholder: "Masukkan member ID",
         password: "Password",
         passwordCheckDescriptionEmpty: "Mulai ketik password untuk melihat kekuatannya.",
