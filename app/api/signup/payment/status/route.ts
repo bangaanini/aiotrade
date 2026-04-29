@@ -1,3 +1,4 @@
+import { finalizePaidPendingSignup } from "@/lib/signup-pending-registration";
 import { refreshSignupPaymentStatus } from "@/lib/signup-payment";
 
 export async function GET(request: Request) {
@@ -25,7 +26,16 @@ export async function GET(request: Request) {
       );
     }
 
+    const activation =
+      payment.status === "paid"
+        ? await finalizePaidPendingSignup(payment.referenceId)
+        : {
+            accountReady: false,
+            profileId: null,
+          };
+
     return Response.json({
+      accountReady: activation.accountReady,
       payment,
     });
   } catch (error) {

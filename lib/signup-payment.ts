@@ -23,6 +23,7 @@ type SignupPaymentRecord = {
   customerName: string;
   expiresAt?: string | null;
   message?: string | null;
+  pendingRegistrationId?: string | null;
   planId?: string | null;
   planLabel?: string | null;
   paymentName?: string | null;
@@ -41,6 +42,21 @@ function hasSignupPaymentTransactionDelegate() {
     typeof prisma.signupPaymentTransaction?.create === "function" &&
     typeof prisma.signupPaymentTransaction?.update === "function" &&
     typeof prisma.signupPaymentTransaction?.findUnique === "function"
+  );
+}
+
+function isMissingSignupPaymentSchemaError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error ?? "");
+  const code =
+    typeof error === "object" && error !== null && "code" in error
+      ? String(error.code)
+      : "";
+
+  return (
+    code === "P2021" ||
+    code === "P2022" ||
+    message.includes("signup_payment_transactions") ||
+    message.includes("pending_registration_id")
   );
 }
 
@@ -109,6 +125,7 @@ async function createLocalPaymentRecord(input: {
   customerEmail: string;
   customerName: string;
   customerPhone?: string | null;
+  pendingRegistrationId?: string | null;
   planId: string;
   planLabel: string;
   referenceId: string;
@@ -121,6 +138,7 @@ async function createLocalPaymentRecord(input: {
         customerEmail: input.customerEmail,
         customerName: input.customerName,
         customerPhone: input.customerPhone ?? null,
+        pendingRegistrationId: input.pendingRegistrationId ?? null,
         planId: input.planId,
         planLabel: input.planLabel,
         referenceId: input.referenceId,
@@ -151,6 +169,7 @@ async function createLocalPaymentRecord(input: {
       "customer_name",
       "customer_email",
       "customer_phone",
+      "pending_registration_id",
       "plan_id",
       "plan_label",
       "status"
@@ -162,6 +181,7 @@ async function createLocalPaymentRecord(input: {
       ${input.customerName},
       ${input.customerEmail},
       ${input.customerPhone ?? null},
+      ${input.pendingRegistrationId ?? null}::uuid,
       ${input.planId},
       ${input.planLabel},
       'pending'
@@ -286,7 +306,9 @@ export async function createSignupPayment(input: {
   customerEmail: string;
   customerName: string;
   customerPhone?: string | null;
+  pendingRegistrationId?: string | null;
   planId: string;
+  referenceId?: string;
 }) {
   const settings = await getPaymentGatewaySettings();
   const siteSeo = await getSiteSeoSettings();
@@ -312,7 +334,7 @@ export async function createSignupPayment(input: {
     throw new Error("Paket langganan belum tersedia.");
   }
 
-  const referenceId = generateSignupPaymentReferenceId();
+  const referenceId = input.referenceId ?? generateSignupPaymentReferenceId();
 
   await createLocalPaymentRecord({
     amount: selectedPlan.price,
@@ -320,6 +342,7 @@ export async function createSignupPayment(input: {
     customerEmail: input.customerEmail,
     customerName: input.customerName,
     customerPhone: input.customerPhone,
+    pendingRegistrationId: input.pendingRegistrationId,
     planId: selectedPlan.id,
     planLabel: selectedPlan.label,
     referenceId,
@@ -333,7 +356,7 @@ export async function createSignupPayment(input: {
       customerName: input.customerName,
       customerPhone: input.customerPhone,
       referenceId,
-      returnUrl: `${siteSeo.siteUrl.replace(/\/$/, "")}/signup`,
+      returnUrl: `${siteSeo.siteUrl.replace(/\/$/, "")}/signup/payment?referenceId=${encodeURIComponent(referenceId)}`,
     });
 
     const updated = await updateLocalPaymentRecord(referenceId, {
@@ -364,57 +387,85 @@ export async function createSignupPayment(input: {
 
 export async function getSignupPayment(referenceId: string) {
   if (hasSignupPaymentTransactionDelegate()) {
-    return prisma.signupPaymentTransaction.findUnique({
-      where: {
-        referenceId,
-      },
-      select: {
-        amount: true,
-        channelCode: true,
-        consumedAt: true,
-        customerEmail: true,
-        customerName: true,
-        expiresAt: true,
-        message: true,
-        planId: true,
-        planLabel: true,
-        paymentName: true,
-        paymentNumber: true,
-        paymentUrl: true,
-        providerTransactionId: true,
-        qrImageUrl: true,
-        qrString: true,
-        referenceId: true,
-        status: true,
-      },
-    });
+    try {
+      return await prisma.signupPaymentTransaction.findUnique({
+        where: {
+          referenceId,
+        },
+        select: {
+          amount: true,
+          channelCode: true,
+          consumedAt: true,
+          customerEmail: true,
+          customerName: true,
+          expiresAt: true,
+          message: true,
+          pendingRegistrationId: true,
+          planId: true,
+          planLabel: true,
+          paymentName: true,
+          paymentNumber: true,
+          paymentUrl: true,
+          providerTransactionId: true,
+          qrImageUrl: true,
+          qrString: true,
+          referenceId: true,
+          status: true,
+        },
+      });
+    } catch (error) {
+      if (isMissingSignupPaymentSchemaError(error)) {
+        return null;
+      }
+
+      throw error;
+    }
   }
 
-  const payments = await prisma.$queryRaw<SignupPaymentRecord[]>`
-    SELECT
-      "amount",
-      "channel_code" AS "channelCode",
-      "consumed_at" AS "consumedAt",
-      "customer_email" AS "customerEmail",
-      "customer_name" AS "customerName",
-      "expires_at" AS "expiresAt",
-      "message",
-      "plan_id" AS "planId",
-      "plan_label" AS "planLabel",
-      "payment_name" AS "paymentName",
-      "payment_number" AS "paymentNumber",
-      "payment_url" AS "paymentUrl",
-      "provider_transaction_id" AS "providerTransactionId",
-      "qr_image_url" AS "qrImageUrl",
-      "qr_string" AS "qrString",
-      "reference_id" AS "referenceId",
-      "status"
-    FROM "public"."signup_payment_transactions"
-    WHERE "reference_id" = ${referenceId}
-    LIMIT 1
-  `;
+  if (!(await signupPaymentTransactionsTableExists())) {
+    return null;
+  }
+
+  let payments: SignupPaymentRecord[] = [];
+
+  try {
+    payments = await prisma.$queryRaw<SignupPaymentRecord[]>`
+      SELECT
+        "amount",
+        "channel_code" AS "channelCode",
+        "consumed_at" AS "consumedAt",
+        "customer_email" AS "customerEmail",
+        "customer_name" AS "customerName",
+        "expires_at" AS "expiresAt",
+        "message",
+        "pending_registration_id" AS "pendingRegistrationId",
+        "plan_id" AS "planId",
+        "plan_label" AS "planLabel",
+        "payment_name" AS "paymentName",
+        "payment_number" AS "paymentNumber",
+        "payment_url" AS "paymentUrl",
+        "provider_transaction_id" AS "providerTransactionId",
+        "qr_image_url" AS "qrImageUrl",
+        "qr_string" AS "qrString",
+        "reference_id" AS "referenceId",
+        "status"
+      FROM "public"."signup_payment_transactions"
+      WHERE "reference_id" = ${referenceId}
+      LIMIT 1
+    `;
+  } catch (error) {
+    if (isMissingSignupPaymentSchemaError(error)) {
+      return null;
+    }
+
+    throw error;
+  }
 
   return payments[0] ?? null;
+}
+
+export async function getSignupPaymentPublicState(referenceId: string) {
+  return toPublicState(await getSignupPayment(referenceId));
 }
 
 export async function refreshSignupPaymentStatus(referenceId: string) {

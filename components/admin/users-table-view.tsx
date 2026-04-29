@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BadgeCheck, CircleUserRound, Link2, ShieldCheck } from "lucide-react";
 import { AdminCreateUserForm } from "@/components/admin/admin-create-user-form";
 import { DeleteUserButton } from "@/components/admin/delete-user-button";
+import { EditMemberIdButton } from "@/components/admin/edit-member-id-button";
 import { Alert } from "@/components/ui/alert";
 import type { AdminUserRow } from "@/lib/admin-users";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -49,6 +50,18 @@ export function UsersTableView({ currentAdminId, status, users }: UsersTableView
       ) : null}
       {status === "error" ? (
         <Alert variant="error">User tidak bisa dihapus sekarang. Coba lagi.</Alert>
+      ) : null}
+      {status === "member-id-updated" ? (
+        <Alert variant="success">Member ID user berhasil diperbarui.</Alert>
+      ) : null}
+      {status === "member-id-invalid" ? (
+        <Alert variant="error">Member ID harus tepat 8 huruf atau angka.</Alert>
+      ) : null}
+      {status === "member-id-taken" ? (
+        <Alert variant="error">Member ID sudah dipakai user lain atau masih tertahan pendaftaran pending.</Alert>
+      ) : null}
+      {status === "member-id-error" ? (
+        <Alert variant="error">Member ID belum bisa diperbarui sekarang. Coba lagi.</Alert>
       ) : null}
 
       <AdminCreateUserForm />
@@ -143,11 +156,18 @@ export function UsersTableView({ currentAdminId, status, users }: UsersTableView
                         )}
                       </td>
                       <td className="px-3 py-4 text-right">
-                        {user.id === currentAdminId ? (
-                          <span className="text-xs font-medium text-[var(--admin-text-muted)]">Akun aktif</span>
-                        ) : (
-                          <DeleteUserButton userId={user.id} username={user.username} />
-                        )}
+                        <div className="flex flex-wrap items-center justify-end gap-2">
+                          <EditMemberIdButton
+                            memberId={memberId}
+                            userId={user.id}
+                            username={user.username}
+                          />
+                          {user.id === currentAdminId ? (
+                            <span className="text-xs font-medium text-[var(--admin-text-muted)]">Akun aktif</span>
+                          ) : (
+                            <DeleteUserButton userId={user.id} username={user.username} />
+                          )}
+                        </div>
                       </td>
                     </tr>
                   );

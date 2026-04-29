@@ -98,6 +98,7 @@ model SignupPaymentTransaction {
   referenceId           String   @unique @map("reference_id")
   provider              String   @default("paymenku")
   providerTransactionId String?  @map("provider_transaction_id")
+  pendingRegistrationId String?  @db.Uuid @map("pending_registration_id")
   status                String   @default("pending")
   channelCode           String   @map("channel_code")
   amount                Int
@@ -119,9 +120,39 @@ model SignupPaymentTransaction {
   rawStatusResponse     Json?    @map("raw_status_response")
   createdAt             DateTime @default(now()) @map("created_at")
   updatedAt             DateTime @updatedAt @map("updated_at")
+  pendingRegistration   SignupPendingRegistration? @relation(fields: [pendingRegistrationId], references: [id], onDelete: SetNull)
 
   @@index([status, createdAt], map: "signup_payment_transactions_status_idx")
+  @@index([pendingRegistrationId], map: "signup_payment_transactions_pending_registration_idx")
   @@map("signup_payment_transactions")
+}
+
+model SignupPendingRegistration {
+  id                    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                 String   @unique
+  username              String   @unique
+  whatsapp              String
+  memberId              String   @unique @map("member_id")
+  referralLink          String   @unique @map("referral_link")
+  passwordHash          String   @map("password_hash")
+  referredBy            String?  @map("referred_by")
+  planId                String   @map("plan_id")
+  planLabel             String   @map("plan_label")
+  planDescription       String   @map("plan_description")
+  planPrice             Int      @map("plan_price")
+  planDurationMonths    Int      @map("plan_duration_months")
+  planIsLifetime        Boolean  @default(false) @map("plan_is_lifetime")
+  channelCode           String   @map("channel_code")
+  paymentReferenceId    String?  @unique @map("payment_reference_id")
+  status                String   @default("pending")
+  expiresAt             DateTime @map("expires_at")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+  paymentTransactions   SignupPaymentTransaction[]
+
+  @@index([email, whatsapp, status], map: "signup_pending_registrations_contact_idx")
+  @@index([status, expiresAt], map: "signup_pending_registrations_status_idx")
+  @@map("signup_pending_registrations")
 }
 
 model MemberSubscription {

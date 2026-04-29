@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState } from "react";
 import { AlertCircle, PlusCircle, UserPlus } from "lucide-react";
 import {
   createAdminUserAction,
@@ -15,6 +15,7 @@ const initialCreateAdminUserState: CreateAdminUserState = {
   fieldErrors: {},
   formValues: {
     email: "",
+    memberId: "",
     password: "",
     username: "",
   },
@@ -47,25 +48,14 @@ export function AdminCreateUserForm() {
     createAdminUserAction,
     initialCreateAdminUserState,
   );
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  useEffect(() => {
-    if (state.status === "success") {
-      setUsername("");
-      setEmail("");
-      setPassword("");
-      return;
-    }
-
-    setUsername(state.formValues.username);
-    setEmail(state.formValues.email);
-    setPassword(state.formValues.password);
-  }, [state.formValues.email, state.formValues.password, state.formValues.username, state.status]);
+  const formKey = `${state.status}:${state.formValues.username}:${state.formValues.email}:${state.formValues.memberId}`;
 
   return (
-    <form action={formAction} className="rounded-[30px] border border-transparent px-6 py-6 admin-glass-panel">
+    <form
+      action={formAction}
+      className="rounded-[30px] border border-transparent px-6 py-6 admin-glass-panel"
+      key={formKey}
+    >
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex items-start gap-3">
           <span className="admin-icon-surface inline-flex h-12 w-12 items-center justify-center rounded-2xl">
@@ -76,7 +66,8 @@ export function AdminCreateUserForm() {
               Tambah User Manual
             </h2>
             <p className="mt-1 max-w-2xl text-sm leading-7 text-[var(--admin-text-secondary)]">
-              Admin bisa membuat akun member langsung dari sini. Member ID dan nomor WhatsApp nanti bisa dilengkapi atau diubah sendiri oleh user dari halaman member area.
+              Admin bisa membuat akun member langsung dari sini dan menentukan Member ID user.
+              Nomor WhatsApp tetap bisa dilengkapi atau diubah sendiri oleh user dari halaman member area.
             </p>
           </div>
         </div>
@@ -93,18 +84,20 @@ export function AdminCreateUserForm() {
         </Alert>
       ) : null}
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-3">
+      <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <FormField error={state.fieldErrors.username} htmlFor="adminCreateUsername" label="Username">
           <Input
             autoCapitalize="none"
             autoComplete="off"
+            defaultValue={state.formValues.username}
             id="adminCreateUsername"
             name="username"
-            onChange={(event) => setUsername(event.target.value.toLowerCase())}
+            onChange={(event) => {
+              event.currentTarget.value = event.currentTarget.value.toLowerCase();
+            }}
             placeholder="username_member"
             required
             spellCheck={false}
-            value={username}
           />
         </FormField>
 
@@ -112,26 +105,38 @@ export function AdminCreateUserForm() {
           <Input
             autoCapitalize="none"
             autoComplete="email"
+            defaultValue={state.formValues.email}
             id="adminCreateEmail"
             name="email"
-            onChange={(event) => setEmail(event.target.value)}
             placeholder="member@email.com"
             required
             type="email"
-            value={email}
+          />
+        </FormField>
+
+        <FormField error={state.fieldErrors.memberId} htmlFor="adminCreateMemberId" label="Member ID">
+          <Input
+            autoCapitalize="characters"
+            autoComplete="off"
+            defaultValue={state.formValues.memberId}
+            id="adminCreateMemberId"
+            maxLength={8}
+            name="memberId"
+            pattern="[A-Za-z0-9]{8}"
+            placeholder="ABC12345"
+            spellCheck={false}
           />
         </FormField>
 
         <FormField error={state.fieldErrors.password} htmlFor="adminCreatePassword" label="Password">
           <Input
             autoComplete="new-password"
+            defaultValue={state.formValues.password}
             id="adminCreatePassword"
             name="password"
-            onChange={(event) => setPassword(event.target.value)}
             placeholder="Minimal 8 karakter"
             required
             type="password"
-            value={password}
           />
         </FormField>
       </div>

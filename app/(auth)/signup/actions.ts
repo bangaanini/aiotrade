@@ -13,7 +13,12 @@ import { upsertMemberSubscription } from "@/lib/member-subscription";
 import { prisma } from "@/lib/prisma";
 import { getPaymentGatewaySettings } from "@/lib/payment-gateway-settings";
 import { parseReferralUsername } from "@/lib/referral";
-import { markSignupPaymentConsumed, verifyPaidSignupPayment } from "@/lib/signup-payment";
+import {
+  createPendingSignupAndPayment,
+  getActiveProfileConflict,
+  getPendingRegistrationConflict,
+  resumePendingSignupPayment,
+} from "@/lib/signup-pending-registration";
 import { isReservedUsername, normalizeUsername } from "@/lib/username-rules";
 
 const usernameSchema = z
@@ -92,6 +97,19 @@ export type SignupActionState = {
     email?: string;
     memberId?: string;
     username?: string;
+    whatsapp?: string;
+  };
+};
+
+export type ResumeSignupPaymentState = {
+  status: "idle" | "error";
+  message: string | null;
+  fieldErrors: {
+    email?: string;
+    whatsapp?: string;
+  };
+  formValues?: {
+    email?: string;
     whatsapp?: string;
   };
 };
@@ -235,22 +253,21 @@ export async function signUpAction(
   const { email, memberId, password, username, referredBy, whatsapp } = parsed.data;
   const referralLink = buildMemberReferralLink(memberId);
   const paymentSettings = await getPaymentGatewaySettings();
-  const paymentReferenceId = String(formData.get("paymentReferenceId") ?? "").trim();
   const selectedPlanId = String(formData.get("selectedPlanId") ?? "").trim();
-  let selectedPlan =
+  const selectedChannelCode =
+    String(formData.get("selectedChannelCode") ?? "").trim() ||
+    paymentSettings.defaultChannelCode ||
+    paymentSettings.activeChannelCodes[0] ||
+    "";
+  const selectedPlan =
     paymentSettings.subscriptionPlans.find((plan) => plan.id === selectedPlanId) ??
     paymentSettings.subscriptionPlans.find((plan) => plan.id === paymentSettings.defaultPlanId) ??
     paymentSettings.subscriptionPlans[0];
-  let verifiedPayment: Awaited<ReturnType<typeof verifyPaidSignupPayment>> | null = null;
 
-  const existingProfile = await prisma.profile.findFirst({
-    where: {
-      OR: [{ email }, { username }],
-    },
-    select: {
-      email: true,
-      username: true,
-    },
+  const existingProfile = await getActiveProfileConflict({
+    email,
+    referralLink,
+    username,
   });
 
   if (existingProfile?.username === username) {
@@ -285,7 +302,7 @@ export async function signUpAction(
     };
   }
 
-  if (await referralLinkExists(referralLink)) {
+  if (existingProfile?.referralLink === referralLink || (await referralLinkExists(referralLink))) {
     return {
       status: "error",
       message: "That member ID is already taken.",
@@ -326,11 +343,36 @@ export async function signUpAction(
     }
   }
 
+  const pendingConflict = await getPendingRegistrationConflict({
+    email,
+    memberId,
+    referralLink,
+    username,
+  });
+
+  if (pendingConflict) {
+    return {
+      status: "error",
+      message: "Data ini sudah punya pendaftaran yang masih menunggu pembayaran. Gunakan panel lanjutkan pembayaran.",
+      fieldErrors: {
+        email: pendingConflict.email === email ? "Email ini masih punya pembayaran pending." : undefined,
+        memberId: pendingConflict.memberId === memberId ? "Member ID ini masih punya pembayaran pending." : undefined,
+        username: pendingConflict.username === username ? "Username ini masih punya pembayaran pending." : undefined,
+      },
+      formValues: {
+        email,
+        memberId,
+        username,
+        whatsapp,
+      },
+    };
+  }
+
   if (paymentSettings.isEnabled) {
-    if (!paymentReferenceId) {
+    if (!selectedPlan) {
       return {
         status: "error",
-        message: "Selesaikan pembayaran pendaftaran terlebih dahulu.",
+        message: "Paket langganan belum tersedia.",
         fieldErrors: {},
         formValues: {
           email,
@@ -341,12 +383,10 @@ export async function signUpAction(
       };
     }
 
-    verifiedPayment = await verifyPaidSignupPayment(paymentReferenceId);
-
-    if (!verifiedPayment) {
+    if (!selectedChannelCode || !paymentSettings.activeChannelCodes.includes(selectedChannelCode)) {
       return {
         status: "error",
-        message: "Pembayaran belum terverifikasi. Selesaikan pembayaran lalu cek statusnya lagi.",
+        message: "Pilih metode pembayaran yang tersedia.",
         fieldErrors: {},
         formValues: {
           email,
@@ -357,15 +397,29 @@ export async function signUpAction(
       };
     }
 
-    if (
-      !selectedPlan ||
-      verifiedPayment.amount !== selectedPlan.price ||
-      verifiedPayment.customerEmail.toLowerCase() !== email.toLowerCase() ||
-      verifiedPayment.customerName !== username
-    ) {
+    let paymentReferenceId: string | null = null;
+
+    try {
+      const payment = await createPendingSignupAndPayment({
+        channelCode: selectedChannelCode,
+        email,
+        memberId,
+        password,
+        plan: selectedPlan,
+        referralLink,
+        referredBy,
+        username,
+        whatsapp,
+      });
+
+      paymentReferenceId = payment.referenceId;
+    } catch (error) {
       return {
         status: "error",
-        message: "Data pembayaran tidak cocok dengan form pendaftaran yang sedang Anda kirim.",
+        message:
+          error instanceof Error
+            ? `Data pendaftaran tersimpan, tetapi pembayaran belum bisa dibuat: ${error.message}`
+            : "Data pendaftaran tersimpan, tetapi pembayaran belum bisa dibuat sekarang.",
         fieldErrors: {},
         formValues: {
           email,
@@ -376,9 +430,7 @@ export async function signUpAction(
       };
     }
 
-    selectedPlan =
-      paymentSettings.subscriptionPlans.find((plan) => plan.id === verifiedPayment?.planId) ??
-      selectedPlan;
+    redirect(`/signup/payment?referenceId=${encodeURIComponent(paymentReferenceId)}`);
   }
 
   try {
@@ -393,7 +445,7 @@ export async function signUpAction(
 
     if (selectedPlan) {
       await upsertMemberSubscription({
-        paymentReferenceId: verifiedPayment?.referenceId ?? paymentReferenceId ?? null,
+        paymentReferenceId: null,
         plan: selectedPlan,
         profileId: profile.id,
       });
@@ -405,10 +457,6 @@ export async function signUpAction(
       isAdmin: false,
       username,
     });
-
-    if (paymentSettings.isEnabled && paymentReferenceId) {
-      await markSignupPaymentConsumed(paymentReferenceId);
-    }
 
     await createUserSession(profile.id);
   } catch (error) {
@@ -456,4 +504,69 @@ export async function signUpAction(
   }
 
   redirect("/dashboard");
+}
+
+export async function resumeSignupPaymentAction(
+  _prevState: ResumeSignupPaymentState,
+  formData: FormData,
+): Promise<ResumeSignupPaymentState> {
+  void _prevState;
+
+  const parsed = z.object({
+    email: z.string().trim().email("Masukkan email yang valid.").transform((value) => value.toLowerCase()),
+    whatsapp: whatsappSchema,
+  }).safeParse({
+    email: formData.get("resumeEmail"),
+    whatsapp: formData.get("resumeWhatsapp"),
+  });
+  const email = String(formData.get("resumeEmail") ?? "").trim().toLowerCase();
+  const whatsapp = String(formData.get("resumeWhatsapp") ?? "").trim();
+
+  if (!parsed.success) {
+    const fieldErrors = parsed.error.flatten().fieldErrors;
+
+    return {
+      status: "error",
+      message: "Periksa email dan WhatsApp yang dipakai saat daftar.",
+      fieldErrors: {
+        email: fieldErrors.email?.[0],
+        whatsapp: fieldErrors.whatsapp?.[0],
+      },
+      formValues: {
+        email,
+        whatsapp,
+      },
+    };
+  }
+
+  let referenceId: string | null = null;
+
+  try {
+    const result = await resumePendingSignupPayment(parsed.data);
+    referenceId = result?.referenceId ?? null;
+  } catch (error) {
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Pembayaran belum bisa dilanjutkan sekarang.",
+      fieldErrors: {},
+      formValues: {
+        email: parsed.data.email,
+        whatsapp: parsed.data.whatsapp,
+      },
+    };
+  }
+
+  if (!referenceId) {
+    return {
+      status: "error",
+      message: "Tidak ada pendaftaran pending yang cocok dengan email dan WhatsApp tersebut.",
+      fieldErrors: {},
+      formValues: {
+        email: parsed.data.email,
+        whatsapp: parsed.data.whatsapp,
+      },
+    };
+  }
+
+  redirect(`/signup/payment?referenceId=${encodeURIComponent(referenceId)}`);
 }
