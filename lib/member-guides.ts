@@ -348,6 +348,69 @@ export async function getPublishedMemberGuidePosts() {
   return records.map(toMemberGuidePost);
 }
 
+export async function getPublishedMemberGuidePostById(id: string) {
+  const normalizedId = id.trim();
+
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(normalizedId)) {
+    return null;
+  }
+
+  const tables = await prisma.$queryRaw<Array<{ tableName: string | null }>>`
+    SELECT to_regclass('public.member_guide_posts')::text AS "tableName"
+  `;
+
+  if (!tables[0]?.tableName) {
+    return null;
+  }
+
+  const record = hasMemberGuidePostReadDelegate()
+    ? await prisma.memberGuidePost.findFirst({
+        where: {
+          id: normalizedId,
+          isPublished: true,
+        },
+        select: {
+          createdAt: true,
+          description: true,
+          embedUrl: true,
+          fileAssetId: true,
+          fileUrl: true,
+          id: true,
+          isPublished: true,
+          publishedAt: true,
+          section: true,
+          sortOrder: true,
+          title: true,
+          type: true,
+          updatedAt: true,
+        },
+      })
+    : (
+        await prisma.$queryRaw<MemberGuidePostRecord[]>`
+          SELECT
+            "id",
+            "type",
+            "title",
+            "description",
+            "embed_url" AS "embedUrl",
+            "file_asset_id" AS "fileAssetId",
+            "file_url" AS "fileUrl",
+            "sort_order" AS "sortOrder",
+            "is_published" AS "isPublished",
+            "published_at" AS "publishedAt",
+            "section",
+            "created_at" AS "createdAt",
+            "updated_at" AS "updatedAt"
+          FROM "public"."member_guide_posts"
+          WHERE "id" = ${normalizedId}::uuid
+            AND "is_published" = true
+          LIMIT 1
+        `
+      )[0] ?? null;
+
+  return record ? toMemberGuidePost(record as MemberGuidePostRecord) : null;
+}
+
 export async function saveMemberGuidePost(input: SaveMemberGuidePostInput) {
   const normalizedGuideInput = validateMemberGuideInput(input);
 

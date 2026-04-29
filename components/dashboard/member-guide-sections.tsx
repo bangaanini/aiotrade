@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { ExternalLink, FileText, PlayCircle } from "lucide-react";
 import type { MemberGuidePost } from "@/lib/member-guide-types";
 import {
@@ -194,14 +193,15 @@ export function MemberPdfGuideSection({
                 </div>
 
                 <div className="mt-auto">
-                  <Link
+                  <a
                     className={memberSoftButtonClass}
-                    href={guide.fileUrl ?? "#"}
+                    href={guide.fileUrl ? `/api/member-guides/pdf/${guide.id}` : "#"}
+                    rel="noreferrer"
                     target="_blank"
                   >
                     <ExternalLink className="h-4 w-4" />
                     {labels.openPdf}
-                  </Link>
+                  </a>
                 </div>
               </div>
             ))}

@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { ExternalLink, FileText, PlayCircle } from "lucide-react";
 import type { MemberGuidePost } from "@/lib/member-guide-types";
 
@@ -137,14 +136,15 @@ export function MemberGuidesView({ guides }: MemberGuidesViewProps) {
                 </div>
 
                 <div className="mt-auto">
-                  <Link
+                  <a
                     className="inline-flex h-11 items-center gap-2 rounded-2xl bg-white/52 px-5 text-sm font-medium text-stone-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.78)] transition hover:bg-white/64 hover:shadow-[0_16px_28px_rgba(15,23,42,0.08)]"
-                    href={guide.fileUrl ?? "#"}
+                    href={guide.fileUrl ? `/api/member-guides/pdf/${guide.id}` : "#"}
+                    rel="noreferrer"
                     target="_blank"
                   >
                     <ExternalLink className="h-4 w-4" />
                     Buka PDF
-                  </Link>
+                  </a>
                 </div>
               </div>
             ))}
