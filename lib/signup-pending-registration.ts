@@ -51,6 +51,16 @@ type ProfileConflict = {
   username: string;
 };
 
+export class PendingRegistrationApprovalError extends Error {
+  code: "not-found";
+
+  constructor(code: "not-found", message: string) {
+    super(message);
+    this.code = code;
+    this.name = "PendingRegistrationApprovalError";
+  }
+}
+
 function getPendingExpiresAt() {
   return new Date(Date.now() + SIGNUP_PENDING_RETENTION_MS);
 }
@@ -331,6 +341,35 @@ export async function getPendingRegistrationByReference(referenceId: string) {
   return rows[0] ?? null;
 }
 
+export async function getPendingRegistrationById(pendingId: string) {
+  const rows = await prisma.$queryRaw<SignupPendingRegistrationRecord[]>`
+    SELECT
+      "channel_code" AS "channelCode",
+      "email",
+      "expires_at" AS "expiresAt",
+      "id",
+      "member_id" AS "memberId",
+      "password_hash" AS "passwordHash",
+      "payment_reference_id" AS "paymentReferenceId",
+      "plan_description" AS "planDescription",
+      "plan_duration_months" AS "planDurationMonths",
+      "plan_id" AS "planId",
+      "plan_is_lifetime" AS "planIsLifetime",
+      "plan_label" AS "planLabel",
+      "plan_price" AS "planPrice",
+      "referral_link" AS "referralLink",
+      "referred_by" AS "referredBy",
+      "status",
+      "username",
+      "whatsapp"
+    FROM "public"."signup_pending_registrations"
+    WHERE "id" = ${pendingId}::uuid
+    LIMIT 1
+  `;
+
+  return rows[0] ?? null;
+}
+
 export async function resumePendingSignupPayment(input: {
   email: string;
   whatsapp: string;
@@ -459,6 +498,46 @@ async function createProfileFromPending(pending: SignupPendingRegistrationRecord
   }
 }
 
+async function activatePendingRegistration(input: {
+  consumePaymentReferenceId?: string | null;
+  paymentReferenceId?: string | null;
+  pending: SignupPendingRegistrationRecord;
+}) {
+  const profile = await createProfileFromPending(input.pending);
+  const adminProfile = await ensureEnvAdmin({
+    email: profile.email,
+    id: profile.id,
+    isAdmin: profile.isAdmin,
+    username: profile.username,
+  });
+
+  const existingSubscription = await getMemberSubscription(adminProfile.id);
+
+  if (!existingSubscription) {
+    await upsertMemberSubscription({
+      paymentReferenceId: input.paymentReferenceId ?? null,
+      plan: planFromPending(input.pending),
+      profileId: adminProfile.id,
+    });
+  }
+
+  if (input.consumePaymentReferenceId) {
+    await markSignupPaymentConsumed(input.consumePaymentReferenceId);
+  }
+
+  await prisma.$executeRaw`
+    UPDATE "public"."signup_pending_registrations"
+    SET
+      "status" = 'paid',
+      "updated_at" = CURRENT_TIMESTAMP
+    WHERE "id" = ${input.pending.id}::uuid
+  `;
+
+  return {
+    profileId: adminProfile.id,
+  };
+}
+
 export async function finalizePaidPendingSignup(referenceId: string) {
   const payment = await getSignupPayment(referenceId);
 
@@ -478,35 +557,43 @@ export async function finalizePaidPendingSignup(referenceId: string) {
     };
   }
 
-  const profile = await createProfileFromPending(pending);
-  const adminProfile = await ensureEnvAdmin({
-    email: profile.email,
-    id: profile.id,
-    isAdmin: profile.isAdmin,
-    username: profile.username,
+  const activated = await activatePendingRegistration({
+    consumePaymentReferenceId: payment.consumedAt ? null : payment.referenceId,
+    paymentReferenceId: payment.referenceId,
+    pending,
   });
-
-  const existingSubscription = await getMemberSubscription(adminProfile.id);
-
-  if (!existingSubscription) {
-    await upsertMemberSubscription({
-      paymentReferenceId: payment.referenceId,
-      plan: planFromPending(pending),
-      profileId: adminProfile.id,
-    });
-  }
-
-  await markSignupPaymentConsumed(payment.referenceId);
-  await prisma.$executeRaw`
-    UPDATE "public"."signup_pending_registrations"
-    SET
-      "status" = 'paid',
-      "updated_at" = CURRENT_TIMESTAMP
-    WHERE "id" = ${pending.id}::uuid
-  `;
 
   return {
     accountReady: true,
-    profileId: adminProfile.id,
+    profileId: activated.profileId,
+  };
+}
+
+export async function approvePendingRegistrationManually(pendingId: string) {
+  const pending = await getPendingRegistrationById(pendingId);
+
+  if (!pending) {
+    throw new PendingRegistrationApprovalError(
+      "not-found",
+      "Pending registration tidak ditemukan.",
+    );
+  }
+
+  const payment = pending.paymentReferenceId
+    ? await getSignupPayment(pending.paymentReferenceId)
+    : null;
+  const activated = await activatePendingRegistration({
+    consumePaymentReferenceId:
+      payment?.status === "paid" && !payment.consumedAt
+        ? payment.referenceId
+        : null,
+    paymentReferenceId: payment?.referenceId ?? pending.paymentReferenceId,
+    pending,
+  });
+
+  return {
+    accountReady: true,
+    profileId: activated.profileId,
+    wasAlreadyPaid: pending.status === "paid",
   };
 }

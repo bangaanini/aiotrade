@@ -1,14 +1,19 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { refresh, revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { normalizeAdminUserSearchQuery } from "@/lib/admin-users";
 import { hashPassword, requireAdminProfile } from "@/lib/auth";
+import { upsertMemberSubscription } from "@/lib/member-subscription";
 import {
   buildMemberReferralLink,
   isValidMemberId,
   normalizeMemberId,
 } from "@/lib/member-id";
+import { normalizePlanId } from "@/lib/payment-gateway-config";
+import { getPaymentGatewaySettings } from "@/lib/payment-gateway-settings";
 import { prisma } from "@/lib/prisma";
 import { cleanupExpiredPendingRegistrations } from "@/lib/signup-pending-registration";
 import { HIDDEN_ADMIN_TABLE_USERNAMES, isReservedUsername, normalizeUsername } from "@/lib/username-rules";
@@ -39,6 +44,11 @@ const createAdminUserSchema = z.object({
     ),
 });
 
+const assignUserPackageSchema = z.object({
+  planId: z.string().trim().transform((value) => normalizePlanId(value)).pipe(z.string().min(1)),
+  userId: z.string().trim().uuid(),
+});
+
 export type CreateAdminUserState = {
   fieldErrors: {
     email?: string;
@@ -58,6 +68,19 @@ export type CreateAdminUserState = {
 
 function isUniqueConstraintError(error: unknown): error is { code: string } {
   return typeof error === "object" && error !== null && "code" in error && error.code === "P2002";
+}
+
+function adminUsersRedirect(status: string, searchQueryInput?: string | null) {
+  const params = new URLSearchParams({
+    status,
+  });
+  const searchQuery = normalizeAdminUserSearchQuery(searchQueryInput);
+
+  if (searchQuery) {
+    params.set("q", searchQuery);
+  }
+
+  return `/admin/users?${params.toString()}`;
 }
 
 async function findActiveMemberIdConflict(referralLink: string, userId?: string) {
@@ -335,6 +358,60 @@ export async function updateUserMemberIdAction(formData: FormData) {
 
   revalidatePath("/admin/users");
   redirect("/admin/users?status=member-id-updated");
+}
+
+export async function assignUserPackageAction(formData: FormData) {
+  await requireAdminProfile();
+
+  const searchQuery = normalizeAdminUserSearchQuery(String(formData.get("q") ?? ""));
+  const parsed = assignUserPackageSchema.safeParse({
+    planId: formData.get("planId"),
+    userId: formData.get("userId"),
+  });
+
+  if (!parsed.success) {
+    redirect(adminUsersRedirect("package-invalid", searchQuery));
+  }
+
+  const [user, paymentSettings] = await Promise.all([
+    prisma.profile.findUnique({
+      where: {
+        id: parsed.data.userId,
+      },
+      select: {
+        id: true,
+        username: true,
+      },
+    }),
+    getPaymentGatewaySettings(),
+  ]);
+
+  if (!user || HIDDEN_ADMIN_TABLE_USERNAMES.has(user.username)) {
+    redirect(adminUsersRedirect("package-user-not-found", searchQuery));
+  }
+
+  const plan = paymentSettings.subscriptionPlans.find(
+    (item) => item.id === parsed.data.planId,
+  );
+
+  if (!plan) {
+    redirect(adminUsersRedirect("package-invalid", searchQuery));
+  }
+
+  try {
+    await upsertMemberSubscription({
+      paymentReferenceId: `MANUAL-${randomUUID()}`,
+      plan,
+      profileId: user.id,
+    });
+  } catch {
+    redirect(adminUsersRedirect("package-error", searchQuery));
+  }
+
+  revalidatePath("/admin/users");
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/subscription");
+  redirect(adminUsersRedirect("package-updated", searchQuery));
 }
 
 export async function deleteUserAction(formData: FormData) {

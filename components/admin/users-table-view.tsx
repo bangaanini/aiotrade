@@ -1,18 +1,28 @@
 import Link from "next/link";
-import { BadgeCheck, CircleUserRound, Link2, ShieldCheck } from "lucide-react";
+import { BadgeCheck, CircleUserRound, Link2, Search, ShieldCheck } from "lucide-react";
 import { AdminCreateUserForm } from "@/components/admin/admin-create-user-form";
+import { AssignUserPackageButton } from "@/components/admin/assign-user-package-button";
 import { DeleteUserButton } from "@/components/admin/delete-user-button";
 import { EditMemberIdButton } from "@/components/admin/edit-member-id-button";
 import { Alert } from "@/components/ui/alert";
 import type { AdminUserRow } from "@/lib/admin-users";
+import type { PaymentSubscriptionPlan } from "@/lib/payment-gateway-types";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { extractMemberIdFromReferralLink } from "@/lib/member-id";
 
 type UsersTableViewProps = {
   currentAdminId: string;
+  searchQuery: string;
   status?: string;
+  subscriptionPlans: PaymentSubscriptionPlan[];
   users: AdminUserRow[];
 };
+
+const subscriptionDateFormatter = new Intl.DateTimeFormat("id-ID", {
+  dateStyle: "medium",
+  timeZone: "Asia/Jakarta",
+});
 
 function StatusPill({
   active,
@@ -36,7 +46,50 @@ function StatusPill({
   );
 }
 
-export function UsersTableView({ currentAdminId, status, users }: UsersTableViewProps) {
+function formatSubscriptionDate(date: Date | null | undefined) {
+  if (!date) {
+    return null;
+  }
+
+  return subscriptionDateFormatter.format(date);
+}
+
+function getSubscriptionDisplay(user: AdminUserRow) {
+  if (!user.subscriptionPlanLabel) {
+    return {
+      detail: "Belum ada paket aktif",
+      isActive: false,
+      label: "Belum ada",
+      status: "Inactive",
+    };
+  }
+
+  const expiresAt = user.subscriptionExpiresAt;
+  const expiresAtLabel = formatSubscriptionDate(user.subscriptionExpiresAt);
+  const isExpired =
+    !user.subscriptionIsLifetime &&
+    (expiresAt ? expiresAt.getTime() < Date.now() : false);
+  const durationLabel = user.subscriptionIsLifetime
+    ? "Lifetime"
+    : expiresAtLabel
+      ? `Exp ${expiresAtLabel}`
+      : `${user.subscriptionDurationMonths ?? 0} bulan`;
+
+  return {
+    detail: durationLabel,
+    isActive: !isExpired && user.subscriptionStatus !== "inactive",
+    label: user.subscriptionPlanLabel,
+    status: isExpired ? "Expired" : user.subscriptionStatus ?? "Active",
+  };
+}
+
+export function UsersTableView({
+  currentAdminId,
+  searchQuery,
+  status,
+  subscriptionPlans,
+  users,
+}: UsersTableViewProps) {
   const totalReferrals = users.reduce((sum, user) => sum + user.referralCount, 0);
   const adminCardClass = "rounded-[30px] border-transparent";
 
@@ -63,6 +116,18 @@ export function UsersTableView({ currentAdminId, status, users }: UsersTableView
       {status === "member-id-error" ? (
         <Alert variant="error">Member ID belum bisa diperbarui sekarang. Coba lagi.</Alert>
       ) : null}
+      {status === "package-updated" ? (
+        <Alert variant="success">Paket user berhasil diperbarui secara manual.</Alert>
+      ) : null}
+      {status === "package-invalid" ? (
+        <Alert variant="error">Paket yang dipilih tidak valid atau sudah tidak tersedia.</Alert>
+      ) : null}
+      {status === "package-user-not-found" ? (
+        <Alert variant="error">User tidak ditemukan.</Alert>
+      ) : null}
+      {status === "package-error" ? (
+        <Alert variant="error">Paket user belum bisa diperbarui sekarang. Coba lagi.</Alert>
+      ) : null}
 
       <AdminCreateUserForm />
 
@@ -74,6 +139,9 @@ export function UsersTableView({ currentAdminId, status, users }: UsersTableView
               <CircleUserRound className="h-6 w-6 text-sky-600" />
               {users.length}
             </CardTitle>
+            {searchQuery ? (
+              <p className="pt-1 text-xs text-[var(--admin-text-muted)]">Hasil pencarian</p>
+            ) : null}
           </CardHeader>
         </Card>
         <Card className={adminCardClass}>
@@ -97,9 +165,53 @@ export function UsersTableView({ currentAdminId, status, users }: UsersTableView
       </div>
 
       <Card className={adminCardClass}>
+        <CardContent>
+          <form action="/admin/users" className="flex flex-col gap-3 md:flex-row md:items-end">
+            <div className="flex-1 space-y-2">
+              <label
+                className="text-sm font-semibold text-[var(--admin-text-primary)]"
+                htmlFor="admin-users-search"
+              >
+                Cari User
+              </label>
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--admin-text-muted)]" />
+                <input
+                  autoComplete="off"
+                  className="h-11 w-full rounded-xl border border-stone-200 bg-white pl-10 pr-3 text-sm text-stone-950 outline-none transition focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100"
+                  defaultValue={searchQuery}
+                  id="admin-users-search"
+                  maxLength={80}
+                  name="q"
+                  placeholder="Cari username, email, WhatsApp, atau Member ID"
+                  type="search"
+                />
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button type="submit">
+                <Search className="h-4 w-4" />
+                Cari
+              </Button>
+              {searchQuery ? (
+                <Link
+                  className="inline-flex h-11 items-center justify-center rounded-lg border border-stone-300 bg-white px-5 text-sm font-medium text-stone-900 transition hover:bg-stone-50"
+                  href="/admin/users"
+                >
+                  Reset
+                </Link>
+              ) : null}
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+
+      <Card className={adminCardClass}>
         <CardHeader>
           <CardTitle>User Table</CardTitle>
-          <CardDescription>Menampilkan semua user</CardDescription>
+          <CardDescription>
+            {searchQuery ? `Menampilkan hasil untuk "${searchQuery}"` : "Menampilkan semua user"}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -111,14 +223,16 @@ export function UsersTableView({ currentAdminId, status, users }: UsersTableView
                   <th className="px-3 py-3.5">WhatsApp</th>
                   <th className="px-3 py-3.5">Member ID</th>
                   <th className="px-3 py-3.5">Referral</th>
+                  <th className="px-3 py-3.5">Paket</th>
                   <th className="px-3 py-3.5">Landing Page</th>
                   <th className="px-3 py-3.5">Admin</th>
                   <th className="px-3 py-3.5 text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => {
+                {users.length ? users.map((user) => {
                   const memberId = extractMemberIdFromReferralLink(user.referralLink);
+                  const subscription = getSubscriptionDisplay(user);
 
                   return (
                     <tr className="admin-data-row align-top text-[var(--admin-text-secondary)]" key={user.id}>
@@ -143,6 +257,21 @@ export function UsersTableView({ currentAdminId, status, users }: UsersTableView
                       </td>
                       <td className="px-3 py-4 font-semibold text-[var(--admin-text-primary)]">{user.referralCount}</td>
                       <td className="px-3 py-4">
+                        <div className="space-y-1">
+                          <p className="font-semibold text-[var(--admin-text-primary)]">{subscription.label}</p>
+                          <p className="text-xs text-[var(--admin-text-muted)]">{subscription.detail}</p>
+                          <span
+                            className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
+                              subscription.isActive
+                                ? "bg-emerald-100 text-emerald-800"
+                                : "bg-stone-100 text-stone-600"
+                            }`}
+                          >
+                            {subscription.status}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-3 py-4">
                         <StatusPill active={user.isLpActive} activeLabel="Active" inactiveLabel="Inactive" />
                       </td>
                       <td className="px-3 py-4">
@@ -157,6 +286,13 @@ export function UsersTableView({ currentAdminId, status, users }: UsersTableView
                       </td>
                       <td className="px-3 py-4 text-right">
                         <div className="flex flex-wrap items-center justify-end gap-2">
+                          <AssignUserPackageButton
+                            currentPlanLabel={user.subscriptionPlanLabel}
+                            plans={subscriptionPlans}
+                            searchQuery={searchQuery}
+                            userId={user.id}
+                            username={user.username}
+                          />
                           <EditMemberIdButton
                             memberId={memberId}
                             userId={user.id}
@@ -171,7 +307,13 @@ export function UsersTableView({ currentAdminId, status, users }: UsersTableView
                       </td>
                     </tr>
                   );
-                })}
+                }) : (
+                  <tr>
+                    <td className="px-3 py-10 text-center text-sm text-[var(--admin-text-muted)]" colSpan={9}>
+                      Tidak ada user yang cocok dengan pencarian ini.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

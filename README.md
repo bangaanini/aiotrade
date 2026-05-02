@@ -85,6 +85,7 @@ Fungsi utamanya:
 
 - `Analytics`
 - `User Management`
+- `Pending Registration`
 - `Payment Settings`
 - `Post to Member`
 - `Posting Konten`
@@ -94,6 +95,7 @@ Fungsi utamanya:
 Admin bisa:
 
 - membuat user manual
+- melihat status pendaftaran pending dan approve manual bila pembayaran sudah diverifikasi
 - mengubah komponen homepage tanpa edit kode
 - upload asset homepage
 - mengatur paket pembayaran dan channel pembayaran
@@ -133,6 +135,7 @@ Admin bisa:
 - `/admin` = redirect ke `/admin/analytics`
 - `/admin/analytics`
 - `/admin/homepage`
+- `/admin/pending-registrations`
 - `/admin/users`
 - `/admin/payments`
 - `/admin/member-posts`
@@ -155,6 +158,7 @@ Admin bisa:
 - nomor WhatsApp yang bisa diedit user
 - signup dengan validasi username, email, password, WhatsApp, dan member ID
 - pembayaran signup / langganan lewat Paymenku
+- approval manual untuk pendaftaran yang masih pending di panel admin
 - guide member dalam bentuk video dan PDF
 - blog publik
 - SEO settings
@@ -207,6 +211,7 @@ Secara garis besar, database menyimpan:
 - `homepage_assets` = gambar/asset homepage
 - `site_seo_settings` = metadata SEO
 - `payment_gateway_settings` = pengaturan pembayaran signup/langganan
+- `signup_pending_registrations` = data signup yang menunggu pembayaran atau approval manual
 - `signup_payment_transactions` = riwayat transaksi pembayaran signup
 - `landing_page_visits` = statistik detail kunjungan referral `/{username}`
 - `blog_posts` = artikel blog

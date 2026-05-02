@@ -1,24 +1,30 @@
 import { UsersTableView } from "@/components/admin/users-table-view";
+import { getAdminUsers, normalizeAdminUserSearchQuery } from "@/lib/admin-users";
 import { requireAdminProfile } from "@/lib/auth";
-import { getAdminUsers } from "@/lib/admin-users";
+import { getPaymentGatewaySettings } from "@/lib/payment-gateway-settings";
 
 type AdminUsersPageProps = {
   searchParams: Promise<{
+    q?: string;
     status?: string;
   }>;
 };
 
 export default async function AdminUsersPage({ searchParams }: AdminUsersPageProps) {
-  const [users, admin, query] = await Promise.all([
-    getAdminUsers(),
+  const query = await searchParams;
+  const searchQuery = normalizeAdminUserSearchQuery(query.q);
+  const [users, admin, paymentSettings] = await Promise.all([
+    getAdminUsers(searchQuery),
     requireAdminProfile(),
-    searchParams,
+    getPaymentGatewaySettings(),
   ]);
 
   return (
     <UsersTableView
       currentAdminId={admin.id}
+      searchQuery={searchQuery}
       status={query.status}
+      subscriptionPlans={paymentSettings.subscriptionPlans}
       users={users}
     />
   );

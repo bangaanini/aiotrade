@@ -15,6 +15,7 @@ import {
   Search,
   Settings2,
   Sun,
+  UserCheck,
   Users,
 } from "lucide-react";
 import { logoutAction } from "@/app/(protected)/account/actions";
@@ -99,6 +100,7 @@ export function AdminSidebar({ onThemeChange, pathname, theme, username }: Admin
   const isMemberPublishedPostsRoute = resolvedPathname === "/admin/member-posts/published";
   const isResetPasswordRoute = resolvedPathname === "/admin/reset-password";
   const isPaymentsRoute = resolvedPathname === "/admin/payments";
+  const isPendingRegistrationsRoute = resolvedPathname === "/admin/pending-registrations";
   const isAnalyticsRoute = resolvedPathname === "/admin/analytics";
   const isSeoRoute = resolvedPathname === "/admin/seo";
   const isUsersRoute = resolvedPathname === "/admin/users";
@@ -227,6 +229,14 @@ export function AdminSidebar({ onThemeChange, pathname, theme, username }: Admin
           >
             <Users className="h-4 w-4" />
             User Management
+          </Link>
+
+          <Link
+            className={primaryLinkClass(isPendingRegistrationsRoute)}
+            href="/admin/pending-registrations"
+          >
+            <UserCheck className="h-4 w-4" />
+            Pending Registration
           </Link>
 
           <Link
