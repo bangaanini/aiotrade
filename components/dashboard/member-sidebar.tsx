@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import {
+  BarChart3,
   BookOpen,
   ChevronDown,
   CreditCard,
@@ -53,6 +54,7 @@ export function MemberSidebar({
   const accountOpen = isAccountRoute || accountExpanded;
   const primaryItems = [
     { href: "/dashboard", label: labels.primaryItems.dashboard, icon: LayoutDashboard },
+    { href: "/dashboard/analytics", label: labels.primaryItems.analytics, icon: BarChart3 },
     { href: "/dashboard/subscription", label: labels.primaryItems.subscription, icon: CreditCard },
   ] as const;
   const guideItems = [

@@ -34,6 +34,10 @@ function getMobileHeaderTitle(pathname: string, labels: MemberShellLabels) {
     return labels.mobileTitles.subscription;
   }
 
+  if (pathname === "/dashboard/analytics") {
+    return labels.mobileTitles.analytics;
+  }
+
   if (pathname === "/dashboard/guides/start") {
     return labels.mobileTitles.guideStart;
   }

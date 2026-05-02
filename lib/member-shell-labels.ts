@@ -22,6 +22,7 @@ export type MemberShellLabels = {
     accountLandingPage: string;
     accountProfile: string;
     accountResetPassword: string;
+    analytics: string;
     dashboard: string;
     fallback: string;
     guideFiles: string;
@@ -32,6 +33,7 @@ export type MemberShellLabels = {
   };
   openMenu: string;
   primaryItems: {
+    analytics: string;
     dashboard: string;
     subscription: string;
   };
@@ -63,6 +65,7 @@ export const defaultMemberShellLabels: MemberShellLabels = {
     accountLandingPage: "Akun: Landing Page",
     accountProfile: "Akun: Profil",
     accountResetPassword: "Akun: Reset Password",
+    analytics: "Analytics",
     dashboard: "Dashboard",
     fallback: "Dashboard Member",
     guideFiles: "Panduan: File PDF",
@@ -73,6 +76,7 @@ export const defaultMemberShellLabels: MemberShellLabels = {
   },
   openMenu: "Buka menu",
   primaryItems: {
+    analytics: "Analytics",
     dashboard: "Dashboard",
     subscription: "Langganan",
   },

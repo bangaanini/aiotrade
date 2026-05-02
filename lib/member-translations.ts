@@ -78,6 +78,7 @@ const englishMemberShellLabels = {
     accountLandingPage: "Account: Landing Page",
     accountProfile: "Account: Profile",
     accountResetPassword: "Account: Reset Password",
+    analytics: "Analytics",
     dashboard: "Dashboard",
     fallback: "Member Dashboard",
     guideFiles: "Guides: PDF Files",
@@ -88,6 +89,7 @@ const englishMemberShellLabels = {
   },
   openMenu: "Open menu",
   primaryItems: {
+    analytics: "Analytics",
     dashboard: "Dashboard",
     subscription: "Subscription",
   },
@@ -147,6 +149,7 @@ const englishMemberCopyByKey: Record<string, string> = {
   noteBody: "After the password is changed, your next login will use the new password.",
   noteTitle: "Note",
   nowPlaying: "Now playing",
+  openAnalytics: "View analytics",
   openEntryLink: "Open entry link",
   openMenu: "Open menu",
   openPdf: "Open PDF",

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, ExternalLink, Link2, WalletCards } from "lucide-react";
+import { ArrowUpRight, BarChart3, ExternalLink, Link2, WalletCards } from "lucide-react";
 import type { requireCurrentProfile } from "@/lib/auth";
 import { ActivateLandingPageButton } from "@/components/dashboard/activate-lp-button";
 import { CopyLinkButton } from "@/components/dashboard/copy-link-button";
@@ -30,6 +30,7 @@ type MemberLandingPagePanelProps = {
     inactiveStatus: string;
     landingLinkDescription: string;
     landingLinkLabel: string;
+    openAnalytics: string;
     openEntryLink: string;
     pageTitle: string;
     sectionTitle: string;
@@ -56,6 +57,7 @@ const defaultLabels = {
   landingLinkDescription:
     "Tombol daftar di landing page Anda akan mengikuti referral link yang tersimpan pada profil member.",
   landingLinkLabel: "Link landing page Anda",
+  openAnalytics: "View Analytics",
   openEntryLink: "Open Entry Link",
   pageTitle: "Landing page referral",
   sectionTitle: "Generate landing page",
@@ -131,6 +133,13 @@ export function MemberLandingPagePanel({
                 >
                   <ExternalLink className="h-4 w-4" />
                   {labels.openEntryLink}
+                </Link>
+                <Link
+                  className={memberSoftButtonClass}
+                  href="/dashboard/analytics"
+                >
+                  <BarChart3 className="h-4 w-4" />
+                  {labels.openAnalytics}
                 </Link>
               </div>
             </>

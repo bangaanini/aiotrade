@@ -27,6 +27,7 @@ export default async function DashboardAccountLandingPagePage() {
       landingLinkDescription:
         "Tombol daftar di landing page Anda akan mengikuti referral link yang tersimpan pada profil member.",
       landingLinkLabel: "Link landing page Anda",
+      openAnalytics: "View Analytics",
       openEntryLink: "Open Entry Link",
       pageTitle: "Landing page referral",
       sectionTitle: "Generate landing page",

@@ -73,7 +73,7 @@ Fungsi utamanya:
 - melihat dan mengubah profil dasar
 - mengubah `member ID` dan nomor WhatsApp
 - melihat landing page referral miliknya
-- melihat statistik kunjungan landing page
+- melihat analytics landing page miliknya sendiri
 - membuka panduan video dan file PDF
 - mengganti light mode dan dark mode
 
@@ -117,6 +117,7 @@ Admin bisa:
 ### Halaman member
 
 - `/dashboard`
+- `/dashboard/analytics`
 - `/dashboard/account`
 - `/dashboard/account/profile`
 - `/dashboard/account/landing-page`
