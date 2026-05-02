@@ -1,5 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { LANDING_PAGE_VISIT_SECRET_HEADER, getLandingPageVisitSecret } from "@/lib/landing-page-visits";
+import {
+  LANDING_PAGE_VISIT_SECRET_HEADER,
+  LANDING_VISITOR_COOKIE_MAX_AGE,
+  LANDING_VISITOR_COOKIE_NAME,
+  getLandingPageVisitMetadata,
+  getLandingPageVisitSecret,
+  getOrCreateLandingVisitorId,
+  hashLandingVisitorId,
+} from "@/lib/landing-page-visits";
 import {
   LANDING_REFERRAL_COOKIE_MAX_AGE,
   LANDING_REFERRAL_COOKIE_NAME,
@@ -44,6 +52,11 @@ export async function proxy(request: NextRequest) {
     return nextResponse();
   }
 
+  const visitorId = getOrCreateLandingVisitorId(
+    request.cookies.get(LANDING_VISITOR_COOKIE_NAME)?.value,
+  );
+  const visitMetadata = getLandingPageVisitMetadata(request.headers);
+
   try {
     await fetch(new URL("/api/landing-page-visit", request.url), {
       method: "POST",
@@ -52,7 +65,11 @@ export async function proxy(request: NextRequest) {
         [LANDING_PAGE_VISIT_SECRET_HEADER]: getLandingPageVisitSecret(),
       },
       body: JSON.stringify({
+        ...visitMetadata,
+        profileId: referralOwner.id,
+        sourcePath: pathname,
         username: referralOwner.username,
+        visitorIdHash: hashLandingVisitorId(visitorId),
       }),
       cache: "no-store",
     });
@@ -64,6 +81,13 @@ export async function proxy(request: NextRequest) {
   redirectResponse.cookies.set(LANDING_REFERRAL_COOKIE_NAME, referralOwner.username, {
     httpOnly: true,
     maxAge: LANDING_REFERRAL_COOKIE_MAX_AGE,
+    path: "/",
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+  redirectResponse.cookies.set(LANDING_VISITOR_COOKIE_NAME, visitorId, {
+    httpOnly: true,
+    maxAge: LANDING_VISITOR_COOKIE_MAX_AGE,
     path: "/",
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",

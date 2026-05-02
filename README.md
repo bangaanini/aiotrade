@@ -83,6 +83,7 @@ Area ini dipakai admin untuk operasional.
 
 Fungsi utamanya:
 
+- `Analytics`
 - `User Management`
 - `Payment Settings`
 - `Post to Member`
@@ -128,7 +129,9 @@ Admin bisa:
 
 ### Halaman admin
 
-- `/admin`
+- `/admin` = redirect ke `/admin/analytics`
+- `/admin/analytics`
+- `/admin/homepage`
 - `/admin/users`
 - `/admin/payments`
 - `/admin/member-posts`
@@ -180,6 +183,7 @@ Dependency utama di `package.json` yang paling relevan:
 - `@prisma/client`
 - `prisma`
 - `pg`
+- `google-auth-library`
 - `zod`
 - `framer-motion`
 - `lucide-react`
@@ -203,6 +207,7 @@ Secara garis besar, database menyimpan:
 - `site_seo_settings` = metadata SEO
 - `payment_gateway_settings` = pengaturan pembayaran signup/langganan
 - `signup_payment_transactions` = riwayat transaksi pembayaran signup
+- `landing_page_visits` = statistik detail kunjungan referral `/{username}`
 - `blog_posts` = artikel blog
 - `member_guide_posts` = panduan member video/PDF
 - `public_guide_pdf_posts` = PDF guide publik
@@ -439,7 +444,31 @@ DEFAULT_ADMIN_EMAIL=admin@domainanda.com
 DEFAULT_ADMIN_USERNAME=adminutama
 ```
 
-### J. Seed user referral khusus
+### J. Google Analytics
+
+Opsional untuk panel `/admin/analytics`:
+
+- `NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID`
+- `GOOGLE_ANALYTICS_PROPERTY_ID`
+- `GOOGLE_ANALYTICS_SERVICE_ACCOUNT_JSON_BASE64`
+- `GOOGLE_ANALYTICS_OAUTH_CLIENT_ID`
+- `GOOGLE_ANALYTICS_OAUTH_CLIENT_SECRET`
+- `GOOGLE_ANALYTICS_OAUTH_REFRESH_TOKEN`
+
+Fungsi:
+
+- memasang GA4 tag hanya di halaman public/auth
+- membaca statistik global dari GA Data API
+- panel admin tetap menampilkan statistik referral internal walaupun env GA belum diisi
+
+Catatan:
+
+- pembacaan GA bisa memakai service account atau OAuth refresh token
+- jika env OAuth lengkap, sistem memakai OAuth lebih dulu
+- service account JSON disimpan dalam bentuk base64 di env server
+- beri akses service account ke property GA4 yang dipakai jika jalur service account tersedia
+
+### K. Seed user referral khusus
 
 Opsional:
 
@@ -486,6 +515,13 @@ COINMARKETCAP_API_KEY=
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
+
+NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID=
+GOOGLE_ANALYTICS_PROPERTY_ID=
+GOOGLE_ANALYTICS_SERVICE_ACCOUNT_JSON_BASE64=
+GOOGLE_ANALYTICS_OAUTH_CLIENT_ID=
+GOOGLE_ANALYTICS_OAUTH_CLIENT_SECRET=
+GOOGLE_ANALYTICS_OAUTH_REFRESH_TOKEN=
 
 SEED_REGISTER_PASSWORD=register-seed-placeholder
 ```
@@ -579,7 +615,8 @@ URL:
 
 Yang perlu diatur pertama kali:
 
-- homepage content
+- analytics
+- homepage content di `/admin/homepage`
 - SEO settings
 - payment settings
 - guide member
@@ -590,7 +627,7 @@ Yang perlu diatur pertama kali:
 Masuk ke:
 
 ```text
-/admin
+/admin/homepage
 ```
 
 Di sini admin bisa mengubah:
@@ -685,6 +722,16 @@ Admin bisa mengubah:
 - open graph description
 - favicon
 - gambar share social media
+
+### I. Melihat analytics
+
+Masuk ke:
+
+```text
+/admin/analytics
+```
+
+Panel ini menampilkan traffic global dari GA4 dan statistik referral internal dari kunjungan `/{username}`.
 
 ## 13. Alur Operasional yang Mudah Dipahami
 

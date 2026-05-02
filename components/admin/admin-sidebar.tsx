@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
+  BarChart3,
   ChevronDown,
   CreditCard,
   KeyRound,
@@ -21,18 +22,20 @@ import { AdminThemeToggle } from "@/components/admin/admin-theme-toggle";
 import type { AdminTheme } from "@/lib/admin-theme";
 import { cn } from "@/lib/utils";
 
+const homepageAdminPath = "/admin/homepage";
+
 const homepageItems = [
-  { href: "/admin#overview-section", id: "overview-section", label: "Overview Section", section: "overview" },
-  { href: "/admin#benefits-section", id: "benefits-section", label: "Benefit Section", section: "benefits" },
-  { href: "/admin#pricing-section", id: "pricing-section", label: "Pricing Section", section: "pricing" },
-  { href: "/admin#video-section", id: "video-section", label: "Video Section", section: "video" },
-  { href: "/admin#faq-section", id: "faq-section", label: "FAQ Section", section: "faq" },
-  { href: "/admin#guide-section", id: "guide-section", label: "Guide Section", section: "guide" },
-  { href: "/admin#testimonial-section", id: "testimonial-section", label: "Testimoni Section", section: "testimonial" },
-  { href: "/admin#blog-section", id: "blog-section", label: "Blog Section", section: "blog" },
-  { href: "/admin#banner-ads-section", id: "banner-ads-section", label: "Banner Ads Section", section: "bannerAds" },
-  { href: "/admin#register-contact-section", id: "register-contact-section", label: "Register Contact", section: "registerContact" },
-  { href: "/admin#footer-section", id: "footer-section", label: "Footer Section", section: "footer" },
+  { href: `${homepageAdminPath}#overview-section`, id: "overview-section", label: "Overview Section", section: "overview" },
+  { href: `${homepageAdminPath}#benefits-section`, id: "benefits-section", label: "Benefit Section", section: "benefits" },
+  { href: `${homepageAdminPath}#pricing-section`, id: "pricing-section", label: "Pricing Section", section: "pricing" },
+  { href: `${homepageAdminPath}#video-section`, id: "video-section", label: "Video Section", section: "video" },
+  { href: `${homepageAdminPath}#faq-section`, id: "faq-section", label: "FAQ Section", section: "faq" },
+  { href: `${homepageAdminPath}#guide-section`, id: "guide-section", label: "Guide Section", section: "guide" },
+  { href: `${homepageAdminPath}#testimonial-section`, id: "testimonial-section", label: "Testimoni Section", section: "testimonial" },
+  { href: `${homepageAdminPath}#blog-section`, id: "blog-section", label: "Blog Section", section: "blog" },
+  { href: `${homepageAdminPath}#banner-ads-section`, id: "banner-ads-section", label: "Banner Ads Section", section: "bannerAds" },
+  { href: `${homepageAdminPath}#register-contact-section`, id: "register-contact-section", label: "Register Contact", section: "registerContact" },
+  { href: `${homepageAdminPath}#footer-section`, id: "footer-section", label: "Footer Section", section: "footer" },
 ] as const;
 
 const postItems = [
@@ -85,7 +88,7 @@ export function AdminSidebar({ onThemeChange, pathname, theme, username }: Admin
   const resolvedPathname = usePathname() ?? pathname;
   const searchParams = useSearchParams();
   const currentHomepageSection = searchParams.get("section");
-  const isHomepageRoute = resolvedPathname === "/admin";
+  const isHomepageRoute = resolvedPathname === homepageAdminPath;
   const isPostsRoute = resolvedPathname.startsWith("/admin/posts");
   const isPostComposerRoute = resolvedPathname === "/admin/posts";
   const isPublishedPostsRoute = resolvedPathname === "/admin/posts/published";
@@ -96,6 +99,7 @@ export function AdminSidebar({ onThemeChange, pathname, theme, username }: Admin
   const isMemberPublishedPostsRoute = resolvedPathname === "/admin/member-posts/published";
   const isResetPasswordRoute = resolvedPathname === "/admin/reset-password";
   const isPaymentsRoute = resolvedPathname === "/admin/payments";
+  const isAnalyticsRoute = resolvedPathname === "/admin/analytics";
   const isSeoRoute = resolvedPathname === "/admin/seo";
   const isUsersRoute = resolvedPathname === "/admin/users";
   const [homepageExpanded, setHomepageExpanded] = useState(isHomepageRoute);
@@ -209,6 +213,14 @@ export function AdminSidebar({ onThemeChange, pathname, theme, username }: Admin
 
       <div className="flex-1 overflow-y-auto px-4 py-4">
         <nav className="space-y-2.5">
+          <Link
+            className={primaryLinkClass(isAnalyticsRoute)}
+            href="/admin/analytics"
+          >
+            <BarChart3 className="h-4 w-4" />
+            Analytics
+          </Link>
+
           <Link
             className={primaryLinkClass(isUsersRoute)}
             href="/admin/users"
@@ -347,7 +359,7 @@ export function AdminSidebar({ onThemeChange, pathname, theme, username }: Admin
                 <div className="space-y-1 px-2 pb-2 pt-1">
                   <Link
                     className={subItemClass(isHomepageRoute && !activeHomepageSection)}
-                    href="/admin"
+                    href={homepageAdminPath}
                     onClick={(event) => {
                       if (!isHomepageRoute) {
                         return;
@@ -356,7 +368,7 @@ export function AdminSidebar({ onThemeChange, pathname, theme, username }: Admin
                       event.preventDefault();
                       window.scrollTo({ top: 0, behavior: "smooth" });
                       setActiveHomepageSection(null);
-                      window.history.replaceState(null, "", "/admin");
+                      window.history.replaceState(null, "", homepageAdminPath);
                     }}
                   >
                     Semua Section

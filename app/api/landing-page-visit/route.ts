@@ -1,10 +1,21 @@
 import { NextResponse } from "next/server";
-import { LANDING_PAGE_VISIT_SECRET_HEADER, getLandingPageVisitSecret } from "@/lib/landing-page-visits";
-import { prisma } from "@/lib/prisma";
+import {
+  LANDING_PAGE_VISIT_SECRET_HEADER,
+  getLandingPageVisitSecret,
+  recordLandingPageVisit,
+} from "@/lib/landing-page-visits";
 import { parseReferralUsername } from "@/lib/referral";
 
 type LandingPageVisitPayload = {
+  city?: string | null;
+  countryCode?: string | null;
+  deviceType?: string | null;
+  profileId?: string;
+  referrer?: string | null;
+  region?: string | null;
+  sourcePath?: string;
   username?: string;
+  visitorIdHash?: string | null;
 };
 
 export async function POST(request: Request) {
@@ -23,18 +34,24 @@ export async function POST(request: Request) {
   }
 
   const username = parseReferralUsername(payload.username);
+  const profileId = String(payload.profileId ?? "").trim();
 
-  if (!username) {
+  if (!username || !profileId) {
     return NextResponse.json({ error: "Invalid username" }, { status: 400 });
   }
 
   try {
-    await prisma.$executeRaw`
-      UPDATE "public"."profiles"
-      SET "landing_page_visit_count" = COALESCE("landing_page_visit_count", 0) + 1
-      WHERE "username" = ${username}
-        AND "is_lp_active" = true
-    `;
+    await recordLandingPageVisit({
+      city: payload.city ?? null,
+      countryCode: payload.countryCode ?? null,
+      deviceType: payload.deviceType ?? null,
+      profileId,
+      referrer: payload.referrer ?? null,
+      region: payload.region ?? null,
+      sourcePath: payload.sourcePath ?? "/",
+      username,
+      visitorIdHash: payload.visitorIdHash ?? null,
+    });
   } catch (error) {
     console.error("[landing-page-visit] Failed to increment visit count", error);
   }

@@ -12,6 +12,7 @@ export const LANDING_REFERRAL_COOKIE_NAME = "landing_referral";
 export const LANDING_REFERRAL_COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
 
 export type ReferralOwner = {
+  id: string;
   referralLink: string | null;
   username: string;
   whatsapp: string | null;
@@ -50,6 +51,7 @@ export async function getActiveReferralOwner(username: string | null | undefined
   try {
     const profiles = await prisma.$queryRaw<ReferralOwner[]>`
       SELECT
+        "id",
         "referral_link" AS "referralLink",
         "username",
         "whatsapp"

@@ -18,9 +18,32 @@ model Profile {
   isLpActive   Boolean @default(false) @map("is_lp_active")
   referredBy   String? @map("referred_by")
   subscription MemberSubscription?
+  landingPageVisits LandingPageVisit[]
 
   @@index([referredBy], map: "profiles_referred_by_idx")
   @@map("profiles")
+}
+
+model LandingPageVisit {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  profileId     String   @db.Uuid @map("profile_id")
+  username      String
+  visitorIdHash String?  @map("visitor_id_hash")
+  countryCode   String?  @map("country_code")
+  region        String?
+  city          String?
+  sourcePath    String   @default("/") @map("source_path")
+  referrer      String?
+  deviceType    String?  @map("device_type")
+  createdAt     DateTime @default(now()) @map("created_at")
+  profile       Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt], map: "landing_page_visits_created_at_idx")
+  @@index([profileId, createdAt], map: "landing_page_visits_profile_created_at_idx")
+  @@index([username, createdAt], map: "landing_page_visits_username_created_at_idx")
+  @@index([countryCode, createdAt], map: "landing_page_visits_country_created_at_idx")
+  @@index([visitorIdHash, profileId, createdAt], map: "landing_page_visits_unique_visitor_idx")
+  @@map("landing_page_visits")
 }
 
 model HomepageContent {

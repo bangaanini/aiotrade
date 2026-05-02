@@ -39,7 +39,7 @@ function readBackground(formData: FormData, prefix = "background") {
 }
 
 function redirectToSection(section: string, status: "saved" | "error"): never {
-  redirect(`/admin?section=${encodeURIComponent(section)}&status=${status}`);
+  redirect(`/admin/homepage?section=${encodeURIComponent(section)}&status=${status}`);
 }
 
 function readPaletteOnlyBackground(formData: FormData) {
