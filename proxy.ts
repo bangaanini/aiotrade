@@ -1,12 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 import {
-  LANDING_PAGE_VISIT_SECRET_HEADER,
   LANDING_VISITOR_COOKIE_MAX_AGE,
   LANDING_VISITOR_COOKIE_NAME,
   getLandingPageVisitMetadata,
-  getLandingPageVisitSecret,
   getOrCreateLandingVisitorId,
   hashLandingVisitorId,
+  recordLandingPageVisit,
 } from "@/lib/landing-page-visits";
 import {
   LANDING_REFERRAL_COOKIE_MAX_AGE,
@@ -58,20 +57,12 @@ export async function proxy(request: NextRequest) {
   const visitMetadata = getLandingPageVisitMetadata(request.headers);
 
   try {
-    await fetch(new URL("/api/landing-page-visit", request.url), {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        [LANDING_PAGE_VISIT_SECRET_HEADER]: getLandingPageVisitSecret(),
-      },
-      body: JSON.stringify({
-        ...visitMetadata,
-        profileId: referralOwner.id,
-        sourcePath: pathname,
-        username: referralOwner.username,
-        visitorIdHash: hashLandingVisitorId(visitorId),
-      }),
-      cache: "no-store",
+    await recordLandingPageVisit({
+      ...visitMetadata,
+      profileId: referralOwner.id,
+      sourcePath: pathname,
+      username: referralOwner.username,
+      visitorIdHash: hashLandingVisitorId(visitorId),
     });
   } catch (error) {
     console.error("[proxy] Failed to track landing page visit", error);
